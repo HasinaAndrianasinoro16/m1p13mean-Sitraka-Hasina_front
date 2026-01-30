@@ -13,6 +13,10 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import {CommandesComponent} from "../../pages/commandes/commandes.component";
 import {AchatsComponent} from "../../pages/achats/achats.component";
 import {PanierComponent} from "../../pages/panier/panier.component";
+import {StatComponent} from "../../pages/stat/stat.component";
+import {CommentairesComponent} from "../../pages/commentaires/commentaires.component";
+import {ApreciationsComponent} from "../../pages/apreciations/apreciations.component";
+import {RegisterComponent} from "../../pages/register/register.component";
 
 @NgModule({
   imports: [
@@ -27,7 +31,11 @@ import {PanierComponent} from "../../pages/panier/panier.component";
     ProduitsComponent,
     CommandesComponent,
     AchatsComponent,
-    PanierComponent
+    PanierComponent,
+    StatComponent,
+    CommentairesComponent,
+    ApreciationsComponent,
+    RegisterComponent,
   ]
 })
 

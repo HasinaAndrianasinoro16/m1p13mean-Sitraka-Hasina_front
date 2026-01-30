@@ -7,6 +7,10 @@ import {ProduitsComponent} from "../../pages/produits/produits.component";
 import {CommandesComponent} from "../../pages/commandes/commandes.component";
 import {AchatsComponent} from "../../pages/achats/achats.component";
 import {PanierComponent} from "../../pages/panier/panier.component";
+import {StatComponent} from "../../pages/stat/stat.component";
+import {CommentairesComponent} from "../../pages/commentaires/commentaires.component";
+import {ApreciationsComponent} from "../../pages/apreciations/apreciations.component";
+import {RegisterComponent} from "../../pages/register/register.component";
 
 export const AdminLayoutRoutes: Routes = [
     { path: 'dashboard',      component: DashboardComponent },
@@ -16,4 +20,8 @@ export const AdminLayoutRoutes: Routes = [
     {path: 'commandes',      component: CommandesComponent },
     {path: 'achats',     component: AchatsComponent },
     {path: 'panier',     component: PanierComponent },
+    {path: 'stat',     component: StatComponent },
+    {path: 'commentaire', component: CommentairesComponent},
+    {path: 'appreciation', component: ApreciationsComponent},
+    {path: 'register', component: RegisterComponent },
 ];

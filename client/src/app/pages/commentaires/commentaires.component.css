@@ -1,0 +1,8 @@
+table th, table td {
+  vertical-align: middle;
+}
+
+.badge {
+  font-size: 14px;
+  padding: 6px 10px;
+}

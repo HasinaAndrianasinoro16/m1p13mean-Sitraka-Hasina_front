@@ -1,0 +1,57 @@
+<div class="row">
+  <div class="col-md-10 mx-auto">
+    <div class="card shadow-sm border-0">
+
+      <!-- Header -->
+      <div class="card-header bg-danger text-white text-center">
+        <h5 class="card-title mb-0">
+          <i class="nc-icon nc-cloud-upload-94"></i>
+          Importer des boutiques
+        </h5>
+        <p class="card-category mt-1 text-white-50">
+          Importez vos boutiques via un fichier CSV ou Excel
+        </p>
+      </div>
+
+      <!-- Body -->
+      <div class="card-body px-4 py-4">
+        <form>
+
+          <!-- Upload -->
+          <div class="form-group text-center mb-4">
+            <label class="fw-semibold mb-2">
+              Sélectionner un fichier
+            </label>
+
+            <div class="custom-file">
+              <input
+                type="file"
+                class="custom-file-input"
+                id="fileUpload"
+                accept=".csv,.xlsx"
+              >
+              <label class="custom-file-label" for="fileUpload">
+                Choisir un fichier (.csv, .xlsx)
+              </label>
+            </div>
+
+            <small class="form-text text-muted mt-2">
+              <i class="nc-icon nc-info"></i>
+              Formats acceptés : CSV ou Excel (.xlsx)
+            </small>
+          </div>
+
+          <!-- Bouton -->
+          <div class="text-center">
+            <button type="submit" class="btn btn-success btn-round px-5">
+              <i class="nc-icon nc-cloud-upload-94"></i>
+              Importer
+            </button>
+          </div>
+
+        </form>
+      </div>
+
+    </div>
+  </div>
+</div>

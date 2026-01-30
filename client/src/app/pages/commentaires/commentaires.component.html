@@ -1,0 +1,194 @@
+<div class="row mb-4">
+  <div class="col-md-12 text-center">
+    <h3 class="fw-bold">
+      <i class="nc-icon nc-chat-33"></i>
+      Avis sur les boutiques
+    </h3>
+    <p class="text-muted">
+      Consultez et partagez votre expérience avec les boutiques
+    </p>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-12">
+    <div class="card shadow-sm">
+      <div class="card-body table-responsive">
+        <table class="table table-hover align-middle">
+          <thead class="text-primary">
+          <tr>
+            <th>Boutique</th>
+            <th>Note moyenne</th>
+            <th class="text-center">Actions</th>
+          </tr>
+          </thead>
+
+          <tbody>
+          <tr *ngFor="let boutique of boutiques">
+            <td>
+              <strong>{{ boutique.nom }}</strong>
+            </td>
+
+            <td>
+                <span class="h6">
+                  {{ getNoteMoyenne(boutique) }}/10
+                </span>
+            </td>
+
+            <td class="text-center">
+              <button
+                class="btn btn-sm btn-primary me-2"
+                data-toggle="modal"
+                data-target="#commentModal"
+                (click)="ouvrirCommentaire(boutique)"
+              >
+                <i class="nc-icon nc-chat-33"></i>
+                Commenter
+              </button>
+
+              <button
+                class="btn btn-sm btn-outline-secondary"
+                data-toggle="modal"
+                data-target="#avisModal"
+                (click)="ouvrirCommentaire(boutique)"
+              >
+                <i class="nc-icon nc-zoom-split"></i>
+                Voir
+              </button>
+            </td>
+          </tr>
+          </tbody>
+
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL : COMMENTER -->
+<div class="modal fade" id="commentModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <h5 class="modal-title">
+          Commenter {{ selectedBoutique?.nom }}
+        </h5>
+        <button type="button" class="close" data-dismiss="modal">
+          <i class="nc-icon nc-simple-remove"></i>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Note (/10)</label>
+          <input
+            type="number"
+            class="form-control"
+            min="0"
+            max="10"
+            [(ngModel)]="note"
+          />
+        </div>
+
+        <div class="form-group">
+          <label>Commentaire (facultatif)</label>
+          <textarea
+            class="form-control"
+            rows="3"
+            [(ngModel)]="commentaire"
+          ></textarea>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button
+          class="btn btn-primary"
+          data-dismiss="modal"
+          (click)="ajouterAvis()"
+        >
+          Enregistrer
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- MODAL : VOIR AVIS -->
+<div class="modal fade" id="avisModal" tabindex="-1">
+  <div class="modal-dialog modal-lg modal-dialog-scrollable">
+    <div class="modal-content">
+
+      <!-- HEADER -->
+      <div class="modal-header border-0 pb-0">
+        <div>
+          <h5 class="modal-title mb-1">
+            Avis clients
+          </h5>
+          <small class="text-muted">
+            Boutique : {{ selectedBoutique?.nom }}
+          </small>
+        </div>
+        <button type="button" class="close" data-dismiss="modal">
+          <i class="nc-icon nc-simple-remove"></i>
+        </button>
+      </div>
+
+      <!-- BODY -->
+      <div class="modal-body pt-3">
+
+        <!-- Aucun avis -->
+        <div
+          *ngIf="selectedBoutique?.avis.length === 0"
+          class="text-center text-muted py-5"
+        >
+          <i class="nc-icon nc-chat-33 mb-2" style="font-size: 30px;"></i>
+          <p class="mb-0">Aucun avis pour le moment</p>
+        </div>
+
+        <!-- Liste des avis -->
+        <div
+          class="card mb-3 shadow-sm"
+          *ngFor="let avis of selectedBoutique?.avis"
+        >
+          <div class="card-body">
+
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <!-- Avatar + label -->
+              <div class="d-flex align-items-center">
+                <div
+                  class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center mr-2"
+                  style="width: 36px; height: 36px;"
+                >
+                  <i class="nc-icon nc-single-02"></i>
+                </div>
+                <strong>Client</strong>
+              </div>
+
+              <!-- Note -->
+              <span class="badge badge-success badge-pill px-3 py-2">
+                {{ avis.note }}/10
+              </span>
+            </div>
+
+            <!-- Commentaire -->
+            <p class="mb-0 text-muted">
+              {{ avis.commentaire || 'Aucun commentaire laissé par le client.' }}
+            </p>
+
+          </div>
+        </div>
+
+      </div>
+
+      <div class="modal-footer border-0">
+        <button type="button" class="btn btn-secondary btn-round" data-dismiss="modal">
+          Fermer
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div>
+

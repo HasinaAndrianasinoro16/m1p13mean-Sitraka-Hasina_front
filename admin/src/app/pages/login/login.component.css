@@ -1,154 +1,154 @@
-/* Palette de couleurs COMMERCIAL SHOP */
-:root {
-  --primary-color: #2c3e50;
-  --secondary-color: #3498db;
-  --accent-color: #e74c3c;
-  --light-color: #ecf0f1;
-  --dark-color: #2c3e50;
-  --success-color: #27ae60;
-  --warning-color: #f39c12;
-  --border-color: #bdc3c7;
-  --shadow-color: rgba(44, 62, 80, 0.1);
-}
+/*!* Palette de couleurs COMMERCIAL SHOP *!*/
+/*:root {*/
+/*  --primary-color: #2c3e50;*/
+/*  --secondary-color: #3498db;*/
+/*  --accent-color: #e74c3c;*/
+/*  --light-color: #ecf0f1;*/
+/*  --dark-color: #2c3e50;*/
+/*  --success-color: #27ae60;*/
+/*  --warning-color: #f39c12;*/
+/*  --border-color: #bdc3c7;*/
+/*  --shadow-color: rgba(44, 62, 80, 0.1);*/
+/*}*/
 
-/* Conteneur principal */
-.login-container {
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: linear-gradient(135deg, var(--light-color), #dfe6e9);
-  padding: 20px;
-  position: relative;
-  overflow: hidden;
-}
+/*!* Conteneur principal *!*/
+/*.login-container {*/
+/*  min-height: 100vh;*/
+/*  display: flex;*/
+/*  align-items: center;*/
+/*  justify-content: center;*/
+/*  background: linear-gradient(135deg, var(--light-color), #dfe6e9);*/
+/*  padding: 20px;*/
+/*  position: relative;*/
+/*  overflow: hidden;*/
+/*}*/
 
-.login-container::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background-image:
-    radial-gradient(circle at 10% 20%, rgba(52, 152, 219, 0.05) 0%, transparent 20%),
-    radial-gradient(circle at 90% 80%, rgba(44, 62, 80, 0.05) 0%, transparent 20%);
-}
+/*.login-container::before {*/
+/*  content: '';*/
+/*  position: absolute;*/
+/*  inset: 0;*/
+/*  background-image:*/
+/*    radial-gradient(circle at 10% 20%, rgba(52, 152, 219, 0.05) 0%, transparent 20%),*/
+/*    radial-gradient(circle at 90% 80%, rgba(44, 62, 80, 0.05) 0%, transparent 20%);*/
+/*}*/
 
-/* Carte */
-.login-card {
-  background: #fff;
-  border-radius: 12px;
-  box-shadow: 0 10px 30px var(--shadow-color);
-  padding: 40px;
-  max-width: 420px;
-  width: 100%;
-  z-index: 1;
-  border: 1px solid var(--border-color);
-  animation: slideUp 0.5s ease-out;
-}
+/*!* Carte *!*/
+/*.login-card {*/
+/*  background: #fff;*/
+/*  border-radius: 12px;*/
+/*  box-shadow: 0 10px 30px var(--shadow-color);*/
+/*  padding: 40px;*/
+/*  max-width: 420px;*/
+/*  width: 100%;*/
+/*  z-index: 1;*/
+/*  border: 1px solid var(--border-color);*/
+/*  animation: slideUp 0.5s ease-out;*/
+/*}*/
 
-@keyframes slideUp {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
-}
+/*@keyframes slideUp {*/
+/*  from { opacity: 0; transform: translateY(20px); }*/
+/*  to { opacity: 1; transform: translateY(0); }*/
+/*}*/
 
-/* Header */
-.login-header {
-  text-align: center;
-  margin-bottom: 35px;
-}
+/*!* Header *!*/
+/*.login-header {*/
+/*  text-align: center;*/
+/*  margin-bottom: 35px;*/
+/*}*/
 
-.logo-container {
-  width: 80px;
-  height: 80px;
-  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0 auto 20px;
-}
+/*.logo-container {*/
+/*  width: 80px;*/
+/*  height: 80px;*/
+/*  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));*/
+/*  border-radius: 12px;*/
+/*  display: flex;*/
+/*  align-items: center;*/
+/*  justify-content: center;*/
+/*  margin: 0 auto 20px;*/
+/*}*/
 
-.login-title {
-  font-size: 26px;
-  font-weight: 700;
-  color: var(--primary-color);
-}
+/*.login-title {*/
+/*  font-size: 26px;*/
+/*  font-weight: 700;*/
+/*  color: var(--primary-color);*/
+/*}*/
 
-.login-subtitle {
-  font-size: 14px;
-  color: #7f8c8d;
-}
+/*.login-subtitle {*/
+/*  font-size: 14px;*/
+/*  color: #7f8c8d;*/
+/*}*/
 
-/* Inputs */
-.form-label {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--primary-color);
-  margin-bottom: 8px;
-  display: block;
-}
+/*!* Inputs *!*/
+/*.form-label {*/
+/*  font-size: 13px;*/
+/*  font-weight: 600;*/
+/*  color: var(--primary-color);*/
+/*  margin-bottom: 8px;*/
+/*  display: block;*/
+/*}*/
 
-.input-group {
-  border: 2px solid var(--border-color);
-  border-radius: 8px;
-  overflow: hidden;
-}
+/*.input-group {*/
+/*  border: 2px solid var(--border-color);*/
+/*  border-radius: 8px;*/
+/*  overflow: hidden;*/
+/*}*/
 
-.input-group:focus-within {
-  border-color: var(--secondary-color);
-}
+/*.input-group:focus-within {*/
+/*  border-color: var(--secondary-color);*/
+/*}*/
 
-.input-group-text {
-  background: var(--light-color);
-  border: none;
-}
+/*.input-group-text {*/
+/*  background: var(--light-color);*/
+/*  border: none;*/
+/*}*/
 
-.input-field {
-  border: none;
-  padding: 14px;
-}
+/*.input-field {*/
+/*  border: none;*/
+/*  padding: 14px;*/
+/*}*/
 
-.input-field:focus {
-  outline: none;
-  box-shadow: none;
-}
+/*.input-field:focus {*/
+/*  outline: none;*/
+/*  box-shadow: none;*/
+/*}*/
 
-/* Checkbox */
-.form-check {
-  color: black;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-
-.form-check-input {
-  width: 18px;
-  height: 18px;
-  border: 2px solid var(--border-color);
-  cursor: pointer;
-}
+/*!* Checkbox *!*/
+/*.form-check {*/
+/*  color: black;*/
+/*  display: flex;*/
+/*  align-items: center;*/
+/*  gap: 10px;*/
+/*}*/
 
 
-/* Bouton login */
-.btn-login {
-  background: black;
-  color: #fff;
-  border-radius: 8px;
-  padding: 15px;
-  font-weight: 600;
-  border: none;
-}
+/*.form-check-input {*/
+/*  width: 18px;*/
+/*  height: 18px;*/
+/*  border: 2px solid var(--border-color);*/
+/*  cursor: pointer;*/
+/*}*/
 
-.btn-login:hover {
-  box-shadow: 0 8px 20px rgba(44, 62, 80, 0.2);
-}
 
-/* Erreurs */
-.input-group.error {
-  border-color: var(--accent-color);
-}
+/*!* Bouton login *!*/
+/*.btn-login {*/
+/*  background: black;*/
+/*  color: #fff;*/
+/*  border-radius: 8px;*/
+/*  padding: 15px;*/
+/*  font-weight: 600;*/
+/*  border: none;*/
+/*}*/
 
-.error-message {
-  color: var(--accent-color);
-  font-size: 13px;
-}
+/*.btn-login:hover {*/
+/*  box-shadow: 0 8px 20px rgba(44, 62, 80, 0.2);*/
+/*}*/
+
+/*!* Erreurs *!*/
+/*.input-group.error {*/
+/*  border-color: var(--accent-color);*/
+/*}*/
+
+/*.error-message {*/
+/*  color: var(--accent-color);*/
+/*  font-size: 13px;*/
+/*}*/

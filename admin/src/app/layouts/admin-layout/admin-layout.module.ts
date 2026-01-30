@@ -10,6 +10,7 @@ import { ValidationComponent} from "../../pages/validation/validation.component"
 import {StatComponent} from "../../pages/stat/stat.component";
 
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import {ExportComponent} from "../../pages/export/export.component";
 
 @NgModule({
   imports: [
@@ -21,7 +22,8 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
   declarations: [
     DashboardComponent,
     ValidationComponent,
-    StatComponent
+    StatComponent,
+    ExportComponent
   ]
 })
 

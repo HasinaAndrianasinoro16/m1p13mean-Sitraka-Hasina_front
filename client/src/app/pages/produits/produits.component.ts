@@ -4,6 +4,7 @@ interface Produit {
   nom: string;
   prix: number;
   stock: number;
+  image: string;
 }
 
 @Component({
@@ -13,19 +14,20 @@ interface Produit {
 export class ProduitsComponent {
 
   produits: Produit[] = [
-    { nom: 'Chaussures Nike', prix: 120000, stock: 45 },
-    { nom: 'T-shirt Adidas', prix: 35000, stock: 10 },
-    { nom: 'Casquette Puma', prix: 25000, stock: 5 },
-    { nom: 'Sac à dos', prix: 80000, stock: 30 },
-    { nom: 'Montre sportive', prix: 150000, stock: 8 },
-    { nom: 'Veste', prix: 95000, stock: 12 }
+    { nom: 'Chaussures Nike', prix: 120000, stock: 45, image: '' },
+    { nom: 'T-shirt Adidas', prix: 35000, stock: 10, image: ''  },
+    { nom: 'Casquette Puma', prix: 25000, stock: 5, image: ''  },
+    { nom: 'Sac à dos', prix: 80000, stock: 30, image: ''  },
+    { nom: 'Montre sportive', prix: 150000, stock: 8, image: ''  },
+    { nom: 'Veste', prix: 95000, stock: 12, image: ''  }
   ];
 
   // Nouveau produit
   nouveauProduit: Produit = {
     nom: '',
     prix: 0,
-    stock: 0
+    stock: 0,
+    image: ''
   };
 
   // Ajout stock
@@ -58,7 +60,7 @@ export class ProduitsComponent {
 
     this.produits.push({ ...this.nouveauProduit });
 
-    this.nouveauProduit = { nom: '', prix: 0, stock: 0 };
+    this.nouveauProduit = { nom: '', prix: 0, stock: 0, image: ''  };
     this.pageActuelle = this.totalPages;
   }
 
