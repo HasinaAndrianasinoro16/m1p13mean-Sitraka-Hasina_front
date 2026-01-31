@@ -12,7 +12,7 @@ export const ROUTES: RouteInfo[] = [
     { path: '/dashboard',     title: 'Dashboard',         icon:'nc-bank',             class: '' },
     { path: '/validation',    title: 'Validation',        icon:'nc-check-2',          class: '' },
     { path: '/statistique',   title: 'Statistique',       icon:'nc-chart-bar-32',     class: '' },
-    // { path: '/import',        title: 'Import',            icon:'nc-single-copy-04',   class: '' },
+    { path: '/import',        title: 'Import',            icon:'nc-single-copy-04',   class: '' },
 ];
 
 @Component({
@@ -33,17 +33,14 @@ export class SidebarComponent implements OnInit {
   logout() {
     // Confirmation avant déconnexion
     if (confirm('Êtes-vous sûr de vouloir vous déconnecter ?')) {
-      // Effacer toutes les données de session
       localStorage.clear();
 
-      // Ou effacer seulement les items spécifiques
       // localStorage.removeItem('token');
       // localStorage.removeItem('role');
       // localStorage.removeItem('user');
 
-      // Rediriger vers la page de login
       this.router.navigate(['/login']).then(() => {
-        console.log('Déconnexion réussie');
+        alert('Déconnexion réussie');
       });
     }
   }
