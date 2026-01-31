@@ -5,11 +5,12 @@ import {ValidationComponent} from '../../pages/validation/validation.component';
 import {StatComponent} from "../../pages/stat/stat.component";
 import {LoginComponent} from '../../pages/login/login.component';
 import {ExportComponent} from "../../pages/export/export.component";
+import {AuthGuard} from "../../guards/auth.guard";
 
 export const AdminLayoutRoutes: Routes = [
-    { path: 'dashboard',      component: DashboardComponent },
-    {path: 'validation',      component: ValidationComponent },
-    {path: 'statistique',      component: StatComponent },
-    {path: 'login',            component: LoginComponent },
-    {path: 'import',          component: ExportComponent },
+    {path: 'dashboard',       component: DashboardComponent,    canActivate: [AuthGuard] },
+    {path: 'validation',      component: ValidationComponent,   canActivate: [AuthGuard] },
+    {path: 'statistique',     component: StatComponent,         canActivate: [AuthGuard] },
+    {path: 'login',           component: LoginComponent, },
+    {path: 'import',          component: ExportComponent,       canActivate: [AuthGuard] },
 ];

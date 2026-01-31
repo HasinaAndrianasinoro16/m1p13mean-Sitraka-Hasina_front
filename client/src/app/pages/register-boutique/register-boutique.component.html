@@ -14,7 +14,21 @@
 
           <!-- NOM -->
           <div class="form-group mb-4">
-            <label class="form-label">Nom</label>
+            <label class="form-label">Nom Boutique</label>
+            <div class="input-group">
+          <span class="input-group-text">
+            <i class="nc-icon nc-single-02"></i>
+          </span>
+              <input
+                type="text"
+                class="form-control input-field"
+                placeholder="Votre nom"
+                [(ngModel)]="nom"
+              />
+            </div>
+          </div>
+          <div class="form-group mb-4">
+            <label class="form-label">Nom proprietaire</label>
             <div class="input-group">
           <span class="input-group-text">
             <i class="nc-icon nc-single-02"></i>
@@ -121,8 +135,8 @@
                 Se connecter
               </a>
               /
-              <a routerLink="/register-boutique" class="text-primary font-weight-bold">
-                Creer un compte en tant que boutique
+              <a routerLink="/register" class="text-primary font-weight-bold">
+                Creer un compte en tant qu'utilisateur
               </a>
             </small>
           </div>

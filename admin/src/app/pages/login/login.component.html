@@ -11,63 +11,83 @@
 
         <!-- BODY -->
         <div class="login-body">
+          <form (ngSubmit)="login()" #loginForm="ngForm">
 
-          <!-- EMAIL -->
-          <div class="form-group mb-4">
-            <label class="form-label">Email</label>
-            <div class="input-group">
-          <span class="input-group-text">
-            <i class="nc-icon nc-email-85"></i>
-          </span>
-              <input
-                type="email"
-                class="form-control input-field"
-                placeholder="Entrez votre email"
-                [(ngModel)]="email"
-              />
+            <!-- EMAIL -->
+            <div class="form-group mb-4">
+              <label class="form-label" for="email">Email</label>
+              <div class="input-group">
+                <span class="input-group-text">
+                  <i class="nc-icon nc-email-85"></i>
+                </span>
+                <input
+                  id="email"
+                  type="email"
+                  class="form-control input-field"
+                  placeholder="Entrez votre email"
+                  [(ngModel)]="email"
+                  name="email"
+                  required
+                  email
+                  [disabled]="isLoading"
+                  autocomplete="email"
+                />
+              </div>
             </div>
-          </div>
 
-          <!-- PASSWORD -->
-          <div class="form-group mb-4">
-            <label class="form-label">Mot de passe</label>
-            <div class="input-group">
-          <span class="input-group-text">
-            <i class="nc-icon nc-lock-circle-open"></i>
-          </span>
-              <input
-                [type]="showPassword ? 'text' : 'password'"
-                class="form-control input-field"
-                placeholder="Entrez votre mot de passe"
-                [(ngModel)]="password"
-              />
+            <!-- PASSWORD -->
+            <div class="form-group mb-4">
+              <label class="form-label" for="password">Mot de passe</label>
+              <div class="input-group">
+                <span class="input-group-text">
+                  <i class="nc-icon nc-lock-circle-open"></i>
+                </span>
+                <input
+                  id="password"
+                  [type]="showPassword ? 'text' : 'password'"
+                  class="form-control input-field"
+                  placeholder="Entrez votre mot de passe"
+                  [(ngModel)]="password"
+                  name="password"
+                  required
+                  [disabled]="isLoading"
+                  autocomplete="current-password"
+                  (keyup.enter)="login()"
+                />
+                <button
+                  class="btn btn-outline-secondary"
+                  type="button"
+                  (click)="togglePasswordVisibility()"
+                  [disabled]="isLoading"
+                  [attr.aria-label]="showPassword ? 'Masquer le mot de passe' : 'Afficher le mot de passe'"
+                >
+                  <i [class]="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
+                </button>
+              </div>
+            </div>
+
+            <!-- BUTTON -->
+            <div class="text-center">
               <button
-                class="btn btn-outline-secondary"
-                type="button"
-                (click)="togglePasswordVisibility()"
+                type="submit"
+                class="btn btn-success w-50 mb-3"
+                [disabled]="isLoading || !email || !password"
               >
-                <i [class]="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
+                <span *ngIf="!isLoading">
+                  <i class="fas fa-sign-in-alt me-2"></i>
+                  Se connecter
+                </span>
+                <span *ngIf="isLoading">
+                  <i class="fas fa-spinner fa-spin me-2"></i>
+                  Connexion...
+                </span>
               </button>
             </div>
-          </div>
 
-          <!-- BUTTON -->
-          <div class="text-center">
-            <button
-              class="btn btn-success w-50 mb-3"
-              (click)="login()"
-              [disabled]="isLoading"
-            >
-              <span *ngIf="!isLoading">Se connecter</span>
-              <span *ngIf="isLoading">
-          <i class="fas fa-spinner fa-spin me-2"></i> Connexion...
-        </span>
-              <!--              <i class="fas fa-sign-in-alt btn-icon" *ngIf="!isLoading"></i>-->
-            </button>
-          </div>
+          </form>
         </div>
+
       </div>
     </div>
-
   </div>
 </div>

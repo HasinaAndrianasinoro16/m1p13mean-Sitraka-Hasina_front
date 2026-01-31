@@ -11,6 +11,7 @@ import {StatComponent} from "../../pages/stat/stat.component";
 
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import {ExportComponent} from "../../pages/export/export.component";
+import {LoginComponent} from "../../pages/login/login.component";
 
 @NgModule({
   imports: [
@@ -23,7 +24,8 @@ import {ExportComponent} from "../../pages/export/export.component";
     DashboardComponent,
     ValidationComponent,
     StatComponent,
-    ExportComponent
+    ExportComponent,
+    LoginComponent,
   ]
 })
 

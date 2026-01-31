@@ -11,6 +11,7 @@ import {StatComponent} from "../../pages/stat/stat.component";
 import {CommentairesComponent} from "../../pages/commentaires/commentaires.component";
 import {ApreciationsComponent} from "../../pages/apreciations/apreciations.component";
 import {RegisterComponent} from "../../pages/register/register.component";
+import {RegisterBoutiqueComponent} from "../../pages/register-boutique/register-boutique.component";
 
 export const AdminLayoutRoutes: Routes = [
     { path: 'dashboard',      component: DashboardComponent },
@@ -24,4 +25,5 @@ export const AdminLayoutRoutes: Routes = [
     {path: 'commentaire', component: CommentairesComponent},
     {path: 'appreciation', component: ApreciationsComponent},
     {path: 'register', component: RegisterComponent },
+    {path: 'register-boutique', component: RegisterBoutiqueComponent},
 ];

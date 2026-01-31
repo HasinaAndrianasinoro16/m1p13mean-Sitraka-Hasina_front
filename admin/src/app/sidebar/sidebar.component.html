@@ -17,8 +17,8 @@
                 <p>{{menuItem.title}}</p>
             </a>
         </li>
-      <li class="active-pro d-flex justify-content-center">
-        <button class=" text-center btn btn-danger d-flex align-items-center gap-2">
+      <li  *ngIf="localStorage.getItem('token') != null" class="active-pro d-flex justify-content-center">
+        <button (click)="logout()" class=" text-center btn btn-danger d-flex align-items-center gap-2">
           <i class="nc-icon nc-button-power"></i>
           <span>Se déconnecter</span>
         </button>

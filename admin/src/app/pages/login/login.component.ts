@@ -1,133 +1,119 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
+import { finalize } from 'rxjs/operators';
+import { getAPIUrl } from "../../link/url";
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })
-export class LoginComponent {
-  email: string = '';
-  password: string = '';
-  showPassword: boolean = false;
-  rememberMe: boolean = false;
-  isLoading: boolean = false;
-  errorMessage: string = '';
+export class LoginComponent implements OnInit {
 
-  constructor(private router: Router) {}
+  email = '';
+  password = '';
+  showPassword = false;
+  isLoading = false;
 
-  login() {
-    // Empêcher le clic multiple pendant le chargement
-    if (this.isLoading) return;
+  baseUrl = getAPIUrl('auth');
 
-    // Réinitialiser le message d'erreur
-    this.errorMessage = '';
+  constructor(
+    private http: HttpClient,
+    private router: Router
+  ) {}
 
-    // Validation des champs
-    if (!this.email || !this.password) {
-      this.errorMessage = 'Veuillez remplir tous les champs';
-      return;
+  ngOnInit() {
+    const token = localStorage.getItem('token');
+    const role = localStorage.getItem('role');
+
+    if (token && role === 'ADMIN') {
+      this.router.navigate(['/dashboard']);
+    } else {
+      localStorage.clear();
     }
-
-    // Validation de l'email
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(this.email)) {
-      this.errorMessage = 'Veuillez entrer une adresse email valide';
-      return;
-    }
-
-    // Activation de l'état de chargement
-    this.isLoading = true;
-
-    // Simulation de connexion avec délai (remplacer par un vrai appel API)
-    setTimeout(() => {
-      try {
-        // Ici, vous ferez appel à votre service d'authentification
-        console.log('Tentative de connexion avec:', {
-          email: this.email,
-          rememberMe: this.rememberMe
-        });
-
-        // Simuler une réponse du serveur
-        const mockUsers = [
-          { email: 'admin@commercialshop.com', password: 'admin123', role: 'admin' },
-          { email: 'boutique@commercialshop.com', password: 'boutique123', role: 'boutique' }
-        ];
-
-        const user = mockUsers.find(u =>
-          u.email === this.email && u.password === this.password
-        );
-
-        if (user) {
-          console.log('Connexion réussie pour:', user.role);
-
-          // Sauvegarder dans localStorage si "Se souvenir de moi" est coché
-          if (this.rememberMe) {
-            localStorage.setItem('rememberedEmail', this.email);
-          } else {
-            localStorage.removeItem('rememberedEmail');
-          }
-
-          // Simuler la sauvegarde du token (à remplacer par votre token réel)
-          localStorage.setItem('auth_token', 'mock-jwt-token-' + Date.now());
-          localStorage.setItem('user_role', user.role);
-          localStorage.setItem('user_email', this.email);
-
-          // Redirection selon le rôle (à adapter selon votre logique)
-          if (user.role === 'admin') {
-            this.router.navigate(['/dashboard']);
-          } else {
-            this.router.navigate(['/boutique/dashboard']);
-          }
-        } else {
-          this.errorMessage = 'Email ou mot de passe incorrect';
-          this.isLoading = false;
-        }
-      } catch (error) {
-        console.error('Erreur lors de la connexion:', error);
-        this.errorMessage = 'Une erreur est survenue. Veuillez réessayer.';
-        this.isLoading = false;
-      }
-    }, 1500); // Simuler un délai réseau
   }
-
-  // goToRegister() {
-  //   this.router.navigate(['/register']);
-  // }
-  //
-  // forgotPassword() {
-  //   // Redirection vers la page de réinitialisation de mot de passe
-  //   this.router.navigate(['/forgot-password']);
-  // }
 
   togglePasswordVisibility() {
     this.showPassword = !this.showPassword;
   }
 
-  ngOnInit() {
-    // Remplir automatiquement l'email si "Se souvenir de moi" était coché
-    const rememberedEmail = localStorage.getItem('rememberedEmail');
-    if (rememberedEmail) {
-      this.email = rememberedEmail;
-      this.rememberMe = true;
+  login() {
+    // Validation des champs
+    if (!this.email || !this.password) {
+      alert('Veuillez remplir tous les champs');
+      return;
     }
 
-    // Rediriger si déjà connecté
-    const authToken = localStorage.getItem('auth_token');
-    if (authToken) {
-      const userRole = localStorage.getItem('user_role');
-      if (userRole === 'admin') {
-        this.router.navigate(['/dashboard']);
-      } else {
-        this.router.navigate(['/boutique/dashboard']);
-      }
+    // Validation format email
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(this.email)) {
+      alert('Veuillez entrer un email valide');
+      return;
     }
-  }
 
-  // Méthode pour gérer la touche Enter
-  onKeyDown(event: KeyboardEvent) {
-    if (event.key === 'Enter') {
-      this.login();
-    }
+    this.isLoading = true;
+
+    this.http.post<any>(`${this.baseUrl}/login`, {
+      email: this.email,
+      password: this.password
+    })
+      .pipe(
+        finalize(() => {
+          // S'exécute toujours, même en cas d'erreur
+          this.isLoading = false;
+        })
+      )
+      .subscribe({
+        next: (res) => {
+          // Vérification de la réponse
+          if (!res.success) {
+            alert(res.message || 'Erreur de connexion');
+            return;
+          }
+
+          // Vérification de la structure de données
+          if (!res.data || !res.data.user) {
+            alert('Erreur: données utilisateur manquantes');
+            return;
+          }
+
+          const user = res.data.user;
+
+          // ❌ PAS ADMIN → REFUS
+          if (user.role !== 'ADMIN') {
+            alert('Accès refusé : compte administrateur requis');
+            localStorage.clear();
+            return;
+          }
+
+          // ✅ ADMIN OK - Stockage sécurisé
+          if (res.token) {
+            localStorage.setItem('token', res.token);
+          }
+          localStorage.setItem('role', user.role);
+          localStorage.setItem('user', JSON.stringify(user));
+
+          // Redirection vers dashboard
+          this.router.navigate(['/dashboard']).then(() => {
+            // Message de succès après navigation
+            console.log('Connexion réussie');
+          });
+        },
+        error: (err) => {
+          console.error('Erreur de connexion:', err);
+
+          // Gestion des différents types d'erreurs
+          if (err.status === 401) {
+            alert('Email ou mot de passe incorrect');
+          } else if (err.status === 0) {
+            alert('Impossible de contacter le serveur. Vérifiez votre connexion.');
+          } else if (err.error && err.error.message) {
+            alert(err.error.message);
+          } else {
+            alert('Erreur serveur. Veuillez réessayer.');
+          }
+        }
+      });
   }
 }

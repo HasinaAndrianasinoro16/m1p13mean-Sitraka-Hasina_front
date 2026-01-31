@@ -17,6 +17,7 @@ import {StatComponent} from "../../pages/stat/stat.component";
 import {CommentairesComponent} from "../../pages/commentaires/commentaires.component";
 import {ApreciationsComponent} from "../../pages/apreciations/apreciations.component";
 import {RegisterComponent} from "../../pages/register/register.component";
+import {RegisterBoutiqueComponent} from "../../pages/register-boutique/register-boutique.component";
 
 @NgModule({
   imports: [
@@ -36,6 +37,7 @@ import {RegisterComponent} from "../../pages/register/register.component";
     CommentairesComponent,
     ApreciationsComponent,
     RegisterComponent,
+    RegisterBoutiqueComponent,
   ]
 })
 
