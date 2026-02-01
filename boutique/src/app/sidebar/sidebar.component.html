@@ -1,0 +1,33 @@
+
+<div class="sidebar-wrapper">
+  <div class="logo">
+    <a  class="simple-text logo-mini">
+      <div class="logo-image-small">
+        <img src="assets/img/angular2-logo.png">
+      </div>
+    </a>
+    <a class="simple-text logo-normal">
+      Commercial Shop
+    </a>
+  </div>
+    <ul class="nav">
+        <li *ngFor="let menuItem of menuItems" routerLinkActive="active" class="{{menuItem.class}}">
+            <a [routerLink]="[menuItem.path]">
+                <i class="nc-icon {{menuItem.icon}}"></i>
+                <p>{{menuItem.title}}</p>
+            </a>
+        </li>
+      <li class="active-pro d-flex justify-content-center">
+        <button class=" text-center btn btn-primary d-flex align-items-center gap-2">
+          <i class="nc-icon nc-circle-10"></i>
+          <span>Creer un compte</span>
+        </button>
+      </li>
+<!--      <li class="active-pro d-flex justify-content-center">-->
+<!--        <button class=" text-center btn btn-danger d-flex align-items-center gap-2">-->
+<!--          <i class="nc-icon nc-button-power"></i>-->
+<!--          <span>Se déconnecter</span>-->
+<!--        </button>-->
+<!--      </li>-->
+    </ul>
+</div>

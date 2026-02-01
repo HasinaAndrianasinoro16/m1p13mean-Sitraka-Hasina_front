@@ -1,0 +1,115 @@
+<div class="row mb-4">
+  <div class="col-md-12 text-center">
+    <h3 class="fw-bold">
+      <i class="nc-icon nc-cart-simple"></i>
+      Mon Panier
+    </h3>
+    <p class="text-muted">
+      Vérifiez vos produits avant de valider votre commande
+    </p>
+  </div>
+</div>
+
+<div class="row">
+
+  <!-- TABLE PANIER -->
+  <div class="col-lg-8">
+    <div class="card shadow-sm border-0">
+      <div class="card-body p-0">
+
+        <table class="table align-middle mb-0">
+          <thead class="table-light">
+          <tr>
+            <th>Produit</th>
+            <th>Prix unitaire</th>
+            <th>Quantité</th>
+            <th>Total</th>
+            <th></th>
+          </tr>
+          </thead>
+
+          <tbody *ngIf="panier.length > 0">
+          <tr *ngFor="let produit of panier; let i = index">
+
+            <td>
+              <div class="d-flex align-items-center">
+                <img
+                  [src]="produit.image"
+                  class="rounded me-3"
+                  width="60"
+                  height="60"
+                />
+                <strong>{{ produit.nom }}</strong>
+              </div>
+            </td>
+
+            <td>{{ produit.prix | number }} Ar</td>
+
+            <td style="width:120px">
+              <input
+                type="number"
+                class="form-control form-control-sm"
+                [(ngModel)]="produit.quantite"
+                min="1"
+              />
+            </td>
+
+            <td class="fw-bold">
+              {{ produit.prix * produit.quantite | number }} Ar
+            </td>
+
+            <td>
+              <button
+                class="btn btn-sm btn-outline-danger"
+                (click)="supprimerProduit(i)"
+              >
+                <i class="nc-icon nc-simple-remove"></i>
+              </button>
+            </td>
+
+          </tr>
+          </tbody>
+
+          <tbody *ngIf="panier.length === 0">
+          <tr>
+            <td colspan="5" class="text-center text-muted py-5">
+              <i class="nc-icon nc-basket"></i><br>
+              Votre panier est vide
+            </td>
+          </tr>
+          </tbody>
+
+        </table>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- RESUME -->
+  <div class="col-lg-4">
+    <div class="card shadow-sm border-0">
+      <div class="card-body">
+
+        <h5 class="fw-bold mb-3">Résumé</h5>
+
+        <div class="d-flex justify-content-between mb-2">
+          <span>Total</span>
+          <strong>{{ getTotal() | number }} Ar</strong>
+        </div>
+
+        <hr>
+
+        <button
+          class="btn btn-dark w-100"
+          (click)="validerPanier()"
+          [disabled]="panier.length === 0"
+        >
+          <i class="nc-icon nc-check-2"></i>
+          Valider le panier
+        </button>
+
+      </div>
+    </div>
+  </div>
+
+</div>
