@@ -17,17 +17,11 @@
                 <p>{{menuItem.title}}</p>
             </a>
         </li>
-      <li class="active-pro d-flex justify-content-center">
-        <button class=" text-center btn btn-primary d-flex align-items-center gap-2">
-          <i class="nc-icon nc-circle-10"></i>
-          <span>Creer un compte</span>
+      <li  *ngIf="localStorage.getItem('token') != null" class="active-pro d-flex justify-content-center">
+        <button class=" text-center btn btn-danger d-flex align-items-center gap-2">
+          <i class="nc-icon nc-button-power"></i>
+          <span>Se déconnecter</span>
         </button>
       </li>
-<!--      <li class="active-pro d-flex justify-content-center">-->
-<!--        <button class=" text-center btn btn-danger d-flex align-items-center gap-2">-->
-<!--          <i class="nc-icon nc-button-power"></i>-->
-<!--          <span>Se déconnecter</span>-->
-<!--        </button>-->
-<!--      </li>-->
     </ul>
 </div>
