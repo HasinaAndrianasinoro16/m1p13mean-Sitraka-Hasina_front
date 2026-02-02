@@ -15,12 +15,15 @@
           class="btn btn-primary"
           data-bs-toggle="modal"
           data-bs-target="#addProductModal">
-          <i class="nc-icon nc-simple-add"></i> Nouveau produit
+          <i class="nc-icon nc-simple-add"></i>
+          Nouveau produit
         </button>
       </div>
 
-      <!-- TABLE -->
+      <!-- BODY -->
       <div class="card-body">
+
+        <!-- TABLE -->
         <div class="table-responsive">
           <table class="table table-hover align-middle">
             <thead class="text-primary">
@@ -33,26 +36,37 @@
             </thead>
 
             <tbody>
-            <tr *ngFor="let p of produitsPaginees">
-              <td>{{ p.nom }}</td>
+
+            <!-- AUCUN PRODUIT -->
+            <tr *ngIf="produitData.length === 0">
+              <td colspan="4" class="text-center text-muted py-4">
+                Aucun produit enregistré
+              </td>
+            </tr>
+
+            <!-- PRODUITS -->
+            <tr *ngFor="let p of produitData">
+              <td>
+                <a
+                  class="link-info"
+                  [routerLink]="['/detail-produit']"
+                  [queryParams]="{id: p.id}">
+                  {{ p.nom }}
+                </a>
+              </td>
               <td>{{ p.prix | number }} Ar</td>
               <td>{{ p.stock }}</td>
               <td class="text-end">
                 <button
                   class="btn btn-sm btn-outline-success"
                   data-bs-toggle="modal"
-                  data-bs-target="#addStockModal"
-                  (click)="ouvrirAjoutStock(p)">
-                  <i class="nc-icon nc-box"></i> Ajouter stock
+                  data-bs-target="#addStockModal">
+                  <i class="nc-icon nc-box"></i>
+                  Ajouter stock
                 </button>
               </td>
             </tr>
 
-            <tr *ngIf="produits.length === 0">
-              <td colspan="4" class="text-center text-muted py-4">
-                Aucun produit enregistré
-              </td>
-            </tr>
             </tbody>
           </table>
         </div>
@@ -61,24 +75,23 @@
         <nav *ngIf="totalPages > 1">
           <ul class="pagination justify-content-end">
 
-            <li class="page-item" [class.disabled]="pageActuelle === 1">
-              <a class="page-link" (click)="changerPage(pageActuelle - 1)">
+            <li class="page-item" [class.disabled]="currentPage === 1">
+              <a class="page-link" (click)="goToPage(currentPage - 1)">
                 Précédent
               </a>
             </li>
 
             <li
               class="page-item"
-              *ngFor="let _ of [].constructor(totalPages); let i = index"
-              [class.active]="pageActuelle === i + 1"
-            >
-              <a class="page-link" (click)="changerPage(i + 1)">
-                {{ i + 1 }}
+              *ngFor="let p of pages"
+              [class.active]="currentPage === p">
+              <a class="page-link" (click)="goToPage(p)">
+                {{ p }}
               </a>
             </li>
 
-            <li class="page-item" [class.disabled]="pageActuelle === totalPages">
-              <a class="page-link" (click)="changerPage(pageActuelle + 1)">
+            <li class="page-item" [class.disabled]="currentPage === totalPages">
+              <a class="page-link" (click)="goToPage(currentPage + 1)">
                 Suivant
               </a>
             </li>
@@ -91,9 +104,11 @@
   </div>
 </div>
 
+<!-- ===================== -->
 <!-- MODAL : NOUVEAU PRODUIT -->
-<div class="modal fade" id="addProductModal" tabindex="-1">
-  <div class="modal-dialog">
+<!-- ===================== -->
+<div class="modal fade" id="addProductModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
 
       <div class="modal-header">
@@ -102,32 +117,39 @@
       </div>
 
       <div class="modal-body">
+
         <div class="mb-3">
           <label class="form-label">Image</label>
-          <input type="file" class="form-control" accept=".jpg, .png, .jpeg" [(ngModel)]="nouveauProduit.image">
-        </div>
-        <div class="mb-3">
-          <label class="form-label">Nom du produit</label>
-          <input class="form-control" [(ngModel)]="nouveauProduit.nom">
+          <input type="file" class="form-control" accept=".jpg,.jpeg,.png">
         </div>
 
         <div class="mb-3">
-          <label class="form-label">Prix unitaire (Ar)</label>
-          <input type="number" class="form-control" [(ngModel)]="nouveauProduit.prix">
+          <label class="form-label">Nom du produit<span style="color: red" >*</span></label>
+          <input type="text" class="form-control" placeholder="Nom du produit" [(ngModel)]="nomProduit">
         </div>
 
         <div class="mb-3">
-          <label class="form-label">Stock initial</label>
-          <input type="number" class="form-control" [(ngModel)]="nouveauProduit.stock">
+          <label class="form-label">Prix unitaire (Ar)<span style="color: red" >*</span></label>
+          <input type="number" class="form-control" placeholder="0" [(ngModel)]="prix" >
         </div>
+
+        <div class="mb-3">
+          <label class="form-label">Stock initial<span style="color: red" >*</span></label>
+          <input type="number" class="form-control" placeholder="0" [(ngModel)]="stock" >
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Description</label>
+          <textarea cols="50" rows="4" class="form-control" [(ngModel)]="description" ></textarea>
+        </div>
+
       </div>
 
       <div class="modal-footer">
-        <button class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-        <button
-          class="btn btn-primary"
-          data-bs-dismiss="modal"
-          (click)="ajouterProduit()">
+        <button class="btn btn-secondary" data-bs-dismiss="modal">
+          Annuler
+        </button>
+        <button class="btn btn-primary" (click)="clickAddProduit()" data-bs-dismiss="modal">
           Enregistrer
         </button>
       </div>
@@ -136,14 +158,16 @@
   </div>
 </div>
 
+<!-- ===================== -->
 <!-- MODAL : AJOUT STOCK -->
-<div class="modal fade" id="addStockModal" tabindex="-1">
-  <div class="modal-dialog">
+<!-- ===================== -->
+<div class="modal fade" id="addStockModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
 
       <div class="modal-header">
         <h5 class="modal-title">
-          Ajouter du stock – {{ produitSelectionne?.nom }}
+          Ajouter du stock
         </h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
@@ -153,15 +177,15 @@
         <input
           type="number"
           class="form-control"
-          [(ngModel)]="quantiteAjout">
+          placeholder="Quantité"
+        />
       </div>
 
       <div class="modal-footer">
-        <button class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-        <button
-          class="btn btn-success"
-          data-bs-dismiss="modal"
-          (click)="ajouterStock()">
+        <button class="btn btn-secondary" data-bs-dismiss="modal">
+          Annuler
+        </button>
+        <button class="btn btn-success" data-bs-dismiss="modal">
           Ajouter
         </button>
       </div>
@@ -169,3 +193,4 @@
     </div>
   </div>
 </div>
+

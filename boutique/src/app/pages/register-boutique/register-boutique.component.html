@@ -1,164 +1,144 @@
-<div class="row d-flex justify-content-center">
-  <div class="col-md-11">
+<div class="row justify-content-center">
+  <div class="col-lg-8 col-md-10">
     <div class="login-container">
       <div class="login-card">
 
         <!-- HEADER -->
-        <div class="login-header">
+        <div class="login-header text-center">
           <h3 class="login-title">COMMERCIAL SHOP</h3>
-          <p class="login-subtitle">Créer un nouveau compte</p>
+          <p class="login-subtitle">Créer un nouveau compte boutique</p>
         </div>
 
         <!-- BODY -->
         <div class="login-body">
 
-          <!-- NOM -->
-          <div class="form-group mb-4">
-            <label class="form-label">Nom Boutique</label>
+          <!-- NOM BOUTIQUE -->
+          <div class="mb-4">
+            <label class="form-label">Nom de la boutique<span style="color: red;">*</span> </label>
             <div class="input-group">
-          <span class="input-group-text">
-            <i class="nc-icon nc-single-02"></i>
-          </span>
+              <span class="input-group-text">
+                <i class="nc-icon nc-shop"></i>
+              </span>
               <input
                 type="text"
                 class="form-control input-field"
-                placeholder="Votre nom"
-                [(ngModel)]="nom"
+                placeholder="Le nom de votre boutique"
+                [(ngModel)]="nomBoutique"
               />
             </div>
           </div>
-          <div class="form-group mb-4">
-            <div class="row g-3 me-2">
-              <div class="col-md-6 me-2">
-                <label class="form-label">Nom proprietaire</label>
-                <div class="input-group">
-          <span class="input-group-text">
-            <i class="nc-icon nc-single-02"></i>
-          </span>
-                  <input
-                    type="text"
-                    class="form-control input-field"
-                    placeholder="Votre nom"
-                    [(ngModel)]="nom"
-                  />
-                </div>
-              </div>
-              <div class="col-md-6 me-2">
-              <label class="form-label">Prenom proprietaire</label>
+
+          <!-- NOM / PRENOM -->
+          <div class="row mb-4">
+            <div class="col-md-6">
+              <label class="form-label">Nom du propriétaire<span style="color: red;">*</span></label>
               <div class="input-group">
-          <span class="input-group-text">
-            <i class="nc-icon nc-single-02"></i>
-          </span>
+                <span class="input-group-text">
+                  <i class="nc-icon nc-single-02"></i>
+                </span>
                 <input
                   type="text"
                   class="form-control input-field"
-                  placeholder="Votre prenom"
+                  placeholder="Votre nom"
                   [(ngModel)]="nom"
                 />
               </div>
             </div>
+
+            <div class="col-md-6">
+              <label class="form-label">Prénom du propriétaire<span style="color: red;">*</span></label>
+              <div class="input-group">
+                <span class="input-group-text">
+                  <i class="nc-icon nc-single-02"></i>
+                </span>
+                <input
+                  type="text"
+                  class="form-control input-field"
+                  placeholder="Votre prénom"
+                  [(ngModel)]="prenom"
+                />
+              </div>
             </div>
           </div>
 
-          <!-- EMAIL -->
-          <div class="form-group mb-4">
-            <label class="form-label">Email</label>
-            <div class="input-group">
-          <span class="input-group-text">
-            <i class="nc-icon nc-email-85"></i>
-          </span>
-              <input
-                type="email"
-                class="form-control input-field"
-                placeholder="Votre email"
-                [(ngModel)]="email"
-              />
+          <!-- EMAIL / PASSWORD -->
+          <div class="row mb-4">
+            <div class="col-md-6">
+              <label class="form-label">Email<span style="color: red;">*</span></label>
+              <div class="input-group">
+                <span class="input-group-text">
+                  <i class="nc-icon nc-email-85"></i>
+                </span>
+                <input
+                  type="email"
+                  class="form-control input-field"
+                  placeholder="Votre email"
+                  [(ngModel)]="email"
+                />
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">Mot de passe<span style="color: red;">*</span></label>
+              <div class="input-group">
+                <span class="input-group-text">
+                  <i class="nc-icon nc-lock-circle-open"></i>
+                </span>
+                <input
+                  [type]="showPassword ? 'text' : 'password'"
+                  class="form-control input-field"
+                  placeholder="Mot de passe"
+                  [(ngModel)]="password"
+                />
+                <button
+                  class="btn btn-outline-secondary"
+                  type="button"
+                  (click)="togglePasswordVisibility()"
+                >
+                  <i [class]="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
+                </button>
+              </div>
             </div>
           </div>
 
-          <!-- MOT DE PASSE -->
-          <div class="form-group mb-4">
-            <label class="form-label">Mot de passe</label>
-            <div class="input-group">
-          <span class="input-group-text">
-            <i class="nc-icon nc-lock-circle-open"></i>
-          </span>
-              <input
-                [type]="showPassword ? 'text' : 'password'"
-                class="form-control input-field"
-                placeholder="Mot de passe"
-                [(ngModel)]="password"
-              />
-              <button
-                class="btn btn-outline-secondary"
-                type="button"
-                (click)="togglePasswordVisibility()"
-              >
-                <i [class]="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
-              </button>
-            </div>
+          <!-- DESCRIPTION -->
+          <div class="mb-4">
+            <label class="form-label">Description de la boutique</label>
+            <textarea
+              class="form-control input-field"
+              rows="3"
+              placeholder="Décrivez votre boutique"
+              [(ngModel)]="descriptions"
+            ></textarea>
           </div>
-
-          <!-- CONFIRMATION -->
-          <div class="form-group mb-4">
-            <label class="form-label">Confirmer le mot de passe</label>
-            <div class="input-group">
-          <span class="input-group-text">
-            <i class="nc-icon nc-check-2"></i>
-          </span>
-              <input
-                type="password"
-                class="form-control input-field"
-                placeholder="Confirmer le mot de passe"
-                [(ngModel)]="confirmPassword"
-              />
-            </div>
-          </div>
-
-          <!-- Choix du type de compte -->
-          <div class="form-group mb-4">
-            <label class="checkbox-label d-flex align-items-center gap-2">
-              <input
-                type="checkbox"
-                [(ngModel)]="isBoutique"
-                class="form-check-input"
-              />
-              <span>Enregistrer en tant que boutique</span>
-            </label>
-          </div>
-
 
           <!-- BOUTON REGISTER -->
-          <div class="text-center">
+          <div class="text-center mb-3">
             <button
-              class="btn btn-success w-75 mb-3"
-              (click)="register()"
+              (click)="registerBoutique()"
+              class="btn btn-success w-75"
               [disabled]="isLoading"
             >
-        <span *ngIf="!isLoading">
-          Créer un compte
-        </span>
+              <span *ngIf="!isLoading">Créer un compte</span>
               <span *ngIf="isLoading">
-          <i class="fas fa-spinner fa-spin mr-2"></i>
-          Création...
-        </span>
+                <i class="fas fa-spinner fa-spin me-2"></i>
+                Création...
+              </span>
             </button>
-
           </div>
+
           <!-- LIEN LOGIN -->
           <div class="text-center">
             <small class="text-muted">
               Déjà un compte ?
-              <a routerLink="/login" class="text-primary font-weight-bold">
+              <a routerLink="/login" class="text-primary fw-bold">
                 Se connecter
               </a>
             </small>
           </div>
 
         </div>
-
       </div>
     </div>
-
   </div>
 </div>

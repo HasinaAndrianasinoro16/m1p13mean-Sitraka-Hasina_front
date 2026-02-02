@@ -14,6 +14,7 @@ import {CommandesComponent} from "../../pages/commandes/commandes.component";
 import {StatComponent} from "../../pages/stat/stat.component";
 import {ApreciationsComponent} from "../../pages/apreciations/apreciations.component";
 import {RegisterBoutiqueComponent} from "../../pages/register-boutique/register-boutique.component";
+import {DetailProduitsComponent} from "../../pages/detail-produits/detail-produits.component";
 
 @NgModule({
   imports: [
@@ -30,6 +31,7 @@ import {RegisterBoutiqueComponent} from "../../pages/register-boutique/register-
     StatComponent,
     ApreciationsComponent,
     RegisterBoutiqueComponent,
+    DetailProduitsComponent,
   ]
 })
 

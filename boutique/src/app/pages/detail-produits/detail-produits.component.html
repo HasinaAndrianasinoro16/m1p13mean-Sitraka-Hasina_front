@@ -1,0 +1,123 @@
+<div class="container mt-4">
+
+  <div class="row">
+
+    <!-- GALERIE PRODUIT -->
+    <div class="col-md-6">
+
+      <!-- IMAGE PRINCIPALE -->
+      <div class="mb-3 position-relative">
+        <img
+          src="assets/img/jan-sendereks.jpg"
+          class="img-fluid rounded shadow w-100"
+          alt="Produit"
+        />
+
+        <!-- BOUTON AJOUT IMAGE -->
+      </div>
+
+      <!-- MINIATURES -->
+      <div class="d-flex gap-2 flex-wrap">
+        <img
+          src="assets/img/aff.jpg"
+          class="img-thumbnail"
+          style="width: 70px; height: 70px; object-fit: cover; cursor: pointer;"
+        />
+        <img
+          src="assets/img/angular2-logo.png"
+          class="img-thumbnail"
+          style="width: 70px; height: 70px; object-fit: cover; cursor: pointer;"
+        />
+        <img
+          src="assets/img/damir-bosnjak.jpg"
+          class="img-thumbnail"
+          style="width: 70px; height: 70px; object-fit: cover; cursor: pointer;"
+        />
+      </div>
+
+    </div>
+
+    <!-- INFOS PRODUIT -->
+    <div class="col-md-6">
+
+      <h3 class="fw-bold">{{produit.nom}}</h3>
+
+      <p class="text-muted">
+        {{produit.description}}
+      </p>
+
+      <h4 class="text-success mb-3">
+        {{produit.prix}} Ar
+      </h4>
+
+      <p>
+        <strong>Stock :</strong>
+        <span class="text-secondary">{{produit.stock}}</span>
+      </p>
+
+      <button
+        class="btn btn-sm btn-primary"
+        data-bs-toggle="modal"
+        data-bs-target="#addImageModal"
+      >
+        <i class="nc-icon nc-image"></i> Ajouter photo
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+<!-- MODAL AJOUT IMAGE -->
+<div
+  class="modal fade"
+  id="addImageModal"
+  tabindex="-1"
+>
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <h5 class="modal-title">
+          Ajouter une image au produit
+        </h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+        ></button>
+      </div>
+
+      <div class="modal-body">
+
+        <div class="mb-3">
+          <label class="form-label">Choisir une image</label>
+          <input
+            type="file"
+            class="form-control"
+            accept="image/*"
+            multiple
+          />
+        </div>
+
+      </div>
+
+      <div class="modal-footer">
+        <button
+          class="btn btn-secondary"
+          data-bs-dismiss="modal"
+        >
+          Annuler
+        </button>
+        <button
+          class="btn btn-success"
+          data-bs-dismiss="modal"
+        >
+          Ajouter à la galerie
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div>

@@ -8,6 +8,7 @@ import {StatComponent} from "../../pages/stat/stat.component";
 import {ApreciationsComponent} from "../../pages/apreciations/apreciations.component";
 import {RegisterBoutiqueComponent} from "../../pages/register-boutique/register-boutique.component";
 import {AuthGuard} from "../../guards/auth.guard";
+import {DetailProduitsComponent} from "../../pages/detail-produits/detail-produits.component";
 
 export const AdminLayoutRoutes: Routes = [
     { path: 'dashboard',      component: DashboardComponent, canActivate: [AuthGuard] },
@@ -17,4 +18,5 @@ export const AdminLayoutRoutes: Routes = [
     {path: 'stat',     component: StatComponent, canActivate: [AuthGuard] },
     {path: 'appreciation', component: ApreciationsComponent, canActivate: [AuthGuard] },
     {path: 'register-boutique', component: RegisterBoutiqueComponent},
+    {path: 'detail-produit', component: DetailProduitsComponent, canActivate: [AuthGuard] },
 ];

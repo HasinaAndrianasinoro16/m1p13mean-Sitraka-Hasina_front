@@ -1,79 +1,85 @@
 import { Component } from '@angular/core';
-
-interface Produit {
-  nom: string;
-  prix: number;
-  stock: number;
-  image: string;
-}
+import {ProduitService} from "../../services/produit/produit.service";
 
 @Component({
   selector: 'app-produits',
   templateUrl: './produits.component.html'
 })
 export class ProduitsComponent {
+  //creation produit
+  nomProduit: string = '';
+  description: string = '';
+  prix: number = 0;
+  stock: number = 0;
 
-  produits: Produit[] = [
-    { nom: 'Chaussures Nike', prix: 120000, stock: 45, image: '' },
-    { nom: 'T-shirt Adidas', prix: 35000, stock: 10, image: ''  },
-    { nom: 'Casquette Puma', prix: 25000, stock: 5, image: ''  },
-    { nom: 'Sac à dos', prix: 80000, stock: 30, image: ''  },
-    { nom: 'Montre sportive', prix: 150000, stock: 8, image: ''  },
-    { nom: 'Veste', prix: 95000, stock: 12, image: ''  }
-  ];
+  //liste des produits
+  produitData: any = null;
 
-  // Nouveau produit
-  nouveauProduit: Produit = {
-    nom: '',
-    prix: 0,
-    stock: 0,
-    image: ''
-  };
+  error: string = '';
+  loading:boolean = false;
 
-  // Ajout stock
-  produitSelectionne!: Produit;
-  quantiteAjout: number = 0;
+  //pagination
+  currentPage: number = 1;
+  limit: number = 10;
+  totalPages: number = 0;
+  pages: number[] = [];
 
-  // Pagination
-  pageActuelle: number = 1;
-  elementsParPage: number = 5;
-
-  // PRODUITS PAGINÉS
-  get produitsPaginees(): Produit[] {
-    const start = (this.pageActuelle - 1) * this.elementsParPage;
-    return this.produits.slice(start, start + this.elementsParPage);
+  constructor(private produitService: ProduitService) {
   }
 
-  get totalPages(): number {
-    return Math.ceil(this.produits.length / this.elementsParPage);
+  ngOnInit(): void {
+    this.loadProduits(this.currentPage);
   }
 
-  changerPage(page: number) {
-    if (page >= 1 && page <= this.totalPages) {
-      this.pageActuelle = page;
+  loadProduits(page: number): void {
+    this.loading = true;
+    this.error = '';
+
+    this.produitService.getProduitListe(page, this.limit).subscribe({
+      next: (response: any) => {
+        if (response.success) {
+          this.produitData = response.data.produits;
+
+          const pagination = response.data.pagination;
+          this.currentPage = pagination.page;
+          this.totalPages = pagination.totalPages;
+
+          this.pages = Array.from(
+            {length: this.totalPages},
+            (_, i)=> i+1
+          );
+        }
+
+        this.loading = false;
+
+      },
+      error: (err) => {
+        console.error(err);
+        this.error = "Erreur lors de la récupération des boutiques en attente.";
+        this.loading = false;
+      }
+    });
+  }
+
+  goToPage(page: number): void {
+    if (page >= 1 && page <= this.totalPages && page !== this.currentPage) {
+      this.loadProduits(page);
     }
   }
 
-  // AJOUT PRODUIT
-  ajouterProduit() {
-    if (!this.nouveauProduit.nom || this.nouveauProduit.prix <= 0) return;
-
-    this.produits.push({ ...this.nouveauProduit });
-
-    this.nouveauProduit = { nom: '', prix: 0, stock: 0, image: ''  };
-    this.pageActuelle = this.totalPages;
+  clickAddProduit(): void {
+    this.produitService.createProduit(this.nomProduit, this.description, this.prix, this.stock).subscribe({
+      next: (res: any) => {
+        if(res.success) {
+          alert('nouveau produit créé avec succès');
+          this.loadProduits(this.currentPage);
+        }
+      },
+      error: (err) => {
+        console.error(err);
+        alert('Erreur lors de la création du produit ');
+      }
+    })
   }
 
-  // OUVERTURE MODAL STOCK
-  ouvrirAjoutStock(produit: Produit) {
-    this.produitSelectionne = produit;
-    this.quantiteAjout = 0;
-  }
-
-  // AJOUT STOCK
-  ajouterStock() {
-    if (this.quantiteAjout > 0) {
-      this.produitSelectionne.stock += this.quantiteAjout;
-    }
-  }
 }

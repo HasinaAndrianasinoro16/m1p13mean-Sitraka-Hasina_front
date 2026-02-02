@@ -5,13 +5,13 @@
         <div class="row">
           <div class="col-5 col-md-4">
             <div class="icon-big text-center icon-warning">
-              <i class="nc-icon nc-box-2 text-danger"></i>
+              <i class="nc-icon nc-spaceship text-danger"></i>
             </div>
           </div>
           <div class="col-7 col-md-8">
             <div class="numbers">
               <p class="card-category">Commande</p>
-              <p class="card-title">23
+              <p class="card-title">{{ commande }}
               <p>
             </div>
           </div>
@@ -37,7 +37,7 @@
           <div class="col-7 col-md-8">
             <div class="numbers">
               <p class="card-category">Produits</p>
-              <p class="card-title">235
+              <p class="card-title">{{produit}}
               <p>
             </div>
           </div>
@@ -47,6 +47,32 @@
         <hr>
         <div class="stats">
           Nombre total de produits
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-3 col-md-6 col-sm-6">
+    <div class="card card-stats">
+      <div class="card-body ">
+        <div class="row">
+          <div class="col-5 col-md-4">
+            <div class="icon-big text-center icon-secondary">
+              <i class="nc-icon nc-box-2 text-primary"></i>
+            </div>
+          </div>
+          <div class="col-7 col-md-8">
+            <div class="numbers">
+              <p class="card-category">Stock</p>
+              <p class="card-title">{{stock}}
+              <p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card-footer ">
+        <hr>
+        <div class="stats">
+          Nombre total de produits en stock
         </div>
       </div>
     </div>
