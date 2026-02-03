@@ -12,6 +12,12 @@ export class ProduitsComponent {
   prix: number = 0;
   stock: number = 0;
 
+  //ajout de stock
+  addStock: number = 0;
+
+  selectedId: string = '';
+  currentStock: number = 0;
+
   //liste des produits
   produitData: any = null;
 
@@ -81,5 +87,27 @@ export class ProduitsComponent {
       }
     })
   }
+
+  clickAddStock(id: string, stock: number): void {
+    this.produitService.newAjoutStock(id,stock,this.addStock).subscribe({
+      next: (res: any) => {
+        if(res.success) {
+          alert('nouveau stock ajouter');
+          this.loadProduits(this.currentPage);
+        }
+      },
+      error: (err) => {
+        console.error(err);
+        alert('Erreur lors de la création du produit ');
+      }
+    })
+  }
+
+  clickInfo(id: string, stock: number): void {
+    this.selectedId = id;
+    this.currentStock = stock;
+  }
+
+
 
 }

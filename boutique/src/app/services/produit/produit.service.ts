@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import {getAPIUrl} from "../../pages/link/url";
 import {HttpClient, HttpHeaders} from "@angular/common/http";
-import {Observable} from "rxjs";
+import {Observable, switchMap} from "rxjs";
 
 @Injectable({
   providedIn: 'root'
@@ -49,4 +49,59 @@ export class ProduitService {
       { headers }
     );
   }
+
+  // Version simplifiée (corrections minimales)
+
+  newAjoutStock(id: string, currentStock: number, stock: number): Observable<any> {
+    const token = localStorage.getItem('token');
+
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    });
+
+    const newStock = currentStock + stock;
+
+    const stockData = {
+      stock: newStock,
+      seuilAlerte: 5
+    };
+
+    return this.http.put<any>(
+      `${this.baseUrl}/produits/${id}/stock`,
+      stockData,
+      { headers }
+    );
+  }
+
+
+
+  //ne fonctione pas reste la pour inspiration
+  ajoutStock(id: string, stock: number): Observable<any> {
+    const token = localStorage.getItem('token');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`
+    });
+
+    return this.getProduitInfo(id).pipe(
+      switchMap((response: any) => {
+
+        const stockActuel = response.data.produit.stock ?? 0;
+        const newStock = stockActuel + stock;
+
+        const dataStock = {
+          stock: newStock,
+          seuilAlerte: 5
+        };
+
+        return this.http.put<any>(
+          `${this.baseUrl}/produits/${id}/stock`,
+          dataStock,
+          { headers }
+        );
+      })
+    );
+  }
+
+
 }

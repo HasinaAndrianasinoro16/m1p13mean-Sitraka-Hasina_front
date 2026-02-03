@@ -58,6 +58,7 @@
               <td>{{ p.stock }}</td>
               <td class="text-end">
                 <button
+                  (click)="clickInfo(p.id,p.stock)"
                   class="btn btn-sm btn-outline-success"
                   data-bs-toggle="modal"
                   data-bs-target="#addStockModal">
@@ -177,7 +178,9 @@
         <input
           type="number"
           class="form-control"
+          [(ngModel)]="addStock"
           placeholder="Quantité"
+          min="1"
         />
       </div>
 
@@ -185,7 +188,7 @@
         <button class="btn btn-secondary" data-bs-dismiss="modal">
           Annuler
         </button>
-        <button class="btn btn-success" data-bs-dismiss="modal">
+        <button class="btn btn-success" data-bs-dismiss="modal" (click)="clickAddStock(selectedId, currentStock)" >
           Ajouter
         </button>
       </div>
