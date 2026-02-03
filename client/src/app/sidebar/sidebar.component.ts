@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-
+import { Router } from '@angular/router';
 
 export interface RouteInfo {
     path: string;
@@ -25,4 +25,23 @@ export class SidebarComponent implements OnInit {
     ngOnInit() {
         this.menuItems = ROUTES.filter(menuItem => menuItem);
     }
+
+  constructor(private router: Router) {}
+
+  logout() {
+    // Confirmation avant déconnexion
+    if (confirm('Êtes-vous sûr de vouloir vous déconnecter ?')) {
+      localStorage.clear();
+
+      // localStorage.removeItem('token');
+      // localStorage.removeItem('role');
+      // localStorage.removeItem('user');
+
+      this.router.navigate(['/login']).then(() => {
+        alert('Déconnexion réussie');
+      });
+    }
+  }
+
+  protected readonly localStorage = localStorage;
 }

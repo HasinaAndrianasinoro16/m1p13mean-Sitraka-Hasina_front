@@ -29,6 +29,14 @@
             <span class="d-lg-none d-md-inline ms-2">Notifications</span>
           </a>
         </li>
+        <li *ngIf="localStorage.getItem('token')!== null" class="nav-item">
+          <a class="nav-link d-flex align-items-center position-relative"  routerLink="/profile"
+             routerLinkActive="active">
+            <i class="nc-icon nc-single-02"></i>
+
+            <span class="d-lg-none d-md-inline ms-2">Mon profile</span>
+          </a>
+        </li>
 
       </ul>
     </div>

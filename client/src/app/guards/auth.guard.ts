@@ -12,7 +12,7 @@ export class AuthGuard implements CanActivate {
     const token = localStorage.getItem('token');
     const role = localStorage.getItem('role');
 
-    if (token && role === 'ADMIN') {
+    if (token && role === 'CLIENT') {
       return true;
     }
 

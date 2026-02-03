@@ -12,6 +12,7 @@ import {AchatsComponent} from "../../pages/achats/achats.component";
 import {PanierComponent} from "../../pages/panier/panier.component";
 import {CommentairesComponent} from "../../pages/commentaires/commentaires.component";
 import {RegisterComponent} from "../../pages/register/register.component";
+import {ProfileComponent} from "../../pages/profile/profile.component";
 
 @NgModule({
   imports: [
@@ -26,6 +27,7 @@ import {RegisterComponent} from "../../pages/register/register.component";
     PanierComponent,
     CommentairesComponent,
     RegisterComponent,
+    ProfileComponent,
   ]
 })
 

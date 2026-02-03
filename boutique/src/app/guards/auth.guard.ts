@@ -13,8 +13,6 @@ export class AuthGuard implements CanActivate {
     if (token && role === 'BOUTIQUE') {
       return true;
     }
-
-    alert('Accès refusé. Veuillez vous connecter.');
     this.router.navigate(['/login']);
     return false;
   }
