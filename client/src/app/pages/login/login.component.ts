@@ -88,7 +88,7 @@ export class LoginComponent implements OnInit {
           localStorage.setItem('user', JSON.stringify(user));
 
           alert('connexion reussie');
-          this.router.navigate(['/']).then(() => {
+          this.router.navigate(['/panier']).then(() => {
             console.log('Connexion réussie');
           });
         },
