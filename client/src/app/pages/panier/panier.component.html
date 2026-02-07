@@ -24,7 +24,7 @@
             <th>Prix unitaire</th>
             <th>Quantité</th>
             <th>Total</th>
-            <th></th>
+            <th class="text-end">Actions</th>
           </tr>
           </thead>
 
@@ -45,20 +45,27 @@
 
             <td>{{ produit.prix | number }} Ar</td>
 
-            <td style="width:120px">
-              <input
-                type="number"
-                class="form-control form-control-sm"
-                [(ngModel)]="produit.quantite"
-                min="1"
-              />
+            <!-- QUANTITÉ EN LECTURE SEULE -->
+            <td>
+                {{ produit.quantite }}
             </td>
 
             <td class="fw-bold">
               {{ produit.prix * produit.quantite | number }} Ar
             </td>
 
-            <td>
+            <td class="text-end">
+              <!-- BOUTON MODIFIER -->
+              <button
+                class="btn btn-sm btn-outline-primary me-2"
+                data-bs-toggle="modal"
+                data-bs-target="#quantiteModal"
+                (click)="clickinfo(produit.id, produit.nom, produit.quantite, produit.stocks)"
+              >
+                <i class="nc-icon nc-settings"></i>
+              </button>
+
+              <!-- SUPPRIMER -->
               <button
                 class="btn btn-sm btn-outline-danger"
                 (click)="supprimerProduit(i)"
@@ -112,4 +119,65 @@
     </div>
   </div>
 
+</div>
+
+<!-- ================= MODAL MODIFIER QUANTITÉ ================= -->
+<div
+  class="modal fade"
+  id="quantiteModal"
+  tabindex="-1"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <h5 class="modal-title">
+          Modifier la quantité
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+
+      <div class="modal-body" >
+
+        <div class="text-center mb-3">
+          <strong>{{ produitSelectionner }}</strong>
+        </div>
+
+        <div class="text-center mb-3">
+         quantite en stock: <strong>{{ stock }}</strong>
+        </div>
+
+        <label class="form-label">Quantité</label>
+        <input
+          type="number"
+          class="form-control"
+          [(ngModel)]="quantite"
+          value="{{ quantiteSelectionner }}"
+          min="1"
+        />
+
+      </div>
+
+      <div class="modal-footer">
+        <button
+          type="button"
+          class="btn btn-secondary"
+          data-bs-dismiss="modal"
+        >
+          Annuler
+        </button>
+
+        <button
+          (click)="clickModiferPanierQuantite()"
+          type="button"
+          class="btn btn-primary"
+          data-bs-dismiss="modal"
+        >
+          Enregistrer
+        </button>
+      </div>
+
+    </div>
+  </div>
 </div>

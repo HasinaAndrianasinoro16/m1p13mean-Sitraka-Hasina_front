@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import {ProduitService} from "../../services/produit/produit.service";
+import {PanierService} from "../../services/panier/panier.service";
 
 @Component({
   selector: 'app-achats',
@@ -7,69 +9,12 @@ import { Component, OnInit } from '@angular/core';
 })
 export class AchatsComponent implements OnInit {
 
-  /* =======================
-   * LISTE DES PRODUITS
-   * ======================= */
-  produits: any[] = [
-    {
-      id: 1,
-      nom: 'Riz blanc 25kg',
-      prix: 120000,
-      boutique: 'Boutique Analakely',
-      stock: 15,
-      image: 'assets/img/angular2-logo.png',
-      quantite: 1
-    },
-    {
-      id: 2,
-      nom: 'Huile végétale 5L',
-      prix: 45000,
-      boutique: 'Tana Market',
-      stock: 30,
-      image: 'assets/img/angular2-logo.png',
-      quantite: 1
-    },
-    {
-      id: 3,
-      nom: 'Sucre 1kg',
-      prix: 3500,
-      boutique: 'Jumbo Shop',
-      stock: 0,
-      image: 'assets/img/angular2-logo.png',
-      quantite: 1
-    },
-    {
-      id: 4,
-      nom: 'Riz blanc 25kg',
-      prix: 120000,
-      boutique: 'Boutique Analakely',
-      stock: 15,
-      image: 'assets/img/angular2-logo.png',
-      quantite: 1
-    },
-    {
-      id: 5,
-      nom: 'Huile végétale 5L',
-      prix: 45000,
-      boutique: 'Tana Market',
-      stock: 30,
-      image: 'assets/img/angular2-logo.png',
-      quantite: 1
-    },
-    {
-      id: 6,
-      nom: 'Sucre 1kg',
-      prix: 3500,
-      boutique: 'Jumbo Shop',
-      stock: 0,
-      image: 'assets/img/angular2-logo.png',
-      quantite: 1
-    }
-  ];
+  produits: any[] = [];
+  loading = false;
+  error = '';
 
-  /* =======================
-   * RECHERCHE AVANCÉE
-   * ======================= */
+  // quantite: number = 1;
+
   filters = {
     nom: '',
     boutique: '',
@@ -80,13 +25,42 @@ export class AchatsComponent implements OnInit {
 
   boutiques: string[] = [];
 
-  /* =======================
-   * INITIALISATION
-   * ======================= */
+  constructor(private catalogueService: ProduitService, private panierService: PanierService) { }
 
   ngOnInit(): void {
-    // Liste unique des boutiques pour le select
-    this.boutiques = [...new Set(this.produits.map(p => p.boutique))];
+    this.loadProduits();
+  }
+
+  loadProduits(): void {
+    this.loading = true;
+
+    this.catalogueService.getListeProduits().subscribe({
+      next: (res) => {
+        if (res.success) {
+
+          this.produits = res.data.produits.map((p: any) => ({
+            id: p._id,
+            nom: p.nom,
+            prix: p.prixActuel ?? p.prix,
+            boutique: p.boutique?.nomBoutique || 'Boutique inconnue',
+            stock: p.stock,
+            image: p.imagePrincipaleUrl || 'assets/img/default-product.jpg',
+            quantite: 1
+          }));
+
+          this.boutiques = [
+            ...new Set(this.produits.map(p => p.boutique))
+          ];
+        }
+
+        this.loading = false;
+      },
+      error: (err) => {
+        console.error(err);
+        this.error = 'Erreur lors du chargement des produits';
+        this.loading = false;
+      }
+    });
   }
 
   /* =======================
@@ -124,27 +98,42 @@ export class AchatsComponent implements OnInit {
     });
   }
 
-  /* =======================
-   * PANIER
-   * ======================= */
   ajouterAuPanier(produit: any): void {
+
+    if (localStorage.getItem('token') == null) {
+      alert('vous devez vous connectez pour cette action')
+      return;
+    }
+
     if (produit.stock === 0) {
-      alert('❌ Produit indisponible');
+      alert(' Produit indisponible');
       return;
     }
 
     if (produit.quantite < 1) {
-      alert('⚠️ Quantité invalide');
+      alert('Quantité invalide');
       return;
     }
 
     if (produit.quantite > produit.stock) {
-      alert('❌ Stock insuffisant');
+      alert(' Stock insuffisant');
       return;
     }
 
-    // Ici plus tard : service panier
-    alert(`🛒 ${produit.quantite} × ${produit.nom} ajouté(s) au panier`);
-  }
+    this.panierService.ajoutPanier(produit.id, produit.quantite).subscribe({
+      next: (res: any) => {
+        if (res.success) {
+          alert(`🛒 ${produit.quantite} × ${produit.nom} ajouté(s) au panier`);
+          this.loadProduits()
+        }
+      },
+      error: (err) => {
+        console.error(err);
+        alert('Erreur lors de l\'ajout du produit ');
+      }
+    })
 
+
+
+  }
 }

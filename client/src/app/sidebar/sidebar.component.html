@@ -17,6 +17,12 @@
                 <p>{{menuItem.title}}</p>
             </a>
         </li>
+      <li  *ngIf="localStorage.getItem('token') == null" class="active-pro d-flex justify-content-center">
+        <button routerLink="/login" class=" text-center btn btn-info d-flex align-items-center gap-2">
+          <i class="nc-icon nc-button-power"></i>
+          <span>Se connecter</span>
+        </button>
+      </li>
       <li  *ngIf="localStorage.getItem('token') != null" class="active-pro d-flex justify-content-center">
         <button (click)="logout()" class=" text-center btn btn-danger d-flex align-items-center gap-2">
           <i class="nc-icon nc-button-power"></i>

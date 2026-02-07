@@ -13,6 +13,7 @@ import {PanierComponent} from "../../pages/panier/panier.component";
 import {CommentairesComponent} from "../../pages/commentaires/commentaires.component";
 import {RegisterComponent} from "../../pages/register/register.component";
 import {ProfileComponent} from "../../pages/profile/profile.component";
+import {DetailProduitsComponent} from "../../pages/detail-produits/detail-produits.component";
 
 @NgModule({
   imports: [
@@ -28,6 +29,7 @@ import {ProfileComponent} from "../../pages/profile/profile.component";
     CommentairesComponent,
     RegisterComponent,
     ProfileComponent,
+    DetailProduitsComponent
   ]
 })
 
