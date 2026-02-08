@@ -78,6 +78,10 @@ export class PanierComponent implements OnInit {
   }
 
   clickModiferPanierQuantite(): void {
+    if(this.quantite < 1){
+      alert('quantite invalides');
+      return;
+    }
     if(this.stock < this.quantite) {
       alert(' Attention la quantite depasse le stock disponible');
       return;

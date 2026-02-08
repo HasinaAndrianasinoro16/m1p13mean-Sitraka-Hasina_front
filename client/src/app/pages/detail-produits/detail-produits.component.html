@@ -93,7 +93,7 @@
 
         <div class="mb-3">
           <label class="form-label">Choisir une quantite</label>
-          <input type="number" class="form-control"/>
+          <input type="number" class="form-control" [(ngModel)]="quantite" />
         </div>
 
       </div>
@@ -106,6 +106,7 @@
           Annuler
         </button>
         <button
+          (click)="clickAjoutPanier(produit.nom, produit.stock)"
           class="btn btn-success"
           data-bs-dismiss="modal"
         >
