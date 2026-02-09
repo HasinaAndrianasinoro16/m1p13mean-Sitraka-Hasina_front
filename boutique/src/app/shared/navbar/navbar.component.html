@@ -19,17 +19,14 @@
     </button>
     <div class="collapse navbar-collapse justify-content-end" id="collapseExample" [ngbCollapse]="isCollapsed">
       <ul class="navbar-nav">
-<!--        <li class="nav-item">-->
-<!--          <a class="nav-link d-flex align-items-center position-relative"  routerLink="/notifications"-->
-<!--             routerLinkActive="active">-->
-<!--            <i class="nc-icon nc-bell-55"></i>-->
-<!--            &lt;!&ndash; Badge notification &ndash;&gt;-->
-<!--            <span class="badge bg-danger ">23</span>-->
+        <li *ngIf="localStorage.getItem('token')!== null" class="nav-item">
+          <a class="nav-link d-flex align-items-center position-relative"  routerLink="/profile"
+             routerLinkActive="active">
+            <i class="nc-icon nc-single-02"></i>
 
-<!--            <span class="d-lg-none d-md-inline ms-2">Notifications</span>-->
-<!--          </a>-->
-<!--        </li>-->
-
+            <span class="d-lg-none d-md-inline ms-2">Mon profile</span>
+          </a>
+        </li>
       </ul>
     </div>
   </div>

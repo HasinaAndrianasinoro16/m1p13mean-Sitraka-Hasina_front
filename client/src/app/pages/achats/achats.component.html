@@ -37,6 +37,17 @@
         </select>
       </div>
 
+      <!-- categorie -->
+      <div class="filter-group">
+        <label>categorie</label>
+        <select [(ngModel)]="filters.categorie">
+          <option value="">Toutes les categories</option>
+          <option *ngFor="let b of categories" [value]="b">
+            {{ b }}
+          </option>
+        </select>
+      </div>
+
       <!-- Prix min -->
       <div class="filter-group small">
         <label>Prix min</label>
@@ -76,7 +87,7 @@
 <div class="row g-4">
 
   <div
-    class="col-xl-3 col-lg-4 col-md-6"
+    class="col-xl-3 col-lg-4 col-md-6 mt-5"
     *ngFor="let produit of produitsFiltres"
   >
     <div class="card product-card h-100 border-0 shadow-sm">
@@ -102,6 +113,11 @@
         <small class="text-muted mb-2">
           <i class="nc-icon nc-shop"></i>
           {{ produit.boutique }}
+        </small>
+
+        <small class="text-muted mb-2">
+          <i class="nc-icon nc-book-bookmark"></i>
+          {{ produit.categorie }}
         </small>
 
         <h6 class="text-primary fw-bold mb-3">

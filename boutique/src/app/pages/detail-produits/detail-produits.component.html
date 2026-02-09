@@ -1,120 +1,254 @@
-<div class="container mt-4">
+<div class="admin-product-detail">
+  <div class="container-fluid mt-4 mb-5">
 
-  <div class="row">
-
-    <!-- GALERIE PRODUIT -->
-    <div class="col-md-6">
-
-      <!-- IMAGE PRINCIPALE -->
-      <div class="mb-3 position-relative">
-        <img
-          src="assets/img/jan-sendereks.jpg"
-          class="img-fluid rounded shadow w-100"
-          alt="Produit"
-        />
-
-        <!-- BOUTON AJOUT IMAGE -->
+    <!-- Header avec actions -->
+    <div class="row mb-4">
+      <div class="col-12">
+        <h2 class="page-title">
+          <i class="nc-icon nc-box-2"></i>
+          Détail du produit
+        </h2>
       </div>
-
-      <!-- MINIATURES -->
-      <div class="d-flex gap-2 flex-wrap">
-        <img
-          src="assets/img/aff.jpg"
-          class="img-thumbnail"
-          style="width: 70px; height: 70px; object-fit: cover; cursor: pointer;"
-        />
-        <img
-          src="assets/img/angular2-logo.png"
-          class="img-thumbnail"
-          style="width: 70px; height: 70px; object-fit: cover; cursor: pointer;"
-        />
-        <img
-          src="assets/img/damir-bosnjak.jpg"
-          class="img-thumbnail"
-          style="width: 70px; height: 70px; object-fit: cover; cursor: pointer;"
-        />
-      </div>
-
     </div>
 
-    <!-- INFOS PRODUIT -->
-    <div class="col-md-6">
+    <div class="row">
 
-      <h3 class="fw-bold">{{produit.nom}}</h3>
+      <!-- SECTION GALERIE -->
+      <div class="col-lg-6 mb-4">
+        <div class="card product-gallery-card">
+          <div class="card-header">
+            <h5 class="card-title mb-0">
+              <i class="nc-icon nc-image"></i>
+              Galerie photos
+            </h5>
+          </div>
+          <div class="card-body">
 
-      <p class="text-muted">
-        {{produit.description}}
-      </p>
+            <!-- IMAGE PRINCIPALE -->
+            <div class="main-image-wrapper">
+              <div class="image-container">
+                <img
+                  [src]="produit.imagePrincipaleUrl || 'assets/img/default-product.jpg'"
+                  class="main-image"
+                  [alt]="produit.nom"
+                />
 
-      <h4 class="text-success mb-3">
-        {{produit.prix}} Ar
-      </h4>
+                <!-- Overlay avec actions -->
+                <div class="image-overlay">
+                  <button
+                    class="btn btn-light btn-icon"
+                    data-bs-toggle="modal"
+                    data-bs-target="#addImageModal"
+                  >
+                    <i class="nc-icon nc-simple-add"></i>
+                  </button>
+                </div>
 
-      <p>
-        <strong>Stock :</strong>
-        <span class="text-secondary">{{produit.stock}}</span>
-      </p>
+                <!-- Badge stock -->
+                <div class="stock-indicator" [ngClass]="produit.stock > 0 ? 'in-stock' : 'out-stock'">
+                  <i class="nc-icon" [ngClass]="produit.stock > 0 ? 'nc-check-2' : 'nc-simple-remove'"></i>
+                  {{ produit.stock > 0 ? 'En stock' : 'Rupture' }}
+                </div>
+              </div>
+            </div>
 
-      <button
-        class="btn btn-sm btn-primary"
-        data-bs-toggle="modal"
-        data-bs-target="#addImageModal"
-      >
-        <i class="nc-icon nc-image"></i> Ajouter photo
-      </button>
+            <!-- MINIATURES (Si plusieurs images) -->
+            <!-- <div class="thumbnails-grid">
+              <div class="thumbnail-item active">
+                <img src="assets/img/product1.jpg" alt="Photo 1">
+                <button class="btn-delete"><i class="nc-icon nc-simple-remove"></i></button>
+              </div>
+              <div class="thumbnail-item">
+                <img src="assets/img/product2.jpg" alt="Photo 2">
+                <button class="btn-delete"><i class="nc-icon nc-simple-remove"></i></button>
+              </div>
+              <div class="thumbnail-item add-more">
+                <i class="nc-icon nc-simple-add"></i>
+              </div>
+            </div> -->
+
+            <!-- Bouton d'ajout -->
+            <div class="add-image-section">
+              <button
+                class="btn btn-primary btn-block"
+                data-bs-toggle="modal"
+                data-bs-target="#addImageModal"
+              >
+                <i class="nc-icon nc-image"></i>
+                Ajouter une photo
+              </button>
+              <p class="upload-hint">
+                <i class="nc-icon nc-bulb-63"></i>
+                Formats acceptés : JPG, PNG (max 5MB)
+              </p>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- SECTION INFORMATIONS -->
+      <div class="col-lg-6">
+        <div class="card product-info-card">
+          <div class="card-header">
+            <h5 class="card-title mb-0">
+              <i class="nc-icon nc-notes"></i>
+              Informations du produit
+            </h5>
+          </div>
+          <div class="card-body">
+
+            <!-- Nom du produit -->
+            <div class="info-section">
+              <label class="info-label">Nom du produit</label>
+              <h3 class="product-name">{{ produit.nom }}</h3>
+            </div>
+
+            <!-- Description -->
+            <div class="info-section">
+              <label class="info-label">Description</label>
+              <p class="product-description">
+                {{ produit.description || 'Aucune description disponible' }}
+              </p>
+            </div>
+
+            <!-- Prix -->
+            <div class="info-section">
+              <label class="info-label">Prix unitaire</label>
+              <div class="price-display">
+                <span class="price-amount">{{ produit.prix | number }}</span>
+                <span class="price-currency">Ar</span>
+              </div>
+            </div>
+
+            <!-- Stock -->
+            <div class="info-section">
+              <label class="info-label">Stock disponible</label>
+              <div class="stock-display">
+                <div class="stock-badge" >
+                  <i class="nc-icon nc-box"></i>
+                  <span class="stock-number">{{ produit.stock }}</span>
+                  <span class="stock-unit">unités</span>
+                </div>
+                <div class="stock-status">
+                  <span class="status-dot" [ngClass]="produit.stock > 10 ? 'dot-success' : produit.stock > 0 ? 'dot-warning' : 'dot-danger'"></span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Informations supplémentaires -->
+            <div class="additional-info">
+              <div class="info-row">
+                <span class="info-key">
+                  <i class="nc-icon nc-tag-content"></i>
+                  Catégorie
+                </span>
+                <span class="info-value">{{ produit.categorie?.nom || 'Non catégorisé' }}</span>
+              </div>
+              <div class="info-row">
+                <span class="info-key">
+                  <i class="nc-icon nc-shop"></i>
+                  Boutique
+                </span>
+                <span class="info-value">{{ produit.boutique?.nomBoutique || 'N/A' }}</span>
+              </div>
+              <div class="info-row">
+                <span class="info-key">
+                  <i class="nc-icon nc-calendar-60"></i>
+                  Ajouté le
+                </span>
+                <span class="info-value">{{ produit.createdAt | date:'dd/MM/yyyy' }}</span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
 
     </div>
 
   </div>
-
 </div>
 
 <!-- MODAL AJOUT IMAGE -->
-<div
-  class="modal fade"
-  id="addImageModal"
-  tabindex="-1"
->
+<div class="modal fade" id="addImageModal" tabindex="-1">
   <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
+    <div class="modal-content custom-upload-modal">
 
       <div class="modal-header">
         <h5 class="modal-title">
-          Ajouter une image au produit
+          <i class="nc-icon nc-cloud-upload-94"></i>
+          Ajouter une photo
         </h5>
-        <button
-          type="button"
-          class="btn-close"
-          data-bs-dismiss="modal"
-        ></button>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
 
       <div class="modal-body">
 
-        <div class="mb-3">
-          <label class="form-label">Choisir une image</label>
-          <input
-            type="file"
-            class="form-control"
-            accept="image/*"
-            multiple
-          />
+        <!-- Zone de drop -->
+        <div class="upload-zone" >
+          <div class="upload-content">
+            <i class="nc-icon nc-image upload-icon"></i>
+            <h6>Glissez votre image ici</h6>
+            <p>ou</p>
+            <label for="fileInput" class="btn btn-outline-primary btn-sm">
+              <i class="nc-icon nc-folder-17"></i>
+              Parcourir
+            </label>
+            <input
+              id="fileInput"
+              type="file"
+              class="d-none"
+              accept="image/*"
+              (change)="onImageSelected($event)"
+            />
+          </div>
+        </div>
+
+        <!-- Aperçu image sélectionnée -->
+<!--        <div *ngIf="selectedImage" class="image-preview">-->
+<!--          <img [src]="imagePreview" alt="Aperçu">-->
+<!--          <div class="preview-info">-->
+<!--            <p class="file-name">{{ selectedImage.name }}</p>-->
+<!--            <p class="file-size">{{ getFileSize(selectedImage.size) }}</p>-->
+<!--          </div>-->
+<!--          <button class="btn-remove-preview" (click)="removeSelectedImage()">-->
+<!--            <i class="nc-icon nc-simple-remove"></i>-->
+<!--          </button>-->
+<!--        </div>-->
+
+        <!-- Aide -->
+        <div class="upload-help">
+          <small>
+            <i class="nc-icon nc-bulb-63"></i>
+            <strong>Formats acceptés :</strong> JPG, PNG, GIF
+          </small>
+          <small>
+            <i class="nc-icon nc-bulb-63"></i>
+            <strong>Taille max :</strong> 5 MB
+          </small>
         </div>
 
       </div>
 
       <div class="modal-footer">
-        <button
-          class="btn btn-secondary"
-          data-bs-dismiss="modal"
-        >
+        <button class="btn btn-secondary" data-bs-dismiss="modal">
+          <i class="nc-icon nc-simple-remove"></i>
           Annuler
         </button>
         <button
           class="btn btn-success"
-          data-bs-dismiss="modal"
+          (click)="clickModifImage()"
+          [disabled]="loadingImage || !selectedImage"
         >
-          Ajouter à la galerie
+          <span *ngIf="!loadingImage">
+            <i class="nc-icon nc-check-2"></i>
+            Ajouter à la galerie
+          </span>
+          <span *ngIf="loadingImage">
+            <i class="fas fa-spinner fa-spin"></i>
+            Upload en cours...
+          </span>
         </button>
       </div>
 

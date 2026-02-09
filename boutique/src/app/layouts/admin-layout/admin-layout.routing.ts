@@ -9,6 +9,7 @@ import {ApreciationsComponent} from "../../pages/apreciations/apreciations.compo
 import {RegisterBoutiqueComponent} from "../../pages/register-boutique/register-boutique.component";
 import {AuthGuard} from "../../guards/auth.guard";
 import {DetailProduitsComponent} from "../../pages/detail-produits/detail-produits.component";
+import {ProfileComponent} from "../../pages/profile/profile.component";
 
 export const AdminLayoutRoutes: Routes = [
     { path: 'dashboard',      component: DashboardComponent, canActivate: [AuthGuard] },
@@ -19,4 +20,5 @@ export const AdminLayoutRoutes: Routes = [
     {path: 'appreciation', component: ApreciationsComponent, canActivate: [AuthGuard] },
     {path: 'register-boutique', component: RegisterBoutiqueComponent},
     {path: 'detail-produit', component: DetailProduitsComponent, canActivate: [AuthGuard] },
+    {path: 'profile', component: ProfileComponent, canActivate: [AuthGuard] },
 ];

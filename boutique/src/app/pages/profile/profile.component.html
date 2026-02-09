@@ -24,7 +24,7 @@
                       <div class="block block-four"></div>
                       <a href="javascript:void(0)">
                         <img class="avatar" src="assets/img/logo-small.png" alt="Avatar">
-                        <h5 class="title">{{profile.nomComplet}}</h5>
+                        <h5 class="title">{{profile.boutique.nomBoutique}}</h5>
                       </a>
                     </div>
                     <div class="card-description text-center">
@@ -32,24 +32,20 @@
                         <i class="nc-icon nc-email-85"></i>
                         {{ profile.email }}
                       </p>
-                      <p class="mb-2">
-                        <i class="nc-icon nc-mobile"></i>
-                        {{ profile.telephone }}
-                      </p>
                       <p class="text-muted small">
                         <i class="nc-icon nc-calendar-60"></i>
                         Membre depuis le {{ profile.createdAt | date:'dd MMM yyyy'  }}
                       </p>
                     </div>
                   </div>
-                  <div class="card-footer">
-                    <div class="button-container text-center">
-                      <button class="btn btn-primary btn-sm btn-round" data-toggle="modal" data-target="#editProfileModal">
-                        <i class="nc-icon nc-settings-gear-65"></i>
-                        Modifier le profil
-                      </button>
-                    </div>
-                  </div>
+<!--                  <div class="card-footer">-->
+<!--                    <div class="button-container text-center">-->
+<!--                      <button class="btn btn-primary btn-sm btn-round" data-toggle="modal" data-target="#editProfileModal">-->
+<!--                        <i class="nc-icon nc-settings-gear-65"></i>-->
+<!--                        Modifier le profil-->
+<!--                      </button>-->
+<!--                    </div>-->
+<!--                  </div>-->
                 </div>
               </div>
 
@@ -64,11 +60,11 @@
                   <div class="card-body">
                     <div class="row mb-3">
                       <div class="col-md-6">
-                        <label class="text-muted">Prénom</label>
+                        <label class="text-muted">Prénom proprietaire</label>
                         <p class="font-weight-bold">{{ profile.prenom }}</p>
                       </div>
                       <div class="col-md-6">
-                        <label class="text-muted">Nom</label>
+                        <label class="text-muted">Nom proprietaire</label>
                         <p class="font-weight-bold">{{ profile.nom }}</p>
                       </div>
                     </div>
@@ -79,13 +75,13 @@
                       </div>
                       <div class="col-md-6">
                         <label class="text-muted">Téléphone</label>
-                        <p class="font-weight-bold">{{ profile.telephone }}</p>
+                        <p class="font-weight-bold">{{ profile.telephone || 'aucun contanct' }}</p>
                       </div>
                     </div>
                     <div class="row mb-3">
                       <div class="col-md-6">
                         <label class="text-muted">Rôle</label>
-                        <p><span class="badge badge-success">CLIENT</span></p>
+                        <p><span class="badge badge-warning">{{profile.role}}</span></p>
                       </div>
                       <div class="col-md-6">
                         <label class="text-muted">Date d'inscription</label>
@@ -93,42 +89,8 @@
                       </div>
                     </div>
                     <hr>
-                    <div class="row">
-                      <div class="col-md-12">
-                        <button class="btn btn-warning btn-sm" data-toggle="modal" data-target="#changePasswordModal">
-                          <i class="nc-icon nc-key-25"></i>
-                          Changer le mot de passe
-                        </button>
-                      </div>
-                    </div>
                   </div>
                 </div>
-
-                <!-- Statistics Card -->
-                <div class="card mt-3">
-                  <div class="card-header">
-                    <h5 class="card-title">Statistiques du compte</h5>
-                  </div>
-                  <div class="card-body">
-                    <div class="row text-center">
-                      <div class="col-md-4">
-                        <div class="mb-3">
-                          <i class="nc-icon nc-bag-16" style="font-size: 32px; color: #51CBCE;"></i>
-                          <h4 class="mt-2 mb-0">156</h4>
-                          <p class="text-muted">Commandes</p>
-                        </div>
-                      </div>
-                      <div class="col-md-4">
-                        <div class="mb-3">
-                          <i class="nc-icon nc-favourite-28" style="font-size: 32px; color: #6BD098;"></i>
-                          <h4 class="mt-2 mb-0">42</h4>
-                          <p class="text-muted">Favoris</p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
               </div>
             </div>
 
@@ -156,15 +118,15 @@
         <form>
           <div class="form-group">
             <label>Prénom <span class="text-danger">*</span></label>
-            <input type="text" class="form-control" placeholder="Votre prénom" [ngModel]="prenom"  value="{{ profile.prenom }}">
+            <input type="text" class="form-control" placeholder="Votre prénom" >
           </div>
           <div class="form-group">
             <label>Nom <span class="text-danger">*</span></label>
-            <input type="text" class="form-control" placeholder="Votre nom" [ngModel]="nom"  value="{{ profile.nom }}">
+            <input type="text" class="form-control" placeholder="Votre nom" >
           </div>
           <div class="form-group">
             <label>Numéro de téléphone</label>
-            <input type="tel" class="form-control" placeholder="06 12 34 56 78" [ngModel]="phone" value="{{profile.telephone}}">
+            <input type="tel" class="form-control" placeholder="06 12 34 56 78" >
           </div>
         </form>
       </div>
@@ -173,7 +135,7 @@
           <i class="nc-icon nc-simple-remove"></i>
           Annuler
         </button>
-        <button type="button" class="btn btn-success" (click)="clickChangeProfile()" >
+        <button type="button" class="btn btn-success"  >
           <i class="nc-icon nc-check-2"></i>
           Enregistrer
         </button>
@@ -182,41 +144,3 @@
   </div>
 </div>
 
-<!-- Modal - Changer le mot de passe -->
-<div class="modal fade" id="changePasswordModal" tabindex="-1" role="dialog" aria-labelledby="changePasswordModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="changePasswordModalLabel">
-          <i class="nc-icon nc-key-25"></i>
-          Changer le mot de passe
-        </h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <form>
-          <div class="form-group">
-            <label>Ancien mot de passe <span class="text-danger">*</span></label>
-            <input type="password" class="form-control"  [ngModel]="currentPassword" placeholder="Entrez votre ancien mot de passe">
-          </div>
-          <div class="form-group">
-            <label>Nouveau mot de passe <span class="text-danger">*</span></label>
-            <input type="password" class="form-control"  [ngModel]="newPassword" placeholder="Entrez votre nouveau mot de passe">
-          </div>
-        </form>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">
-          <i class="nc-icon nc-simple-remove"></i>
-          Annuler
-        </button>
-        <button type="button" (click)="clickChangePassword()" class="btn btn-primary">
-          <i class="nc-icon nc-key-25"></i>
-          Modifier le mot de passe
-        </button>
-      </div>
-    </div>
-  </div>
-</div>

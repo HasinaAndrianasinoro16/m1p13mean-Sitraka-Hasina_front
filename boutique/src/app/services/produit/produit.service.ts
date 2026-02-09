@@ -31,7 +31,7 @@ export class ProduitService {
     return this.http.get<any>(`${this.baseUrl}/produits/${id}`, {headers});
   }
 
-  createProduit(nom: string, description: string, prix: number, stock: number): Observable<any> {
+  createProduit(nom: string, description: string, prix: number, stock: number, categorie: string): Observable<any> {
     const token = localStorage.getItem('token');
     const headers = new HttpHeaders({
       Authorization: `Bearer ${token}`
@@ -41,7 +41,9 @@ export class ProduitService {
       nom: nom,
       description: description,
       prix: prix,
-      stock: stock
+      stock: stock,
+      seuilAlerte: 5,
+      categorie: categorie,
     };
     return this.http.post<any>(
       `${this.baseUrl}/produits`,
@@ -51,7 +53,6 @@ export class ProduitService {
   }
 
   // Version simplifiée (corrections minimales)
-
   newAjoutStock(id: string, currentStock: number, stock: number): Observable<any> {
     const token = localStorage.getItem('token');
 
@@ -70,6 +71,24 @@ export class ProduitService {
     return this.http.put<any>(
       `${this.baseUrl}/produits/${id}/stock`,
       stockData,
+      { headers }
+    );
+  }
+
+  modifImagePrincipale(id: string, img: File): Observable<any> {
+    const token = localStorage.getItem('token');
+
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`
+      // ⚠️ PAS de Content-Type
+    });
+
+    const formData = new FormData();
+    formData.append('image', img);
+
+    return this.http.put<any>(
+      `${this.baseUrl}/produits/${id}/image`,
+      formData,
       { headers }
     );
   }

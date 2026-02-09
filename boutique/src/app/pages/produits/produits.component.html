@@ -28,6 +28,7 @@
           <table class="table table-hover align-middle">
             <thead class="text-primary">
             <tr>
+              <th>Image</th>
               <th>Produit</th>
               <th>Prix unitaire</th>
               <th>Stock</th>
@@ -46,6 +47,15 @@
 
             <!-- PRODUITS -->
             <tr *ngFor="let p of produitData">
+              <td class="text-center align-middle">
+                <img
+                  [src]="p.imagePrincipaleUrl || 'assets/img/default-product.jpg'"
+                  alt="Image produit"
+                  class="img-thumbnail"
+                  style="width: 60px; height: 60px; object-fit: cover;"
+                />
+              </td>
+
               <td>
                 <a
                   class="link-info"
@@ -119,15 +129,33 @@
 
       <div class="modal-body">
 
-<!--        <div class="mb-3">-->
-<!--          <label class="form-label">Image</label>-->
-<!--          <input type="file" class="form-control" accept=".jpg,.jpeg,.png">-->
-<!--        </div>-->
-
         <div class="mb-3">
           <label class="form-label">Nom du produit<span style="color: red" >*</span></label>
           <input type="text" class="form-control" placeholder="Nom du produit" [(ngModel)]="nomProduit">
         </div>
+
+        <div class="mb-3">
+          <label class="form-label">
+            Catégorie
+          </label>
+
+          <select
+            class="form-control select-control"
+            [(ngModel)]="categorie"
+          >
+            <option value="" disabled selected>
+              -- Sélectionner une catégorie --
+            </option>
+
+            <option
+              *ngFor="let c of categories"
+              [value]="c._id"
+            >
+              {{ c.nom }}
+            </option>
+          </select>
+        </div>
+
 
         <div class="mb-3">
           <label class="form-label">Prix unitaire (Ar)<span style="color: red" >*</span></label>

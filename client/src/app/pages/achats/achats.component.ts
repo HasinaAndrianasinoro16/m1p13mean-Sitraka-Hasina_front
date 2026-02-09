@@ -18,12 +18,14 @@ export class AchatsComponent implements OnInit {
   filters = {
     nom: '',
     boutique: '',
+    categorie: '',
     prixMin: null as number | null,
     prixMax: null as number | null,
     stockOnly: false
   };
 
   boutiques: string[] = [];
+  categories: string[] = [];
 
   constructor(private catalogueService: ProduitService, private panierService: PanierService) { }
 
@@ -44,6 +46,7 @@ export class AchatsComponent implements OnInit {
             prix: p.prixActuel ?? p.prix,
             boutique: p.boutique?.nomBoutique || 'Boutique inconnue',
             stock: p.stock,
+            categorie: p.categorie?.nom || 'aucune categorie',
             image: p.imagePrincipaleUrl || 'assets/img/default-product.jpg',
             quantite: 1
           }));
@@ -51,6 +54,11 @@ export class AchatsComponent implements OnInit {
           this.boutiques = [
             ...new Set(this.produits.map(p => p.boutique))
           ];
+
+          this.categories =[
+            ...new Set(this.produits.map(p => p.categorie))
+          ]
+
         }
 
         this.loading = false;
@@ -77,6 +85,10 @@ export class AchatsComponent implements OnInit {
         !this.filters.boutique ||
         p.boutique === this.filters.boutique;
 
+      const matchCategorie =
+        !this.filters.categorie ||
+        p.categorie === this.filters.categorie;
+
       const matchPrixMin =
         this.filters.prixMin === null ||
         p.prix >= this.filters.prixMin;
@@ -91,6 +103,7 @@ export class AchatsComponent implements OnInit {
       return (
         matchNom &&
         matchBoutique &&
+        matchCategorie &&
         matchPrixMin &&
         matchPrixMax &&
         matchStock

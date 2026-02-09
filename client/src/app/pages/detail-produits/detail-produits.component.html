@@ -1,108 +1,224 @@
-<div class="container mt-4">
+<div class="product-detail-page">
+  <div class="container mt-5 mb-5">
 
-  <div class="row">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb" class="mb-4">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a routerLink="/achats">Achats</a></li>
+        <li class="breadcrumb-item active" aria-current="page">{{ produit.nom }}</li>
+      </ol>
+    </nav>
 
-    <!-- GALERIE PRODUIT -->
-    <div class="col-md-6">
+    <div class="row">
 
-      <!-- IMAGE PRINCIPALE -->
-      <div class="mb-3 position-relative">
-        <img
-          src="assets/img/jan-sendereks.jpg"
-          class="img-fluid rounded shadow w-100"
-          alt="Produit"
-        />
+      <!-- GALERIE PRODUIT -->
+      <div class="col-lg-6 mb-4">
+        <div class="product-gallery">
 
-        <!-- BOUTON AJOUT IMAGE -->
+          <!-- IMAGE PRINCIPALE -->
+          <div class="main-image-container">
+            <img
+              [src]="produit.imagePrincipaleUrl || 'assets/img/default-product.jpg'"
+              class="main-product-image"
+              [alt]="produit.nom"
+            />
+
+            <!-- Badge Stock -->
+            <span class="stock-badge" [ngClass]="produit.stock > 0 ? 'in-stock' : 'out-stock'">
+              {{ produit.stock > 0 ? 'En stock' : 'Rupture de stock' }}
+            </span>
+
+            <!-- Badge Promo (si applicable) -->
+            <span *ngIf="produit.enPromo" class="promo-badge">
+              PROMO
+            </span>
+          </div>
+
+          <!-- MINIATURES (optionnel - décommenter si vous avez plusieurs images) -->
+          <!-- <div class="thumbnails-container">
+            <div class="thumbnail-item">
+              <img src="assets/img/product1.jpg" alt="Vue 1">
+            </div>
+            <div class="thumbnail-item active">
+              <img src="assets/img/product2.jpg" alt="Vue 2">
+            </div>
+            <div class="thumbnail-item">
+              <img src="assets/img/product3.jpg" alt="Vue 3">
+            </div>
+          </div> -->
+
+        </div>
       </div>
 
-      <!-- MINIATURES -->
-      <div class="d-flex gap-2 flex-wrap">
-        <img
-          src="assets/img/aff.jpg"
-          class="img-thumbnail"
-          style="width: 70px; height: 70px; object-fit: cover; cursor: pointer;"
-        />
-        <img
-          src="assets/img/angular2-logo.png"
-          class="img-thumbnail"
-          style="width: 70px; height: 70px; object-fit: cover; cursor: pointer;"
-        />
-        <img
-          src="assets/img/damir-bosnjak.jpg"
-          class="img-thumbnail"
-          style="width: 70px; height: 70px; object-fit: cover; cursor: pointer;"
-        />
+      <!-- INFOS PRODUIT -->
+      <div class="col-lg-6">
+        <div class="product-info">
+
+          <!-- Nom du produit -->
+          <h1 class="product-title">{{ produit.nom }}</h1>
+
+          <!-- Catégorie -->
+          <div class="product-meta mb-3">
+            <span class="category-badge">
+              <i class="nc-icon nc-tag-content"></i>
+              {{ produit.categorie?.nom || 'Non catégorisé' }}
+            </span>
+          </div>
+
+          <!-- Prix -->
+          <div class="price-section mb-4">
+            <div *ngIf="produit.enPromo && produit.prixPromo" class="price-with-promo">
+              <span class="original-price">{{ produit.prix | number }} Ar</span>
+              <span class="promo-price">{{ produit.prixPromo | number }} Ar</span>
+              <span class="discount-percentage">
+                -{{ ((1 - produit.prixPromo / produit.prix) * 100).toFixed(0) }}%
+              </span>
+            </div>
+            <div *ngIf="!produit.enPromo" class="price-normal">
+              <span class="current-price">{{ produit.prix | number }} Ar</span>
+            </div>
+          </div>
+
+          <!-- Description -->
+          <div class="product-description mb-4">
+            <h5 class="section-title">Description</h5>
+            <p class="description-text">
+              {{ produit.description || 'Aucune description disponible pour ce produit.' }}
+            </p>
+          </div>
+
+          <!-- Informations supplémentaires -->
+          <div class="product-details mb-4">
+
+            <!-- Boutique -->
+            <div class="detail-item">
+              <i class="nc-icon nc-shop"></i>
+              <span class="detail-label">Boutique :</span>
+              <span class="detail-value">{{ produit.boutique?.nomBoutique || 'N/A' }}</span>
+            </div>
+
+            <!-- Stock -->
+            <div class="detail-item">
+              <i class="nc-icon nc-box"></i>
+              <span class="detail-label">Stock disponible :</span>
+              <span class="detail-value" [ngClass]="produit.stock > 10 ? 'text-success' : 'text-warning'">
+                {{ produit.stock }} unités
+              </span>
+            </div>
+
+          </div>
+
+          <!-- Boutons d'action -->
+          <div class="action-buttons">
+            <button
+              class="btn btn-add-cart"
+              data-bs-toggle="modal"
+              data-bs-target="#addImageModal"
+              [disabled]="produit.stock === 0"
+            >
+              <i class="nc-icon nc-cart-simple"></i>
+              {{ produit.stock > 0 ? 'Ajouter au panier' : 'Produit indisponible' }}
+            </button>
+
+            <button class="btn btn-outline-secondary" routerLink="/achats">
+              <i class="nc-icon nc-minimal-left"></i>
+              Retour aux achats
+            </button>
+          </div>
+
+          <!-- Informations de livraison -->
+<!--          <div class="shipping-info mt-4">-->
+<!--            <div class="info-card">-->
+<!--              <i class="nc-icon nc-delivery-fast"></i>-->
+<!--              <div>-->
+<!--                <strong>Livraison rapide</strong>-->
+<!--                <p>Livraison sous 2-3 jours ouvrés</p>-->
+<!--              </div>-->
+<!--            </div>-->
+<!--            <div class="info-card">-->
+<!--              <i class="nc-icon nc-refresh-69"></i>-->
+<!--              <div>-->
+<!--                <strong>Retour gratuit</strong>-->
+<!--                <p>Retour sous 14 jours</p>-->
+<!--              </div>-->
+<!--            </div>-->
+<!--          </div>-->
+
+        </div>
       </div>
-
-    </div>
-
-    <!-- INFOS PRODUIT -->
-    <div class="col-md-6">
-
-      <h3 class="fw-bold">{{produit.nom}}</h3>
-
-      <p class="text-muted">
-        {{produit.description}}
-      </p>
-
-      <h4 class="text-success mb-3">
-        {{produit.prix}} Ar
-      </h4>
-
-      <p>
-        <strong>Stock :</strong>
-        <span class="text-secondary">{{produit.stock}}</span>
-      </p>
-
-      <button
-        class="btn btn-sm btn-warning"
-        data-bs-toggle="modal"
-        data-bs-target="#addImageModal"
-      >
-        <i class="nc-icon nc-cart-simple"></i> Ajouter au panier
-      </button>
 
     </div>
 
   </div>
-
 </div>
 
-<!-- MODAL AJOUT IMAGE -->
-<div
-  class="modal fade"
-  id="addImageModal"
-  tabindex="-1"
->
+<!-- MODAL AJOUT AU PANIER -->
+<div class="modal fade" id="addImageModal" tabindex="-1">
   <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
+    <div class="modal-content custom-modal">
 
       <div class="modal-header">
         <h5 class="modal-title">
-          Ajouter une image au produit
+          <i class="nc-icon nc-cart-simple"></i>
+          Ajouter au panier
         </h5>
-        <button
-          type="button"
-          class="btn-close"
-          data-bs-dismiss="modal"
-        ></button>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
 
       <div class="modal-body">
 
-        <div class="mb-3">
-          <label class="form-label">Choisir une quantite</label>
-          <input type="number" class="form-control" [(ngModel)]="quantite" />
+        <!-- Aperçu produit -->
+        <div class="product-preview">
+          <img
+            [src]="produit.imagePrincipaleUrl || 'assets/img/default-product.jpg'"
+            [alt]="produit.nom"
+            class="preview-image"
+          />
+          <div class="preview-info">
+            <h6>{{ produit.nom }}</h6>
+            <p class="price">{{ produit.prix | number }} Ar</p>
+          </div>
+        </div>
+
+        <!-- Sélection quantité -->
+        <div class="quantity-selector">
+          <label class="form-label">Quantité</label>
+          <div class="input-group">
+            <button
+              class="btn btn-outline-secondary"
+              type="button"
+              (click)="quantite = quantite > 1 ? quantite - 1 : 1"
+            >
+              <i class="nc-icon nc-simple-delete"></i>
+            </button>
+            <input
+              type="number"
+              class="form-control text-center"
+              [(ngModel)]="quantite"
+              [min]="1"
+              [max]="produit.stock"
+            />
+            <button
+              class="btn btn-outline-secondary"
+              type="button"
+              (click)="quantite = quantite < produit.stock ? quantite + 1 : quantite"
+            >
+              <i class="nc-icon nc-simple-add"></i>
+            </button>
+          </div>
+          <small class="text-muted">Stock disponible : {{ produit.stock }}</small>
+        </div>
+
+        <!-- Total -->
+        <div class="total-section">
+          <span>Total :</span>
+          <strong class="total-price">{{ (produit.prix * quantite) | number }} Ar</strong>
         </div>
 
       </div>
 
       <div class="modal-footer">
-        <button
-          class="btn btn-secondary"
-          data-bs-dismiss="modal"
-        >
+        <button class="btn btn-secondary" data-bs-dismiss="modal">
           Annuler
         </button>
         <button
@@ -110,7 +226,8 @@
           class="btn btn-success"
           data-bs-dismiss="modal"
         >
-          Ajouter au panier
+          <i class="nc-icon nc-cart-simple"></i>
+          Confirmer
         </button>
       </div>
 

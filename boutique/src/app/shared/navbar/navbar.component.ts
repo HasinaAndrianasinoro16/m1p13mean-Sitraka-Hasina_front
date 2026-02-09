@@ -92,4 +92,5 @@ export class NavbarComponent implements OnInit{
 
       }
 
+  protected readonly localStorage = localStorage;
 }

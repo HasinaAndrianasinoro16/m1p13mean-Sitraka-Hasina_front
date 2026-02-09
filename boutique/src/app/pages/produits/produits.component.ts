@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import {ProduitService} from "../../services/produit/produit.service";
+import {CategorieService} from "../../services/categorie/categorie.service";
 
 @Component({
   selector: 'app-produits',
@@ -11,6 +12,8 @@ export class ProduitsComponent {
   description: string = '';
   prix: number = 0;
   stock: number = 0;
+  categorie: string = '';
+  categories: any = null;
 
   //ajout de stock
   addStock: number = 0;
@@ -26,15 +29,31 @@ export class ProduitsComponent {
 
   //pagination
   currentPage: number = 1;
-  limit: number = 10;
+  limit: number = 5;
   totalPages: number = 0;
   pages: number[] = [];
 
-  constructor(private produitService: ProduitService) {
+  constructor(private produitService: ProduitService, private categorieService: CategorieService) {
   }
 
   ngOnInit(): void {
     this.loadProduits(this.currentPage);
+    this.loadCategorie();
+  }
+
+  loadCategorie(): void {
+    this.categorieService.getCategorieListe().subscribe({
+      next: (response: any) => {
+        if(response.success) {
+          this.categories = response.data.categories;
+        }
+      },
+      error: (err) => {
+        console.error(err);
+        this.error = "Erreur lors de la récupération des categories.";
+        this.loading = false;
+      }
+    });
   }
 
   loadProduits(page: number): void {
@@ -74,7 +93,7 @@ export class ProduitsComponent {
   }
 
   clickAddProduit(): void {
-    this.produitService.createProduit(this.nomProduit, this.description, this.prix, this.stock).subscribe({
+    this.produitService.createProduit(this.nomProduit, this.description, this.prix, this.stock, this.categorie).subscribe({
       next: (res: any) => {
         if(res.success) {
           alert('nouveau produit créé avec succès');
