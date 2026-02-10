@@ -16,16 +16,21 @@ export class ValidationComponent implements OnInit {
 
 
   currentPage: number = 1;
-  limit: number = 10;
+  limit: number = 5;
   totalPages: number = 0;
   pages: number[] = [];
+
+  currentPageV; number = 1;
+  limitV: number = 5;
+  totalPagesV: number = 0;
+  pagesV: number[] = [];
 
   constructor(private boutiquesService: BoutiquesService) {}
 
 
   ngOnInit(): void {
     this.loadBoutiquesAttente(this.currentPage);
-    this.loadBoutiquesValidee();
+    this.loadBoutiquesValidee(this.currentPageV);
   }
 
 
@@ -64,11 +69,26 @@ export class ValidationComponent implements OnInit {
     }
   }
 
-  loadBoutiquesValidee() {
+  goToPageV(page: number): void {
+    if(page >= 1 && page <= this.totalPagesV && page !== this.currentPageV) {
+      this.loadBoutiquesValidee(page);
+    }
+  }
+
+  loadBoutiquesValidee(page: number) {
     this.boutiquesService.getBoutiquesValidee().subscribe({
       next: (response: any) => {
         if (response.success) {
           this.boutiqueDataV = response.data.boutiques;
+
+          const pagination = response.data.pagination;
+          this.currentPageV = pagination.page;
+          this.totalPagesV = pagination.totalPages;
+
+          this.pagesV = Array.from(
+            { length: this.totalPagesV },
+            (_, i) => i + 1
+          );
         }
       },
       error: (err) => {
@@ -83,7 +103,7 @@ export class ValidationComponent implements OnInit {
       next: (response: any) => {
         if (response.success) {
           this.loadBoutiquesAttente(this.currentPage);
-          this.loadBoutiquesValidee();
+          this.loadBoutiquesValidee(this.currentPageV);
         }
       },
       error: (err) => {
@@ -97,7 +117,7 @@ export class ValidationComponent implements OnInit {
       next: (response: any) => {
         if (response.success) {
           this.loadBoutiquesAttente(this.currentPage);
-          this.loadBoutiquesValidee();
+          this.loadBoutiquesValidee(this.currentPageV);
         }
       },
       error: (err) => {

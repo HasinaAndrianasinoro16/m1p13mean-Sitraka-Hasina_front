@@ -12,7 +12,7 @@ export class BoutiquesService {
 
   constructor(private http: HttpClient) { }
 
-  getBoutiquesEnAttente(page: number = 1, limit: number = 10): Observable<any> {
+  getBoutiquesEnAttente(page: number = 1, limit: number = 5): Observable<any> {
     const token = localStorage.getItem("token");
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${token}`
@@ -24,7 +24,7 @@ export class BoutiquesService {
   }
 
 
-  getBoutiquesValidee(): Observable<any> {
+  getBoutiquesValidee(page: number = 1,limit: number = 5 ): Observable<any> {
     const token = localStorage.getItem("token");
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${token}`
@@ -51,13 +51,23 @@ export class BoutiquesService {
     return this.http.put(`${this.baseUrl}/boutiques/${id}/valider`,null, {headers});
   }
 
-  rejeteBoutique(id: string | undefined): Observable<any> {
-    const token = localStorage.getItem("token");
+  rejeteBoutique(id: string): Observable<any> {
+    const token = localStorage.getItem('token');
     const headers = new HttpHeaders({
-      'Authorization': `Bearer ${token}`
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json'
     });
 
-    return this.http.put(`${this.baseUrl}/boutiques/${id}/rejeter`,null, {headers});
+    const body = {
+      raison: 'Boutique rejetée par l’administrateur'
+    };
+
+    return this.http.put<any>(
+      `${this.baseUrl}/boutiques/${id}/rejeter`,
+      body,
+      { headers }
+    );
   }
+
 
 }
