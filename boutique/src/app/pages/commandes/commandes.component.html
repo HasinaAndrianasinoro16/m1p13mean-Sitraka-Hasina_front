@@ -11,7 +11,7 @@
               Mes Commandes
             </h4>
           </div>
-          <button class="btn btn-primary btn-sm">
+          <button class="btn btn-primary btn-sm" (click)="refresh()">
             <i class="nc-icon nc-refresh-69"></i>
             Actualiser
           </button>
@@ -20,63 +20,31 @@
     </div>
   </div>
 
-  <!-- FILTRES -->
-  <div class="row mb-3">
-    <div class="col-md-12">
-      <div class="card">
-        <div class="card-body">
+  <!-- LOADING -->
+  <div *ngIf="loading" class="row">
+    <div class="col-12 text-center py-5">
+      <div class="spinner-border text-primary" role="status">
+        <span class="sr-only">Chargement...</span>
+      </div>
+      <p class="mt-3 text-muted">Chargement des commandes...</p>
+    </div>
+  </div>
 
-          <!-- Recherche -->
-          <div class="row mb-3">
-            <div class="col-md-6">
-              <div class="input-group">
-                <span class="input-group-text">
-                  <i class="nc-icon nc-zoom-split"></i>
-                </span>
-                <input
-                  type="text"
-                  class="form-control"
-                  placeholder="Rechercher par N° commande, nom client..."
-                />
-              </div>
-            </div>
-          </div>
-
-          <!-- Filtres par statut -->
-          <div class="d-flex gap-2 flex-wrap">
-            <button class="btn btn-outline-secondary btn-sm active">
-              <i class="nc-icon nc-bullet-list-67"></i>
-              Toutes
-            </button>
-            <button class="btn btn-outline-secondary btn-sm">
-              <i class="nc-icon nc-time-alarm"></i>
-              En attente
-            </button>
-            <button class="btn btn-outline-secondary btn-sm">
-              <i class="nc-icon nc-check-2"></i>
-              Confirmées
-            </button>
-            <button class="btn btn-outline-secondary btn-sm">
-              <i class="nc-icon nc-delivery-fast"></i>
-              En livraison
-            </button>
-            <button class="btn btn-outline-secondary btn-sm">
-              <i class="nc-icon nc-check-2"></i>
-              Livrées
-            </button>
-            <button class="btn btn-outline-secondary btn-sm">
-              <i class="nc-icon nc-simple-remove"></i>
-              Annulées
-            </button>
-          </div>
-
-        </div>
+  <!-- ERROR -->
+  <div *ngIf="error && !loading" class="row">
+    <div class="col-12">
+      <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <i class="nc-icon nc-simple-remove"></i>
+        {{ error }}
+        <button type="button" class="close" (click)="error = ''" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
       </div>
     </div>
   </div>
 
   <!-- LISTE DES COMMANDES -->
-  <div class="row">
+  <div *ngIf="!loading" class="row">
     <div class="col-md-12">
       <div class="card">
         <div class="card-body p-0">
@@ -98,179 +66,66 @@
 
               <tbody>
 
-              <!-- Exemple de commande 1 -->
-              <tr>
-                <td>
-                  <strong class="text-primary">#CMD-2024-001</strong>
-                </td>
-                <td>
-                  <small class="text-muted">10 fév. 2024, 14:30</small>
-                </td>
-                <td>
-                  <div>
-                    <strong>Jean Dupont</strong>
-                    <br>
-                    <small class="text-muted">jean.dupont@email.com</small>
-                  </div>
-                </td>
-                <td>
-                  <span class="badge bg-secondary">3 articles</span>
-                </td>
-                <td>
-                  <strong class="text-success">250 000 Ar</strong>
-                </td>
-                <td>
-                    <span class="badge bg-warning text-dark">
-                      <i class="nc-icon nc-time-alarm"></i>
-                      En attente
-                    </span>
-                </td>
-                <td class="text-end">
-                  <button class="btn btn-sm btn-outline-primary">
-                    <i class="nc-icon nc-zoom-split"></i>
-                    Détails
-                  </button>
+              <!-- Aucune commande -->
+              <tr *ngIf="commandes.length === 0">
+                <td colspan="7" class="text-center text-muted py-5">
+                  <i class="nc-icon nc-bag-16" style="font-size: 48px; opacity: 0.3;"></i>
+                  <br><br>
+                  <strong>Aucune commande trouvée</strong>
+                  <br>
+                  <small>Vous n'avez pas encore de commandes</small>
                 </td>
               </tr>
 
-              <!-- Exemple de commande 2 -->
-              <tr>
+              <!-- Liste des commandes -->
+              <tr *ngFor="let commande of commandes">
                 <td>
-                  <strong class="text-primary">#CMD-2024-002</strong>
+                  <a
+                    class="text-primary"
+                    [routerLink]="['/detail-commande']"
+                    [queryParams]="{id: commande._id}">
+                    #{{ commande.numero }}
+                  </a>
                 </td>
                 <td>
-                  <small class="text-muted">09 fév. 2024, 10:15</small>
+                  <small class="text-muted">
+                    {{ commande.createdAt | date:'d MMM y, HH:mm':'':'fr' }}
+                  </small>
                 </td>
                 <td>
                   <div>
-                    <strong>Marie Martin</strong>
+                    <strong>{{ commande.client.nomComplet }}</strong>
                     <br>
-                    <small class="text-muted">marie.martin@email.com</small>
+                    <small class="text-muted">{{ commande.client.email }}</small>
                   </div>
                 </td>
                 <td>
-                  <span class="badge bg-secondary">5 articles</span>
+                  {{ commande.itemsCount }} article(s)
                 </td>
                 <td>
-                  <strong class="text-success">450 000 Ar</strong>
+                  <strong class="text-success">{{ commande.total | number }} Ar</strong>
                 </td>
                 <td>
-                    <span class="badge bg-info text-white">
+                  <span class="badge" [ngClass]="getStatutBadgeClass(commande.statut)">
+                    <i class="nc-icon" [ngClass]="getStatutIcon(commande.statut)"></i>
+                    {{ getStatutTexte(commande.statut) }}
+                  </span>
+                </td>
+                <td class="text-end">
+                  <div class="d-flex flex-column align-items-end gap-2" *ngIf="commande.statut === 'en_attente'" >
+
+                    <button class="btn btn-sm btn-outline-success" (click)="clickConfirmerCommande(commande._id)" >
                       <i class="nc-icon nc-check-2"></i>
-                      Confirmée
-                    </span>
-                </td>
-                <td class="text-end">
-                  <button class="btn btn-sm btn-outline-primary">
-                    <i class="nc-icon nc-zoom-split"></i>
-                    Détails
-                  </button>
-                </td>
-              </tr>
+                      Valider
+                    </button>
+<!--                    <button class="btn btn-sm btn-outline-danger mt-3">-->
+<!--                      <i class="nc-icon nc-simple-remove"></i>-->
+<!--                      Annuler-->
+<!--                    </button>-->
 
-              <!-- Exemple de commande 3 -->
-              <tr>
-                <td>
-                  <strong class="text-primary">#CMD-2024-003</strong>
-                </td>
-                <td>
-                  <small class="text-muted">08 fév. 2024, 16:45</small>
-                </td>
-                <td>
-                  <div>
-                    <strong>Paul Dubois</strong>
-                    <br>
-                    <small class="text-muted">paul.dubois@email.com</small>
                   </div>
                 </td>
-                <td>
-                  <span class="badge bg-secondary">2 articles</span>
-                </td>
-                <td>
-                  <strong class="text-success">180 000 Ar</strong>
-                </td>
-                <td>
-                    <span class="badge bg-primary">
-                      <i class="nc-icon nc-delivery-fast"></i>
-                      En livraison
-                    </span>
-                </td>
-                <td class="text-end">
-                  <button class="btn btn-sm btn-outline-primary">
-                    <i class="nc-icon nc-zoom-split"></i>
-                    Détails
-                  </button>
-                </td>
-              </tr>
 
-              <!-- Exemple de commande 4 -->
-              <tr>
-                <td>
-                  <strong class="text-primary">#CMD-2024-004</strong>
-                </td>
-                <td>
-                  <small class="text-muted">07 fév. 2024, 11:20</small>
-                </td>
-                <td>
-                  <div>
-                    <strong>Sophie Bernard</strong>
-                    <br>
-                    <small class="text-muted">sophie.bernard@email.com</small>
-                  </div>
-                </td>
-                <td>
-                  <span class="badge bg-secondary">1 article</span>
-                </td>
-                <td>
-                  <strong class="text-success">95 000 Ar</strong>
-                </td>
-                <td>
-                    <span class="badge bg-success">
-                      <i class="nc-icon nc-check-2"></i>
-                      Livrée
-                    </span>
-                </td>
-                <td class="text-end">
-                  <button class="btn btn-sm btn-outline-primary">
-                    <i class="nc-icon nc-zoom-split"></i>
-                    Détails
-                  </button>
-                </td>
-              </tr>
-
-              <!-- Exemple de commande 5 -->
-              <tr>
-                <td>
-                  <strong class="text-primary">#CMD-2024-005</strong>
-                </td>
-                <td>
-                  <small class="text-muted">06 fév. 2024, 09:00</small>
-                </td>
-                <td>
-                  <div>
-                    <strong>Luc Petit</strong>
-                    <br>
-                    <small class="text-muted">luc.petit@email.com</small>
-                  </div>
-                </td>
-                <td>
-                  <span class="badge bg-secondary">4 articles</span>
-                </td>
-                <td>
-                  <strong class="text-success">320 000 Ar</strong>
-                </td>
-                <td>
-                    <span class="badge bg-danger">
-                      <i class="nc-icon nc-simple-remove"></i>
-                      Annulée
-                    </span>
-                </td>
-                <td class="text-end">
-                  <button class="btn btn-sm btn-outline-primary">
-                    <i class="nc-icon nc-zoom-split"></i>
-                    Détails
-                  </button>
-                </td>
               </tr>
 
               </tbody>
@@ -278,25 +133,24 @@
           </div>
 
           <!-- PAGINATION -->
-          <nav class="p-3">
+          <nav *ngIf="totalPages > 1" class="p-3">
             <ul class="pagination justify-content-end mb-0">
-              <li class="page-item disabled">
-                <a class="page-link">
+              <li class="page-item" [class.disabled]="currentPage === 1">
+                <a class="page-link" (click)="goToPage(currentPage - 1)" style="cursor: pointer;">
                   <i class="nc-icon nc-minimal-left"></i>
                   Précédent
                 </a>
               </li>
-              <li class="page-item active">
-                <a class="page-link">1</a>
+              <li
+                class="page-item"
+                *ngFor="let p of pages"
+                [class.active]="currentPage === p">
+                <a class="page-link" (click)="goToPage(p)" style="cursor: pointer;">
+                  {{ p }}
+                </a>
               </li>
-              <li class="page-item">
-                <a class="page-link">2</a>
-              </li>
-              <li class="page-item">
-                <a class="page-link">3</a>
-              </li>
-              <li class="page-item">
-                <a class="page-link">
+              <li class="page-item" [class.disabled]="currentPage === totalPages">
+                <a class="page-link" (click)="goToPage(currentPage + 1)" style="cursor: pointer;">
                   Suivant
                   <i class="nc-icon nc-minimal-right"></i>
                 </a>
