@@ -12,6 +12,7 @@ export const ROUTES: RouteInfo[] = [
     {path: '/achats',     title: 'Achats',         icon:'nc-layout-11',       class: '' },
     {path: '/panier',     title: 'Mon Panier',         icon:'nc-basket',       class: '' },
     {path: '/commentaire', title: 'Commentaire',         icon:'nc-chat-33',       class: '' },
+    {path: '/commande', title: 'Commande',         icon:'nc-bullet-list-67',       class: '' },
 ];
 
 @Component({

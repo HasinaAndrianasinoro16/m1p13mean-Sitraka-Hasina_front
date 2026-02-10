@@ -154,19 +154,46 @@
       </div>
       <div class="modal-body">
         <form>
-          <div class="form-group">
-            <label>Prénom <span class="text-danger">*</span></label>
-            <input type="text" class="form-control" placeholder="Votre prénom" [ngModel]="prenom"  value="{{ profile.prenom }}">
+
+          <div class="form-group mb-3">
+            <label>
+              Prénom <span class="text-danger">*</span>
+            </label>
+            <input
+              type="text"
+              class="form-control"
+              placeholder="Votre prénom"
+              name="prenom"
+              [(ngModel)]="profile.prenom"
+            />
           </div>
-          <div class="form-group">
-            <label>Nom <span class="text-danger">*</span></label>
-            <input type="text" class="form-control" placeholder="Votre nom" [ngModel]="nom"  value="{{ profile.nom }}">
+
+          <div class="form-group mb-3">
+            <label>
+              Nom <span class="text-danger">*</span>
+            </label>
+            <input
+              type="text"
+              class="form-control"
+              placeholder="Votre nom"
+              name="nom"
+              [(ngModel)]="profile.nom"
+            />
           </div>
-          <div class="form-group">
+
+          <div class="form-group mb-3">
             <label>Numéro de téléphone</label>
-            <input type="tel" class="form-control" placeholder="06 12 34 56 78" [ngModel]="phone" value="{{profile.telephone}}">
+            <input
+              type="tel"
+              class="form-control"
+              placeholder="06 12 34 56 78"
+              name="telephone"
+              [(ngModel)]="profile.telephone"
+            />
           </div>
+
         </form>
+
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">

@@ -9,6 +9,8 @@ import {RegisterComponent} from "../../pages/register/register.component";
 import {ProfileComponent} from "../../pages/profile/profile.component";
 import {AuthGuard} from "../../guards/auth.guard";
 import {DetailProduitsComponent} from "../../pages/detail-produits/detail-produits.component";
+import {CommandesComponent} from "../../pages/commandes/commandes.component";
+import {DetailsCommandeComponent} from "../../pages/details-commande/details-commande.component";
 
 export const AdminLayoutRoutes: Routes = [
     { path: 'notifications',  component: NotificationsComponent, canActivate: [AuthGuard] },
@@ -18,5 +20,7 @@ export const AdminLayoutRoutes: Routes = [
     {path: 'commentaire', component: CommentairesComponent, canActivate: [AuthGuard] },
     {path: 'register', component: RegisterComponent },
     {path: 'profile', component: ProfileComponent, canActivate: [AuthGuard] },
-    {path: 'detail-produit', component: DetailProduitsComponent}
+    {path: 'detail-produit', component: DetailProduitsComponent},
+    {path: 'commande', component: CommandesComponent, canActivate: [AuthGuard] },
+    {path: 'detail-commande', component: DetailsCommandeComponent, canActivate: [AuthGuard] },
 ];

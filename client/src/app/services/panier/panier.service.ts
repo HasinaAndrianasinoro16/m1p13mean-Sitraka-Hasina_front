@@ -46,7 +46,7 @@ export class PanierService {
   }
 
 
-  viderPanier(id: string): Observable<any>{
+  viderPanier(): Observable<any>{
     const token: string = localStorage.getItem("token");
     const headers = new HttpHeaders({
       Authorization: `Bearer ${token}`

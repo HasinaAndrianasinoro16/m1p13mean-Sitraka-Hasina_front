@@ -108,11 +108,21 @@
 
         <button
           class="btn btn-dark w-100"
-          (click)="validerPanier()"
           [disabled]="panier.length === 0"
+          data-bs-toggle="modal"
+          data-bs-target="#checkoutModal"
         >
           <i class="nc-icon nc-check-2"></i>
           Valider le panier
+        </button>
+
+        <button
+          class="btn btn-danger w-100"
+          (click)="clickViderPanier()"
+          [disabled]="panier.length === 0"
+        >
+          <i class="nc-icon nc-simple-remove"></i>
+          Vider le panier
         </button>
 
       </div>
@@ -120,6 +130,107 @@
   </div>
 
 </div>
+
+<!-- MODAL VALIDATION PANIER -->
+<div
+  class="modal fade"
+  id="checkoutModal"
+  tabindex="-1"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+
+      <!-- HEADER -->
+      <div class="modal-header">
+        <h5 class="modal-title">
+          Finalité de validation de votre panier
+        </h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+        ></button>
+      </div>
+
+      <!-- BODY -->
+      <div class="modal-body">
+
+        <div class="row g-3">
+
+          <div class="col-md-6">
+            <label class="form-label">Nom</label>
+            <input
+              type="text"
+              class="form-control"
+              placeholder="Jean"
+              [(ngModel)]="nom"
+            />
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label">Prénom</label>
+            <input
+              type="text"
+              class="form-control"
+              placeholder="Garcia"
+              [(ngModel)]="prenom"
+            />
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label">Téléphone</label>
+            <input
+              type="tel"
+              class="form-control"
+              placeholder="ex: 344112337"
+              [(ngModel)]="telephone"
+            />
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label">Rue</label>
+            <input
+              type="text"
+              class="form-control"
+              [(ngModel)]="rue"
+            />
+          </div>
+
+          <div class="col-12">
+            <label class="form-label">Instructions</label>
+            <textarea
+              class="form-control"
+              rows="3"
+              [(ngModel)]="instruction"
+            ></textarea>
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- FOOTER -->
+      <div class="modal-footer">
+        <button
+          class="btn btn-secondary"
+          data-bs-dismiss="modal"
+        >
+          Annuler
+        </button>
+
+        <button
+          class="btn btn-success"
+          (click)="validerPanier()"
+        >
+          Confirmer la commande
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
 
 <!-- ================= MODAL MODIFIER QUANTITÉ ================= -->
 <div

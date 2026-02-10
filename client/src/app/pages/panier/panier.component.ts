@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import {PanierService} from "../../services/panier/panier.service";
+import {CommandeService} from "../../services/commande/commande.service";
 
 @Component({
   selector: 'app-panier',
@@ -17,7 +18,14 @@ export class PanierComponent implements OnInit {
 
   quantite: number = 0;
 
-  constructor(private panierService: PanierService) {}
+  //validation du panier
+  nom: string = '';
+  prenom: string = '';
+  telephone: string = '';
+  rue: string = '';
+  instruction: string = '';
+
+  constructor(private panierService: PanierService, private commandeService: CommandeService) {}
 
   ngOnInit(): void {
     this.loadPanier();
@@ -99,21 +107,36 @@ export class PanierComponent implements OnInit {
     });
   }
 
-  validerPanier(): void {
-    if (this.panier.length === 0) {
-      alert('Votre panier est vide ');
-      return;
+  clickViderPanier(): void {
+    if(confirm('Voulez vous vraiment vider votre Panier')){
+      this.panierService.viderPanier().subscribe({
+        next: () => {
+          alert('Panier vidé');
+          this.panier = [];
+          this.total = 0;
+          this.loadPanier();
+          return;
+        },
+        error: () => {
+          alert(' Erreur pendant qu\'on vide le panier');
+        }
+      });
     }
+  }
 
-    this.panierService.viderPanier('').subscribe({
-      next: () => {
-        alert('Panier validé avec succès !');
-        this.panier = [];
-        this.total = 0;
-        this.loadPanier()
+  validerPanier(): void {
+    this.commandeService.passerCommande(this.nom, this.prenom, this.telephone, this.rue,this.instruction).subscribe({
+      next: (res) => {
+        if(res.success){
+          alert('Panier validé');
+          this.panier = [];
+          this.total = 0;
+          this.loadPanier();
+          return
+        }
       },
       error: () => {
-        alert(' Erreur lors de la validation');
+        alert(' Panier non valider');
       }
     });
   }

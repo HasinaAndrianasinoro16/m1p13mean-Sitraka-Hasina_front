@@ -107,10 +107,11 @@ export class ProfileComponent implements OnInit {
   clickChangeProfile(): void {
     // this.error = '';
     if (confirm('Êtes-vous sûr de vouloir modifier votre profile ?')){
-      this.userService.changeProfile(this.nom, this.prenom, this.telephone).subscribe({
+      this.userService.changeProfile(this.profile.nom, this.profile.prenom, this.profile.telephone).subscribe({
         next: (response: any) => {
           if (response.success) {
             this.myProfile();
+            return;
           }
         },
         error: (err) => {
