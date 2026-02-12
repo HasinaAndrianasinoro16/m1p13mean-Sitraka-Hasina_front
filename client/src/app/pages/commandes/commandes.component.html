@@ -45,10 +45,11 @@
                     {{ getStatutTexte(commande.statut) }}
                   </span>
                 </td>
-                <td class="text-end">
+                <td class="text-end"  >
                   <button
+                    *ngIf="getStatutTexte(commande.statut) === 'En attente'"
                     class="btn btn-sm btn-outline-danger"
-                    (click)="annulerCommande(commande._id)"
+                    (click)="clickAnnulerCommande(commande._id)"
                     [disabled]="commande.statut === 'livree' || commande.statut === 'annulee'">
                     <i class="nc-icon nc-simple-remove"></i>
                     Annuler

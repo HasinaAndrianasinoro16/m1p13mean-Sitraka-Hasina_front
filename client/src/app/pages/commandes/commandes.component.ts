@@ -94,5 +94,19 @@ export class CommandesComponent implements OnInit {
     return icons[statut] || 'nc-bullet-list-67';
   }
 
+  clickAnnulerCommande(id:string): void {
+    this.commandeService.annulerCommande(id).subscribe({
+      next: (res: any) =>{
+        if(res.success){
+          alert('commande annulé');
+          this.loadCommande(this.currentPage);
+        }
+      },
+      error: (err) => {
+        console.error(err);
+      }
+    })
+  }
+
 
 }

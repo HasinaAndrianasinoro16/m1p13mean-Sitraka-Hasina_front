@@ -36,4 +36,16 @@ export class DetailsCommandeComponent implements OnInit {
     });
   }
 
+  getStatutBadgeClass(statut: string): string {
+    const classes: { [key: string]: string } = {
+      'en_attente': 'bg-warning text-dark',
+      'confirmee': 'bg-info text-white',
+      'en_preparation': 'bg-primary',
+      'en_livraison': 'bg-secondary',
+      'livree': 'bg-success',
+      'annulee': 'bg-danger'
+    };
+    return classes[statut] || 'bg-secondary';
+  }
+
 }

@@ -54,4 +54,19 @@ export class CommandeService {
 
   }
 
+  annulerCommande (id: string): Observable<any>{
+    const token = localStorage.getItem("token");
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    });
+
+    const data = {
+      raison: 'Je ne veux plus de cette commande'
+    };
+
+    return this.http.put(`${this.baseUrl}/${id}/annuler`, data, {headers});
+
+  }
+
 }
