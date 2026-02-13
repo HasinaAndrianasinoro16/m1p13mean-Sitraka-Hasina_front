@@ -22,4 +22,23 @@ export class DashboardService {
     return this.http.get(`${this.baseurl}/dashboard`, { headers });
   }
 
+  getGraphSeptjour(): Observable<any> {
+    const token = localStorage.getItem('token');
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    });
+
+    return this.http.get(`${this.baseurl}/dashboard/graphiques`, { headers });
+  }
+
+  getGraphPeriode(periode: string): Observable<any>{
+    const token = localStorage.getItem('token');
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    });
+
+    return this.http.get(`${this.baseurl}/dashboard/graphiques?periode=${periode}`, { headers });
+
+  }
+
 }

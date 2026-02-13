@@ -1,54 +1,132 @@
-<div class="row">
+<!-- HEADER + SÉLECTEUR PÉRIODE -->
+<div class="row mb-3">
   <div class="col-md-12">
-    <div class="card ">
-      <div class="card-header ">
-        <h5 class="card-title">Users Behavior</h5>
-        <p class="card-category">24 Hours performance</p>
-      </div>
-      <div class="card-body ">
-        <canvas id=chartHours width="400" height="100"></canvas>
+    <div class="card">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <div>
+          <h4 class="card-title mb-0">Statistiques</h4>
+          <p class="card-category mb-0">Analyse des performances</p>
+        </div>
+
+        <!-- Boutons de période -->
+        <div class="btn-group" role="group">
+          <button
+            class="btn btn-sm"
+            [class.btn-primary]="periodeSelectionnee === '7jours'"
+            [class.btn-outline-secondary]="periodeSelectionnee !== '7jours'"
+            (click)="loadGraphData('7jours')"
+            [disabled]="loading"
+          >
+            7 jours
+          </button>
+          <button
+            class="btn btn-sm"
+            [class.btn-primary]="periodeSelectionnee === '30jours'"
+            [class.btn-outline-secondary]="periodeSelectionnee !== '30jours'"
+            (click)="loadGraphData('30jours')"
+            [disabled]="loading"
+          >
+            30 jours
+          </button>
+          <button
+            class="btn btn-sm"
+            [class.btn-primary]="periodeSelectionnee === '12mois'"
+            [class.btn-outline-secondary]="periodeSelectionnee !== '12mois'"
+            (click)="loadGraphData('12mois')"
+            [disabled]="loading"
+          >
+            12 mois
+          </button>
+        </div>
       </div>
     </div>
   </div>
 </div>
+
+<!-- LOADING -->
+<div *ngIf="loading" class="row">
+  <div class="col-12 text-center py-5">
+    <div class="spinner-border text-primary" role="status">
+      <span class="sr-only">Chargement...</span>
+    </div>
+    <p class="mt-3 text-muted">Chargement des statistiques...</p>
+  </div>
+</div>
+
+<!-- ERROR -->
+<div *ngIf="error" class="row mb-3">
+  <div class="col-12">
+    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+      <i class="nc-icon nc-alert-circle-i"></i>
+      {{ error }} — Les graphiques affichent les données disponibles.
+      <button type="button" class="close" (click)="error = ''" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- GRAPHIQUE PRINCIPAL : ÉVOLUTION -->
 <div class="row">
-  <div class="col-md-4">
-    <div class="card ">
-      <div class="card-header ">
-        <h5 class="card-title">Email Statistics</h5>
-        <p class="card-category">Last Campaign Performance</p>
+  <div class="col-md-12">
+    <div class="card">
+      <div class="card-header">
+        <h5 class="card-title">Évolution des activités</h5>
+        <p class="card-category">
+          Performance sur la période :
+          <strong>{{ periodeSelectionnee === '7jours' ? '7 derniers jours' : periodeSelectionnee === '30jours' ? '30 derniers jours' : '12 derniers mois' }}</strong>
+        </p>
       </div>
-      <div class="card-body ">
+      <div class="card-body">
+        <canvas id="chartHours" width="400" height="100"></canvas>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- GRAPHIQUES SECONDAIRES -->
+<div class="row">
+
+  <!-- Camembert : Répartition -->
+  <div class="col-md-4">
+    <div class="card">
+      <div class="card-header">
+        <h5 class="card-title">Répartition des commandes</h5>
+        <p class="card-category">Par statut</p>
+      </div>
+      <div class="card-body">
         <canvas id="chartEmail"></canvas>
       </div>
-      <div class="card-footer ">
+      <div class="card-footer">
         <div class="legend">
-          <i class="fa fa-circle text-primary"></i> Opened
-          <i class="fa fa-circle text-warning"></i> Read
-          <i class="fa fa-circle text-danger"></i> Deleted
-          <i class="fa fa-circle text-gray"></i> Unopened
+          <i class="fa fa-circle" style="color:#6bd098"></i> Livrées
+          <i class="fa fa-circle" style="color:#fcc468"></i> En attente
+          <i class="fa fa-circle" style="color:#4acccd"></i> En cours
+          <i class="fa fa-circle" style="color:#ef8157"></i> Annulées
         </div>
         <hr>
       </div>
     </div>
   </div>
+
+  <!-- Ligne : Comparaison annuelle -->
   <div class="col-md-8">
     <div class="card card-chart">
       <div class="card-header">
-        <h5 class="card-title">NASDAQ: AAPL</h5>
-        <p class="card-category">Line Chart with Points</p>
+        <h5 class="card-title">Comparaison annuelle</h5>
+        <p class="card-category">Année actuelle vs année précédente</p>
       </div>
       <div class="card-body">
         <canvas id="speedChart" width="400" height="100"></canvas>
       </div>
       <div class="card-footer">
         <div class="chart-legend">
-          <i class="fa fa-circle text-info"></i> Tesla Model S
-          <i class="fa fa-circle text-warning"></i> BMW 5 Series
+          <i class="fa fa-circle" style="color:#51CACF"></i> Année actuelle &nbsp;
+          <i class="fa fa-circle" style="color:#fbc658"></i> Année précédente
         </div>
         <hr/>
-
       </div>
     </div>
   </div>
+
 </div>

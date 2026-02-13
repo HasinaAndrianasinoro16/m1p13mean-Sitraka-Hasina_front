@@ -13,6 +13,8 @@ export class DashboardComponent implements OnInit {
   user: number = 0;
   attente: number = 0;
   valide: number = 0;
+  chiffreAffaire: number = 0;
+  chiffreAffaireMoi: number = 0;
 
   // URL de base
   baseurl = getAPIUrl('admin');
@@ -24,6 +26,10 @@ export class DashboardComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.loadStat();
+  }
+
+  loadStat() {
     this.dashboardService.getStats().subscribe({
       next: (response: any) => {
         if (response.success) {
@@ -32,6 +38,8 @@ export class DashboardComponent implements OnInit {
           this.user = stats.utilisateurs.total;
           this.attente = stats.boutiques.enAttente;
           this.valide = stats.boutiques.validees;
+          this.chiffreAffaire = stats.chiffreAffaires.total;
+          this.chiffreAffaireMoi = stats.chiffreAffaires.mois;
         }
         this.loading = false;
       },
@@ -42,33 +50,5 @@ export class DashboardComponent implements OnInit {
       }
     });
   }
-
-  // constructor(
-  //   private http: HttpClient,
-  // ) {}
-  //
-  // ngOnInit() {
-  //   const token = localStorage.getItem('token');
-  //
-  //   this.http.get(`${this.baseurl}/dashboard`, {
-  //     headers: {
-  //       'Authorization': `Bearer ${token}`
-  //     }
-  //   }).subscribe({
-  //     next: (response: any) => {
-  //       if(response.success) {
-  //         const stats = response.data.stats;
-  //         this.magasin = stats.boutiques.total;
-  //         this.user = stats.utilisateurs.total;
-  //         this.loading = false;
-  //       }
-  //     },
-  //     error: (err) => {
-  //       console.error(err);
-  //       this.error = "Erreur lors de la récupération des statistiques";
-  //       this.loading = false;
-  //     }
-  //   });
-  // }
 
 }
