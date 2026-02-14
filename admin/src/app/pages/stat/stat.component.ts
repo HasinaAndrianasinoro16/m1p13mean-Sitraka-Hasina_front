@@ -9,12 +9,13 @@ import { DashboardService } from '../../services/dashboard/dashboard.service';
 })
 export class StatComponent implements OnInit, AfterViewInit {
 
-  // Charts instances
-  private chartHours: any;
-  private chartEmail: any;
-  private speedChart: any;
+  // Instances des graphiques
+  private chartEvolution: any;
+  private chartStatuts: any;
+  private chartCategories: any;
+  private chartInscriptions: any;
 
-  // Données
+  // Données brutes de l'API
   graphData: any = null;
   periodeSelectionnee: string = '7jours';
 
@@ -26,12 +27,10 @@ export class StatComponent implements OnInit, AfterViewInit {
 
   ngOnInit(): void {}
 
-  // AfterViewInit = DOM disponible → canvas accessible
   ngAfterViewInit(): void {
-    this.loadGraphData(this.periodeSelectionnee);
+    this.loadGraphData('7jours');
   }
 
-  // Charger les données et initialiser les graphiques
   loadGraphData(periode: string): void {
     this.loading = true;
     this.error = '';
@@ -44,84 +43,82 @@ export class StatComponent implements OnInit, AfterViewInit {
     request.subscribe({
       next: (response: any) => {
         this.loading = false;
-        console.log('Graph data:', response);
 
         if (response.success && response.data) {
           this.graphData = response.data;
-          this.initCharts(response.data);
-        } else {
-          // Pas de données : graphiques avec données vides
-          this.initCharts(null);
+          this.detruireGraphiques();
+          this.initTousLesGraphiques(response.data);
         }
       },
       error: (err) => {
         this.loading = false;
         console.error('Erreur chargement graphiques:', err);
         this.error = 'Erreur lors du chargement des statistiques';
-
-        // Afficher quand même les graphiques avec données vides
-        this.initCharts(null);
       }
     });
   }
 
-  // Initialiser ou mettre à jour tous les graphiques
-  private initCharts(data: any): void {
-    // Détruire les anciens graphiques si ils existent
-    if (this.chartHours) this.chartHours.destroy();
-    if (this.chartEmail) this.chartEmail.destroy();
-    if (this.speedChart) this.speedChart.destroy();
-
-    this.initChartHours(data);
-    this.initChartEmail(data);
-    this.initSpeedChart(data);
+  private detruireGraphiques(): void {
+    if (this.chartEvolution)    this.chartEvolution.destroy();
+    if (this.chartStatuts)      this.chartStatuts.destroy();
+    if (this.chartCategories)   this.chartCategories.destroy();
+    if (this.chartInscriptions) this.chartInscriptions.destroy();
   }
 
-  // ===== Graphique lignes principal =====
-  private initChartHours(data: any): void {
-    const canvas = document.getElementById('chartHours') as HTMLCanvasElement;
+  private initTousLesGraphiques(data: any): void {
+    this.initChartEvolution(data);
+    this.initChartStatuts(data);
+    this.initChartCategories(data);
+    this.initChartInscriptions(data);
+  }
+
+  // ===== 1. Graphique Évolution : commandes + CA par période =====
+  private initChartEvolution(data: any): void {
+    const canvas = document.getElementById('chartEvolution') as HTMLCanvasElement;
     if (!canvas) return;
 
-    // Extraire les labels et données depuis l'API, sinon utiliser des valeurs par défaut
-    const labels = data?.chartHours?.labels || data?.labels || ["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"];
-    const dataset1 = data?.chartHours?.commandes || data?.commandes || [0, 0, 0, 0, 0, 0, 0];
-    const dataset2 = data?.chartHours?.revenus || data?.revenus || [0, 0, 0, 0, 0, 0, 0];
-    const dataset3 = data?.chartHours?.visiteurs || data?.visiteurs || [0, 0, 0, 0, 0, 0, 0];
+    const periodes = data.commandesParPeriode || [];
 
-    this.chartHours = new Chart(canvas.getContext('2d'), {
+    // Extraire les labels (dates) et les données
+    const labels  = periodes.map((p: any) => p._id);
+    const nbCmds  = periodes.map((p: any) => p.commandes);
+    const livrees  = periodes.map((p: any) => p.livrees);
+    const annulees = periodes.map((p: any) => p.annulees);
+
+    this.chartEvolution = new Chart(canvas.getContext('2d'), {
       type: 'line',
       data: {
-        labels: labels,
+        labels,
         datasets: [
           {
             label: 'Commandes',
             borderColor: '#6bd098',
             backgroundColor: '#6bd09820',
-            pointRadius: 4,
-            pointHoverRadius: 6,
+            pointRadius: 5,
+            pointHoverRadius: 7,
             borderWidth: 3,
             fill: true,
-            data: dataset1
+            data: nbCmds
           },
           {
-            label: 'Revenus',
-            borderColor: '#f17e5d',
-            backgroundColor: '#f17e5d20',
-            pointRadius: 4,
-            pointHoverRadius: 6,
+            label: 'Livrées',
+            borderColor: '#51CACF',
+            backgroundColor: '#51CACF20',
+            pointRadius: 5,
+            pointHoverRadius: 7,
             borderWidth: 3,
             fill: true,
-            data: dataset2
+            data: livrees
           },
           {
-            label: 'Visiteurs',
-            borderColor: '#fcc468',
-            backgroundColor: '#fcc46820',
-            pointRadius: 4,
-            pointHoverRadius: 6,
+            label: 'Annulées',
+            borderColor: '#ef8157',
+            backgroundColor: '#ef815720',
+            pointRadius: 5,
+            pointHoverRadius: 7,
             borderWidth: 3,
             fill: true,
-            data: dataset3
+            data: annulees
           }
         ]
       },
@@ -142,72 +139,99 @@ export class StatComponent implements OnInit, AfterViewInit {
     });
   }
 
-  // ===== Graphique camembert =====
-  private initChartEmail(data: any): void {
-    const canvas = document.getElementById('chartEmail') as HTMLCanvasElement;
+  // ===== 2. Camembert : Commandes par statut =====
+  private initChartStatuts(data: any): void {
+    const canvas = document.getElementById('chartStatuts') as HTMLCanvasElement;
     if (!canvas) return;
 
-    const pieLabels = data?.repartition?.labels || ['Livrées', 'En attente', 'En cours', 'Annulées'];
-    const pieData = data?.repartition?.values || data?.pieData || [0, 0, 0, 0];
+    const statutsMap: { [key: string]: string } = {
+      'en_attente':    'En attente',
+      'confirmee':     'Confirmée',
+      'en_preparation':'En préparation',
+      'en_livraison':  'En livraison',
+      'livree':        'Livrée',
+      'annulee':       'Annulée'
+    };
 
-    this.chartEmail = new Chart(canvas.getContext('2d'), {
-      type: 'pie',
+    const statuts = data.commandesParStatut || [];
+    const labels  = statuts.map((s: any) => statutsMap[s.statut] || s.statut);
+    const values  = statuts.map((s: any) => s.count);
+
+    this.chartStatuts = new Chart(canvas.getContext('2d'), {
+      type: 'doughnut',
       data: {
-        labels: pieLabels,
+        labels,
         datasets: [{
-          pointRadius: 0,
-          pointHoverRadius: 0,
-          backgroundColor: ['#6bd098', '#fcc468', '#4acccd', '#ef8157'],
-          borderWidth: 0,
-          data: pieData
+          backgroundColor: ['#fcc468', '#6bd098', '#4acccd', '#51CACF', '#6bd098', '#ef8157'],
+          borderWidth: 2,
+          data: values
         }]
       },
       options: {
         legend: { display: true, position: 'bottom' },
         tooltips: { enabled: true },
+        cutoutPercentage: 60
+      }
+    });
+  }
+
+  // ===== 3. Barres : Produits par catégorie =====
+  private initChartCategories(data: any): void {
+    const canvas = document.getElementById('chartCategories') as HTMLCanvasElement;
+    if (!canvas) return;
+
+    const categories = data.produitsParCategorie || [];
+    const labels     = categories.map((c: any) => c.categorie);
+    const counts     = categories.map((c: any) => c.count);
+
+    this.chartCategories = new Chart(canvas.getContext('2d'), {
+      type: 'horizontalBar',
+      data: {
+        labels,
+        datasets: [{
+          label: 'Nombre de produits',
+          backgroundColor: ['#6bd098', '#fcc468', '#51CACF', '#ef8157', '#4acccd'],
+          borderWidth: 0,
+          data: counts
+        }]
+      },
+      options: {
+        legend: { display: false },
+        tooltips: { enabled: true },
         scales: {
-          yAxes: [{ ticks: { display: false }, gridLines: { drawBorder: false } }],
-          xAxes: [{ ticks: { display: false }, gridLines: { display: false } }]
+          xAxes: [{ ticks: { beginAtZero: true, fontColor: '#9f9f9f' }, gridLines: { color: 'rgba(0,0,0,0.05)' } }],
+          yAxes: [{ ticks: { fontColor: '#9f9f9f' }, gridLines: { display: false } }]
         }
       }
     });
   }
 
-  // ===== Graphique comparaison =====
-  private initSpeedChart(data: any): void {
-    const canvas = document.getElementById('speedChart') as HTMLCanvasElement;
+  // ===== 4. Barres groupées : Inscriptions par période =====
+  private initChartInscriptions(data: any): void {
+    const canvas = document.getElementById('chartInscriptions') as HTMLCanvasElement;
     if (!canvas) return;
 
-    const labels = data?.comparaison?.labels || data?.labels || ["Jan", "Fév", "Mar", "Avr", "Mai", "Jun", "Jul", "Aoû", "Sep", "Oct", "Nov", "Déc"];
-    const anneeActuelle = data?.comparaison?.anneeActuelle || data?.anneeActuelle || new Array(labels.length).fill(0);
-    const anneePassee = data?.comparaison?.anneePassee || data?.anneePassee || new Array(labels.length).fill(0);
+    const inscriptions = data.inscriptionsParPeriode || [];
+    const labels       = inscriptions.map((i: any) => i.date);
+    const clients      = inscriptions.map((i: any) => i.clients);
+    const boutiques    = inscriptions.map((i: any) => i.boutiques);
 
-    this.speedChart = new Chart(canvas.getContext('2d'), {
-      type: 'line',
+    this.chartInscriptions = new Chart(canvas.getContext('2d'), {
+      type: 'bar',
       data: {
-        labels: labels,
+        labels,
         datasets: [
           {
-            label: 'Année actuelle',
-            fill: false,
-            borderColor: '#51CACF',
-            backgroundColor: 'transparent',
-            pointBorderColor: '#51CACF',
-            pointRadius: 4,
-            pointHoverRadius: 6,
-            pointBorderWidth: 3,
-            data: anneeActuelle
+            label: 'Clients',
+            backgroundColor: '#6bd098',
+            borderWidth: 0,
+            data: clients
           },
           {
-            label: 'Année précédente',
-            fill: false,
-            borderColor: '#fbc658',
-            backgroundColor: 'transparent',
-            pointBorderColor: '#fbc658',
-            pointRadius: 4,
-            pointHoverRadius: 6,
-            pointBorderWidth: 3,
-            data: anneePassee
+            label: 'Boutiques',
+            backgroundColor: '#fcc468',
+            borderWidth: 0,
+            data: boutiques
           }
         ]
       },
@@ -215,10 +239,25 @@ export class StatComponent implements OnInit, AfterViewInit {
         legend: { display: true, position: 'top' },
         tooltips: { enabled: true, mode: 'index', intersect: false },
         scales: {
-          yAxes: [{ ticks: { fontColor: '#9f9f9f', beginAtZero: true } }],
+          yAxes: [{ ticks: { beginAtZero: true, fontColor: '#9f9f9f' }, gridLines: { color: 'rgba(0,0,0,0.05)' } }],
           xAxes: [{ ticks: { fontColor: '#9f9f9f' }, gridLines: { display: false } }]
         }
       }
     });
+  }
+
+  // Helpers pour le template
+  getTotalCommandes(): number {
+    return (this.graphData?.commandesParPeriode || [])
+      .reduce((sum: number, p: any) => sum + p.commandes, 0);
+  }
+
+  getTotalCA(): number {
+    return (this.graphData?.commandesParPeriode || [])
+      .reduce((sum: number, p: any) => sum + p.ca, 0);
+  }
+
+  getTopBoutiques(): any[] {
+    return this.graphData?.topBoutiquesCA || [];
   }
 }
