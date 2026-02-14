@@ -30,7 +30,27 @@ export class BoutiquesService {
       'Authorization': `Bearer ${token}`
     });
 
-    return this.http.get(`${this.baseUrl}/boutiques/validees`, {headers});
+    return this.http.get(`${this.baseUrl}/boutiques/validees?page=${page}&limit=${limit}`, {headers});
+  }
+
+  getBoutiqueRejete(page: number = 1, limit: number = 5): Observable<any>{
+    const token = localStorage.getItem("token");
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    });
+
+    return this.http.get(`${this.baseUrl}/boutiques/rejetees?page=${page}&limit=${limit}`, {headers});
+
+  }
+
+  getBoutiqueSuspendu(page: number =1, limit: number = 5): Observable<any>{
+    const token = localStorage.getItem("token");
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    });
+
+    return this.http.get(`${this.baseUrl}/boutiques/suspendues?page=${page}&limit=${limit}`, {headers});
+
   }
 
   getBoutiqueById(id: string | undefined): Observable<any>{
@@ -67,6 +87,41 @@ export class BoutiquesService {
       body,
       { headers }
     );
+  }
+
+  suspendreBoutique(id: string): Observable<any>{
+    const token = localStorage.getItem("token");
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    });
+
+    const body = {
+      raison: 'decision de l\'administrateur'
+    }
+
+    return this.http.put<any>(`${this.baseUrl}/boutiques/${id}/suspendre`, body,{headers});
+
+  }
+
+  reactiverBoutique(id:String): Observable<any>{
+    const token = localStorage.getItem("token");
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`,
+    });
+
+
+    return this.http.put(`${this.baseUrl}/boutiques/${id}/reactiver`, null, {headers});
+  }
+
+  supprimerBoutique(id: string): Observable<any>{
+    const token = localStorage.getItem("token");
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`,
+    });
+
+    return this.http.delete(`${this.baseUrl}/boutiques/${id}`, {headers});
+
   }
 
 
