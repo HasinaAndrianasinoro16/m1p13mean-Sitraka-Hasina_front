@@ -1,20 +1,27 @@
 <div class="col-md-12">
-  <div class="card card-plain">
+
+  <!-- ═══════════════════════════════
+       SECTION 1 — EN ATTENTE
+  ════════════════════════════════ -->
+  <div class="card validation-section section-pending">
 
     <div class="card-header">
-      <h4 class="card-title">Validation des comptes</h4>
-      <p class="card-category">Validation de l'inscription des boutiques</p>
+      <div class="section-header">
+        <div>
+          <h4 class="card-title">Validation des comptes</h4>
+          <p class="card-category">Boutiques en attente de validation</p>
+        </div>
+        <span class="section-count">{{ boutiqueDataA.length }}</span>
+      </div>
     </div>
 
     <div class="card-body">
 
-      <div *ngIf="error" class="alert alert-danger">
-        {{ error }}
-      </div>
+      <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
 
-      <div class="table-responsive" >
+      <div class="table-responsive">
         <table class="table table-hover align-middle">
-          <thead class="text-primary">
+          <thead>
           <tr>
             <th>Boutique</th>
             <th>Propriétaire</th>
@@ -26,37 +33,36 @@
 
           <tbody>
 
-          <!-- AUCUNE DONNÉE -->
+          <!-- VIDE -->
           <tr *ngIf="boutiqueDataA.length === 0">
-            <td colspan="5" class="text-center text-muted">
-              Aucune boutique en attente
+            <td colspan="5" class="empty-state">
+              <i class="nc-icon nc-shop"></i>
+              <p>Aucune boutique en attente de validation</p>
             </td>
           </tr>
 
-          <!-- BOUTIQUES EN ATTENTE -->
+          <!-- LISTE -->
           <tr *ngFor="let a of boutiqueDataA">
-            <td>
-              <a
-                class="link-info"
-                [routerLink]="['/detail-boutique']"
-                [queryParams]="{ id: a.id }">
+            <td data-label="Boutique">
+              <a class="link-info"
+                 [routerLink]="['/detail-boutique']"
+                 [queryParams]="{ id: a.id }">
                 {{ a.boutique?.nomBoutique }}
               </a>
             </td>
-
-            <td>{{ a.nom }} {{ a.prenom }}</td>
-            <td>{{ a.email }}</td>
-            <td>
-                <span class="badge badge-warning">
-                  En cours
-                </span>
+            <td data-label="Propriétaire">{{ a.prenom }} {{ a.nom }}</td>
+            <td data-label="Email">{{ a.email }}</td>
+            <td data-label="État">
+              <span class="badge badge-warning">En attente</span>
             </td>
-            <td class="text-right">
-              <div class="d-flex flex-column align-items-end gap-2">
-                <button  (click)="clickValideeBoutique(a.id)" class="btn btn-success btn-sm">
+            <td data-label="Action" class="text-right">
+              <div class="btn-group-actions">
+                <button class="btn btn-success btn-sm"
+                        (click)="clickValideeBoutique(a.id)">
                   <i class="nc-icon nc-check-2"></i> Valider
                 </button>
-                <button (click)="clickRejeterBoutique(a.id)" class="btn btn-danger btn-sm">
+                <button class="btn btn-danger btn-sm"
+                        (click)="clickRejeterBoutique(a.id)">
                   <i class="nc-icon nc-simple-remove"></i> Refuser
                 </button>
               </div>
@@ -67,57 +73,48 @@
         </table>
       </div>
 
-      <nav class="mt-4" *ngIf="totalPages > 1">
+      <!-- PAGINATION -->
+      <nav class="pagination-wrap" >
         <ul class="pagination justify-content-end">
-
-          <!-- PRECEDENT -->
           <li class="page-item" [class.disabled]="currentPage === 1">
-            <a class="page-link"
-               (click)="goToPage(currentPage - 1)">
-              Précédent
-            </a>
+            <a class="page-link" (click)="goToPage(currentPage - 1)">‹ Précédent</a>
           </li>
-
-          <!-- NUMÉROS -->
-          <li class="page-item"
-              *ngFor="let p of pages"
-              [class.active]="p === currentPage">
-            <a class="page-link" (click)="goToPage(p)">
-              {{ p }}
-            </a>
+          <li class="page-item" *ngFor="let p of pages" [class.active]="p === currentPage">
+            <a class="page-link" (click)="goToPage(p)">{{ p }}</a>
           </li>
-
-          <!-- SUIVANT -->
           <li class="page-item" [class.disabled]="currentPage === totalPages">
-            <a class="page-link"
-               (click)="goToPage(currentPage + 1)">
-              Suivant
-            </a>
+            <a class="page-link" (click)="goToPage(currentPage + 1)">Suivant ›</a>
           </li>
-
         </ul>
       </nav>
 
     </div>
   </div>
 
-  <div class="py-3"></div>
 
-  <div class="card card-plain">
+  <!-- ═══════════════════════════════
+       SECTION 2 — VALIDÉES
+  ════════════════════════════════ -->
+  <div class="card validation-section section-validated">
 
     <div class="card-header">
-      <p class="card-category">liste des compte validée.</p>
+      <div class="section-header">
+        <div>
+          <p class="card-category">Boutiques validées</p>
+        </div>
+        <span class="section-count" style="background:#eaf4ee;color:#2d7a4f;">
+          {{ boutiqueDataV.length }}
+        </span>
+      </div>
     </div>
 
     <div class="card-body">
 
-      <div *ngIf="error" class="alert alert-danger">
-        {{ error }}
-      </div>
+      <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
 
-      <div class="table-responsive" >
+      <div class="table-responsive">
         <table class="table table-hover align-middle">
-          <thead class="text-primary">
+          <thead>
           <tr>
             <th>Boutique</th>
             <th>Propriétaire</th>
@@ -129,35 +126,30 @@
 
           <tbody>
 
-          <!-- AUCUNE DONNÉE -->
           <tr *ngIf="boutiqueDataV.length === 0">
-            <td colspan="5" class="text-center text-muted">
-              Aucune boutique n'a encore été validée.
+            <td colspan="5" class="empty-state">
+              <i class="nc-icon nc-check-2"></i>
+              <p>Aucune boutique validée pour l'instant</p>
             </td>
           </tr>
 
-          <!-- BOUTIQUES EN ATTENTE -->
           <tr *ngFor="let a of boutiqueDataV">
-            <td>
-              <a
-                class="link-info"
-                [routerLink]="['/detail-boutique']"
-                [queryParams]="{ id: a.id }">
+            <td data-label="Boutique">
+              <a class="link-info"
+                 [routerLink]="['/detail-boutique']"
+                 [queryParams]="{ id: a.id }">
                 {{ a.boutique?.nomBoutique }}
               </a>
             </td>
-
-            <td>{{ a.nom }} {{ a.prenom }}</td>
-            <td>{{ a.email }}</td>
-            <td>
-                <span class="badge badge-success">
-                  Validée
-                </span>
+            <td data-label="Propriétaire">{{ a.prenom }} {{ a.nom }}</td>
+            <td data-label="Email">{{ a.email }}</td>
+            <td data-label="État">
+              <span class="badge badge-success">Validée</span>
             </td>
-            <td class="text-center">
-              <button class="btn btn-secondary"  (click)="clickSuspendre(a._id)" >
-                <i class="nc-icon nc-button-pause"></i>
-                Suspendre
+            <td data-label="Action" class="text-right">
+              <button class="btn btn-secondary btn-sm"
+                      (click)="clickSuspendre(a._id)">
+                <i class="nc-icon nc-button-pause"></i> Suspendre
               </button>
             </td>
           </tr>
@@ -166,55 +158,47 @@
         </table>
       </div>
 
-      <nav class="mt-4" *ngIf="totalPagesV > 1">
+      <nav class="pagination-wrap" >
         <ul class="pagination justify-content-end">
-
-          <!-- PRECEDENT -->
           <li class="page-item" [class.disabled]="currentPageV === 1">
-            <a class="page-link"
-               (click)="goToPageV(currentPageV - 1)">
-              Précédent
-            </a>
+            <a class="page-link" (click)="goToPageV(currentPageV - 1)">‹ Précédent</a>
           </li>
-
-          <!-- NUMÉROS -->
-          <li class="page-item"
-              *ngFor="let p of pagesV"
-              [class.active]="p === currentPageV">
-            <a class="page-link" (click)="goToPageV(p)">
-              {{ p }}
-            </a>
+          <li class="page-item" *ngFor="let p of pagesV" [class.active]="p === currentPageV">
+            <a class="page-link" (click)="goToPageV(p)">{{ p }}</a>
           </li>
-
-          <!-- SUIVANT -->
           <li class="page-item" [class.disabled]="currentPageV === totalPagesV">
-            <a class="page-link"
-               (click)="goToPageV(currentPageV + 1)">
-              Suivant
-            </a>
+            <a class="page-link" (click)="goToPageV(currentPageV + 1)">Suivant ›</a>
           </li>
-
         </ul>
       </nav>
 
     </div>
   </div>
 
-  <div class="card card-plain">
+
+  <!-- ═══════════════════════════════
+       SECTION 3 — SUSPENDUES
+  ════════════════════════════════ -->
+  <div class="card validation-section section-suspended">
 
     <div class="card-header">
-      <p class="card-category">liste des compte suspendues.</p>
+      <div class="section-header">
+        <div>
+          <p class="card-category">Boutiques suspendues</p>
+        </div>
+        <span class="section-count" style="background:#f0f0f0;color:#555;">
+          {{ boutiquesDataS.length }}
+        </span>
+      </div>
     </div>
 
     <div class="card-body">
 
-      <div *ngIf="error" class="alert alert-danger">
-        {{ error }}
-      </div>
+      <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
 
-      <div class="table-responsive" >
+      <div class="table-responsive">
         <table class="table table-hover align-middle">
-          <thead class="text-primary">
+          <thead>
           <tr>
             <th>Boutique</th>
             <th>Propriétaire</th>
@@ -226,35 +210,30 @@
 
           <tbody>
 
-          <!-- AUCUNE DONNÉE -->
           <tr *ngIf="boutiquesDataS.length === 0">
-            <td colspan="5" class="text-center text-muted">
-              Aucune boutique n'a encore été suspendue.
+            <td colspan="5" class="empty-state">
+              <i class="nc-icon nc-button-pause"></i>
+              <p>Aucune boutique suspendue</p>
             </td>
           </tr>
 
-          <!-- BOUTIQUES EN ATTENTE -->
           <tr *ngFor="let a of boutiquesDataS">
-            <td>
-              <a
-                class="link-info"
-                [routerLink]="['/detail-boutique']"
-                [queryParams]="{ id: a.id }">
+            <td data-label="Boutique">
+              <a class="link-info"
+                 [routerLink]="['/detail-boutique']"
+                 [queryParams]="{ id: a.id }">
                 {{ a.boutique?.nomBoutique }}
               </a>
             </td>
-
-            <td>{{ a.nom }} {{ a.prenom }}</td>
-            <td>{{ a.email }}</td>
-            <td>
-                <span class="badge badge-warning">
-                  suspendue
-                </span>
+            <td data-label="Propriétaire">{{ a.prenom }} {{ a.nom }}</td>
+            <td data-label="Email">{{ a.email }}</td>
+            <td data-label="État">
+              <span class="badge badge-secondary">Suspendue</span>
             </td>
-            <td class="text-center">
-              <button class="btn btn-primary" (click)="clickReactiver(a._id)" >
-                <i class="nc-icon nc-refresh-69"></i>
-                reactiver
+            <td data-label="Action" class="text-right">
+              <button class="btn btn-primary btn-sm"
+                      (click)="clickReactiver(a._id)">
+                <i class="nc-icon nc-refresh-69"></i> Réactiver
               </button>
             </td>
           </tr>
@@ -263,55 +242,48 @@
         </table>
       </div>
 
-      <nav class="mt-4" *ngIf="totalPagesS > 1">
+      <nav class="pagination-wrap" >
         <ul class="pagination justify-content-end">
-
-          <!-- PRECEDENT -->
           <li class="page-item" [class.disabled]="currentPageS === 1">
-            <a class="page-link"
-               (click)="goToPageS(currentPageS - 1)">
-              Précédent
-            </a>
+            <a class="page-link" (click)="goToPageS(currentPageS - 1)">‹ Précédent</a>
           </li>
-
-          <!-- NUMÉROS -->
-          <li class="page-item"
-              *ngFor="let p of pagesS"
-              [class.active]="p === currentPageS">
-            <a class="page-link" (click)="goToPageS(p)">
-              {{ p }}
-            </a>
+          <li class="page-item" *ngFor="let p of pagesS" [class.active]="p === currentPageS">
+            <a class="page-link" (click)="goToPageS(p)">{{ p }}</a>
           </li>
-
-          <!-- SUIVANT -->
+          <!-- ✅ CORRECTION : goToPageS au lieu de goToPageV -->
           <li class="page-item" [class.disabled]="currentPageS === totalPagesS">
-            <a class="page-link"
-               (click)="goToPageV(currentPageS + 1)">
-              Suivant
-            </a>
+            <a class="page-link" (click)="goToPageS(currentPageS + 1)">Suivant ›</a>
           </li>
-
         </ul>
       </nav>
 
     </div>
   </div>
 
-  <div class="card card-plain">
+
+  <!-- ═══════════════════════════════
+       SECTION 4 — REJETÉES
+  ════════════════════════════════ -->
+  <div class="card validation-section section-rejected">
 
     <div class="card-header">
-      <p class="card-category">liste des compte rejeté.</p>
+      <div class="section-header">
+        <div>
+          <p class="card-category">Boutiques rejetées</p>
+        </div>
+        <span class="section-count" style="background:#fff0f0;color:#c02020;">
+          {{ boutiquesDataR.length }}
+        </span>
+      </div>
     </div>
 
     <div class="card-body">
 
-      <div *ngIf="error" class="alert alert-danger">
-        {{ error }}
-      </div>
+      <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
 
-      <div class="table-responsive" >
+      <div class="table-responsive">
         <table class="table table-hover align-middle">
-          <thead class="text-primary">
+          <thead>
           <tr>
             <th>Boutique</th>
             <th>Propriétaire</th>
@@ -323,35 +295,30 @@
 
           <tbody>
 
-          <!-- AUCUNE DONNÉE -->
           <tr *ngIf="boutiquesDataR.length === 0">
-            <td colspan="5" class="text-center text-muted">
-              Aucune boutique n'a encore été rejeté.
+            <td colspan="5" class="empty-state">
+              <i class="nc-icon nc-simple-remove"></i>
+              <p>Aucune boutique rejetée</p>
             </td>
           </tr>
 
-          <!-- BOUTIQUES EN ATTENTE -->
           <tr *ngFor="let a of boutiquesDataR">
-            <td>
-              <a
-                class="link-info"
-                [routerLink]="['/detail-boutique']"
-                [queryParams]="{ id: a.id }">
+            <td data-label="Boutique">
+              <a class="link-info"
+                 [routerLink]="['/detail-boutique']"
+                 [queryParams]="{ id: a.id }">
                 {{ a.boutique?.nomBoutique }}
               </a>
             </td>
-
-            <td>{{ a.nom }} {{ a.prenom }}</td>
-            <td>{{ a.email }}</td>
-            <td>
-                <span class="badge badge-danger">
-                  Rejetée
-                </span>
+            <td data-label="Propriétaire">{{ a.prenom }} {{ a.nom }}</td>
+            <td data-label="Email">{{ a.email }}</td>
+            <td data-label="État">
+              <span class="badge badge-danger">Rejetée</span>
             </td>
-            <td class="text-center">
-              <button class="btn btn-danger" (click)="clickSupprimer(a._id)" >
-                <i class="nc-icon nc-simple-remove"></i>
-                supprimer
+            <td data-label="Action" class="text-right">
+              <button class="btn btn-danger btn-sm"
+                      (click)="clickSupprimer(a._id)">
+                <i class="nc-icon nc-simple-remove"></i> Supprimer
               </button>
             </td>
           </tr>
@@ -360,37 +327,21 @@
         </table>
       </div>
 
-      <nav class="mt-4" *ngIf="totalPagesR > 1">
+      <nav class="pagination-wrap" >
         <ul class="pagination justify-content-end">
-
-          <!-- PRECEDENT -->
           <li class="page-item" [class.disabled]="currentPageR === 1">
-            <a class="page-link"
-               (click)="goToPageV(currentPageR - 1)">
-              Précédent
-            </a>
+            <a class="page-link" (click)="goToPageR(currentPageR - 1)">‹ Précédent</a>
           </li>
-
-          <!-- NUMÉROS -->
-          <li class="page-item"
-              *ngFor="let p of pagesR"
-              [class.active]="p === currentPageR">
-            <a class="page-link" (click)="goToPageV(p)">
-              {{ p }}
-            </a>
+          <li class="page-item" *ngFor="let p of pagesR" [class.active]="p === currentPageR">
+            <a class="page-link" (click)="goToPageR(p)">{{ p }}</a>
           </li>
-
-          <!-- SUIVANT -->
           <li class="page-item" [class.disabled]="currentPageR === totalPagesR">
-            <a class="page-link"
-               (click)="goToPageV(currentPageR + 1)">
-              Suivant
-            </a>
+            <a class="page-link" (click)="goToPageR(currentPageR + 1)">Suivant ›</a>
           </li>
-
         </ul>
       </nav>
 
     </div>
   </div>
+
 </div>
