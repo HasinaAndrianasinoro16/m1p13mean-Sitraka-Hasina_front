@@ -1,61 +1,165 @@
-<div class="container my-5">
-
-  <!-- TITRE -->
-  <div class="mb-4">
-    <h3 class="fw-bold">Détails de la boutique</h3>
-    <p class="text-muted">Informations complètes sur la boutique et son propriétaire</p>
+<div class="page">
+  <!-- HEADING -->
+  <div class="page-heading">
+    <h1>Détails de la boutique</h1>
+    <p>Informations complètes sur la boutique et son propriétaire</p>
   </div>
 
-  <!-- HEADER BOUTIQUE -->
-  <div class="card mb-4">
-    <div class="card-body d-flex align-items-center gap-4">
-      <img
-        src="assets/img/mag.jpg"
-        class="rounded border"
-        width="100"
-        height="100"
-        alt="Logo boutique"
-      >
+  <!-- HERO CARD -->
+  <div class="hero-card">
 
-      <div>
-        <h4 class="mb-1">{{boutiqueData.boutique.nomBoutique}}</h4>
+    <div class="hero-body">
+
+      <!-- Logo -->
+      <div class="hero-logo-wrap">
+        <div class="hero-logo-placeholder">
+          <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+            <polyline points="9 22 9 12 15 12 15 22"/>
+          </svg>
+        </div>
       </div>
+
+
+      <div class="hero-meta">
+        <div class="hero-info">
+          <h2>{{boutiqueData.boutique.nomBoutique}}</h2>
+          <p>Membre depuis {{boutiqueData.boutique.validatedAt | date:'MMMM y'}}</p>
+<!--          <div class="status-badges">-->
+<!--            <span class="badge badge-active">Active</span>-->
+<!--            <span class="badge badge-vendor">Vendeur</span>-->
+<!--          </div>-->
+        </div>
+      </div>
+
     </div>
   </div>
 
-  <!-- INFORMATIONS -->
-  <div class="row g-4">
+  <!-- INFO GRID -->
+  <div class="info-grid">
 
     <!-- PROPRIÉTAIRE -->
-    <div class="col-md-6">
-      <div class="card h-100">
-        <div class="card-header fw-bold">
-          Propriétaire
+    <div class="info-card">
+      <div class="card-header">
+        <div class="card-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+            <circle cx="12" cy="7" r="4"/>
+          </svg>
         </div>
-        <div class="card-body">
-          <p><strong>Nom :</strong> {{boutiqueData.nom}} {{boutiqueData.prenom}}</p>
-          <p><strong>Email :</strong> {{boutiqueData.email}}</p>
-          <p><strong>Rôle :</strong> {{boutiqueData.role}}</p>
+        <h3>Propriétaire</h3>
+      </div>
+      <div class="card-body">
+
+        <div class="field">
+          <span class="field-label">Nom</span>
+          <span class="field-value">{{boutiqueData.prenom}} {{boutiqueData.nom}}</span>
         </div>
+
+        <div class="field">
+          <span class="field-label">Email</span>
+          <span class="field-value">
+            <a href="mailto:{{boutiqueData.email}}">{{boutiqueData.email}}</a>
+          </span>
+        </div>
+
+        <div class="field">
+          <span class="field-label">Téléphone</span>
+          <span class="field-value"
+                [class.empty]="!boutiqueData.telephone">
+            {{boutiqueData.telephone || 'Non renseigné'}}
+          </span>
+        </div>
+
+        <div class="field">
+          <span class="field-label">Rôle</span>
+          <span class="field-value">{{boutiqueData.role}}</span>
+        </div>
+
+        <div class="field">
+          <span class="field-label">Inscription</span>
+          <span class="field-value">
+            {{boutiqueData.createdAt | date:'d MMM y':'':'fr'}}
+          </span>
+        </div>
+
       </div>
     </div>
 
     <!-- BOUTIQUE -->
-    <div class="col-md-6">
-      <div class="card h-100">
-        <div class="card-header fw-bold">
-          Boutique
+    <div class="info-card">
+      <div class="card-header">
+        <div class="card-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
+            <line x1="3" y1="6" x2="21" y2="6"/>
+            <path d="M16 10a4 4 0 0 1-8 0"/>
+          </svg>
         </div>
-        <div class="card-body">
-          <p><strong>Description :</strong> {{boutiqueData.boutique.description}}</p>
-          <p><strong>Email :</strong> {{boutiqueData.email}}</p>
-          <p><strong>Téléphone :</strong> —</p>
-          <p><strong>Pays :</strong> {{boutiqueData.adresse.pays}}</p>
-          <p><strong>Catégorie :</strong> —</p>
+        <h3>Boutique</h3>
+      </div>
+      <div class="card-body">
+
+        <!-- Description mise en avant -->
+        <div class="description-block"
+             *ngIf="boutiqueData.boutique.description; else noDesc">
+          {{ boutiqueData.boutique.description }}
         </div>
+        <ng-template #noDesc>
+          <div class="description-block" style="color: var(--ink-3);">
+            Aucune description renseignée.
+          </div>
+        </ng-template>
+
+        <div class="field">
+          <span class="field-label">Email</span>
+          <span class="field-value">
+            <a href="mailto:{{boutiqueData.boutique.email || boutiqueData.email}}">
+              {{boutiqueData.boutique.email || boutiqueData.email}}
+            </a>
+          </span>
+        </div>
+
+        <div class="field">
+          <span class="field-label">Téléphone</span>
+          <span class="field-value"
+                [class.empty]="!boutiqueData.boutique.telephone">
+            {{boutiqueData.boutique.telephone || 'Non renseigné'}}
+          </span>
+        </div>
+
+        <div class="field">
+          <span class="field-label">Adresse</span>
+          <span class="field-value"
+                [class.empty]="!boutiqueData.adresse?.ville">
+            {{boutiqueData.adresse?.ville || 'Non renseignée'}}
+            <ng-container *ngIf="boutiqueData.adresse?.pays">
+              , {{boutiqueData.adresse.pays}}
+            </ng-container>
+          </span>
+        </div>
+
+        <div class="field">
+          <span class="field-label">Catégorie</span>
+          <span class="field-value"
+                [class.empty]="!boutiqueData.boutique.categorie">
+            {{boutiqueData.boutique.categorie || 'Non renseignée'}}
+          </span>
+        </div>
+
       </div>
     </div>
 
+  </div>
+
+  <!-- ACTIONS -->
+  <div class="actions-bar">
+    <button class="btn btn-ghost" routerLink="/validation">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <polyline points="15 18 9 12 15 6"/>
+      </svg>
+      Retour
+    </button>
   </div>
 
 </div>
