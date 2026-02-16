@@ -54,7 +54,7 @@ export class RegisterComponent {
 
       alert(`Compte ${role} créé avec succès 🎉`);
 
-      this.router.navigate(['/login']);
+      this.router.navigate(['/achats']);
     }, 1500);
   }
 }

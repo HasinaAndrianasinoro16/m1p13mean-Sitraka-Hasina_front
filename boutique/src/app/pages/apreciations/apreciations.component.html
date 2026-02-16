@@ -1,84 +1,248 @@
 <div class="row">
   <div class="col-md-12">
 
-    <!-- CARD PRINCIPALE -->
-    <div class="card shadow-sm">
+    <!-- ERROR -->
+    <div *ngIf="error" class="alert alert-danger alert-dismissible mb-3">
+      <i class="nc-icon nc-alert-circle-i"></i>
+      {{ error }}
+      <button type="button" class="close" (click)="error = ''"><span>&times;</span></button>
+    </div>
 
-      <!-- HEADER -->
-      <div class="card-header d-flex justify-content-between align-items-center">
-        <div>
-          <h5 class="card-title mb-1">Avis des clients</h5>
-          <small class="text-muted">
-            Boutique : {{ boutiqueNom }}
-          </small>
-        </div>
+    <!-- LOADING -->
+    <div *ngIf="loading" class="text-center py-5">
+      <div class="spinner-border text-primary"></div>
+      <p class="mt-3 text-muted">Chargement des avis...</p>
+    </div>
 
-        <!-- NOTE MOYENNE -->
-        <div class="text-right">
-          <span class="badge badge-success badge-pill px-4 py-2">
-            {{ noteMoyenne }}/10
-          </span>
-          <div class="small text-muted mt-1">
-            Note moyenne
+    <div *ngIf="!loading">
+
+      <!-- ══════════════════════════════
+           CARD STATS
+      ══════════════════════════════ -->
+      <div class="card avis-stats-card mb-4">
+        <div class="card-body">
+          <div class="row align-items-center">
+
+            <!-- Note globale -->
+            <div class="col-md-3 text-center border-right">
+              <div class="note-globale">{{ noteMoyenne }}</div>
+              <div class="note-sur">/5</div>
+              <div class="stars-row mt-2">
+                <i *ngFor="let s of getStars(noteMoyenne)"      class="nc-icon nc-favourite-28 star-full"></i>
+                <i *ngFor="let s of getEmptyStars(noteMoyenne)" class="nc-icon nc-favourite-28 star-empty"></i>
+              </div>
+              <div class="text-muted mt-2" style="font-size:.82rem;">{{ totalAvis }} avis au total</div>
+            </div>
+
+            <!-- Barres répartition -->
+            <div class="col-md-5 px-4">
+              <div class="repartition-row" *ngFor="let i of [5,4,3,2,1]">
+                <span class="repartition-label">{{ i }} ★</span>
+                <div class="repartition-bar-wrap">
+                  <div class="repartition-bar"
+                       [style.width.%]="getBarWidth(stats?.repartition?.[i] || 0)"
+                       [ngClass]="i >= 4 ? 'bar-high' : i === 3 ? 'bar-mid' : 'bar-low'">
+                  </div>
+                </div>
+                <span class="repartition-count">{{ stats?.repartition?.[i] || 0 }}</span>
+              </div>
+            </div>
+
+            <!-- Stats rapides -->
+            <div class="col-md-4">
+              <div class="quick-stat">
+                <i class="nc-icon nc-chat-33"></i>
+                <div>
+                  <strong>{{ totalAvis }}</strong>
+                  <span>Avis reçus</span>
+                </div>
+              </div>
+              <div class="quick-stat">
+                <i class="nc-icon nc-bell-55"></i>
+                <div>
+                  <strong>{{ stats?.sansReponse || 0 }}</strong>
+                  <span>Sans réponse</span>
+                </div>
+              </div>
+            </div>
+
           </div>
         </div>
       </div>
 
-      <!-- BODY -->
-      <div class="card-body">
+      <!-- ══════════════════════════════
+           LISTE DES AVIS
+      ══════════════════════════════ -->
+      <div class="card avis-list-card">
 
-        <!-- Aucun avis -->
-        <div
-          *ngIf="avis.length === 0"
-          class="text-center text-muted py-5"
-        >
-          <i class="nc-icon nc-chat-33 mb-3" style="font-size: 35px;"></i>
-          <p class="mb-0">Aucun avis pour le moment</p>
+        <div class="card-header">
+          <h5 class="card-title mb-0">Avis des clients</h5>
+          <p class="card-category mb-0">
+            {{ boutiqueNom ? 'Boutique : ' + boutiqueNom : 'Tous les avis reçus' }}
+          </p>
         </div>
 
-        <!-- LISTE DES AVIS -->
-        <div
-          class="card mb-3 border-0 shadow-sm"
-          *ngFor="let a of avis"
-        >
-          <div class="card-body">
+        <div class="card-body p-0">
 
-            <div class="d-flex justify-content-between align-items-center mb-2">
-              <!-- Client -->
-              <div class="d-flex align-items-center">
-                <div
-                  class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center mr-2"
-                  style="width: 38px; height: 38px;"
-                >
-                  <i class="nc-icon nc-single-02"></i>
+          <!-- Aucun avis -->
+          <div *ngIf="avis.length === 0" class="empty-avis">
+            <i class="nc-icon nc-chat-33"></i>
+            <p>Aucun avis pour le moment</p>
+          </div>
+
+          <!-- LISTE -->
+          <div class="avis-item" *ngFor="let a of avis">
+
+            <!-- Header : avatar + note -->
+            <div class="avis-header">
+              <div class="avis-client">
+                <div class="avis-avatar" [style.background]="getAvatarColor(a.client)">
+                  {{ getInitiales(a.client) }}
                 </div>
-                <strong>Client</strong>
+                <div class="avis-client-info">
+                  <strong>{{ a.client?.nomComplet || 'Client anonyme' }}</strong>
+                  <span class="avis-date">{{ formatDate(a.createdAt) }}</span>
+                </div>
               </div>
+              <div class="avis-right">
+                <div class="avis-note" [ngClass]="getNoteClass(a.note)">{{ a.note }}/5</div>
+                <span class="avis-statut"
+                      [ngClass]="a.statut === 'approuve' ? 'statut-ok' : 'statut-pending'">
+                  {{ a.statut === 'approuve' ? 'Approuvé' : a.statut }}
+                </span>
+              </div>
+            </div>
 
-              <!-- Note -->
-              <span
-                class="badge badge-pill px-3 py-2"
-                [ngClass]="{
-                  'badge-success': a.note >= 7,
-                  'badge-warning': a.note >= 4 && a.note < 7,
-                  'badge-danger': a.note < 4
-                }"
-              >
-                {{ a.note }}/10
-              </span>
+            <!-- Étoiles -->
+            <div class="avis-stars">
+              <i *ngFor="let s of getStars(a.note)"      class="nc-icon nc-favourite-28 star-full"></i>
+              <i *ngFor="let s of getEmptyStars(a.note)" class="nc-icon nc-favourite-28 star-empty"></i>
             </div>
 
             <!-- Commentaire -->
-            <p class="mb-0 text-muted">
+            <p class="avis-commentaire">
               {{ a.commentaire || 'Aucun commentaire laissé.' }}
             </p>
+
+            <!-- Réponse existante -->
+            <div class="avis-reponse" *ngIf="a.reponse?.contenu">
+              <div class="reponse-header">
+                <i class="nc-icon nc-shop"></i>
+                <strong>Réponse de la boutique</strong>
+                <span class="reponse-date">· {{ formatDate(a.reponse.date) }}</span>
+              </div>
+              <p class="reponse-contenu">{{ a.reponse.contenu }}</p>
+            </div>
+
+            <!-- Footer -->
+            <div class="avis-footer">
+              <div class="avis-footer-left">
+                <span *ngIf="a.estVerifie" class="verifie-badge">
+                  <i class="nc-icon nc-check-2"></i> Achat vérifié
+                </span>
+                <span class="utiles-count" *ngIf="a.utilesCount > 0">
+                  👍 {{ a.utilesCount }} utile(s)
+                </span>
+              </div>
+
+              <!-- BOUTON RÉPONDRE / MODIFIER -->
+              <button
+                class="btn-repondre"
+                [class.btn-repondre-edit]="a.reponse?.contenu"
+                [class.btn-repondre-active]="avisSelectionne?._id === a._id"
+                (click)="ouvrirReponse(a)"
+              >
+                <i class="nc-icon"
+                   [ngClass]="a.reponse?.contenu ? 'nc-refresh-69' : 'nc-send'">
+                </i>
+                {{ a.reponse?.contenu ? 'Modifier la réponse' : 'Répondre' }}
+              </button>
+            </div>
+
+            <!-- ══ FORMULAIRE INLINE ══ -->
+            <div class="reponse-form-wrap" *ngIf="avisSelectionne?._id === a._id" [id]="'form-' + a._id">
+              <div class="reponse-form">
+
+                <!-- En-tête du form -->
+                <div class="reponse-form-header">
+                  <i class="nc-icon nc-shop"></i>
+                  <span>{{ a.reponse?.contenu ? 'Modifier votre réponse' : 'Répondre à cet avis' }}</span>
+                </div>
+
+                <!-- Contexte : rappel de l'avis -->
+                <div class="reponse-form-context">
+                  <strong>{{ a.client?.nomComplet }}</strong> a écrit :
+                  <em>"{{ a.commentaire || 'Aucun commentaire' }}"</em>
+                </div>
+
+                <!-- Textarea -->
+                <textarea
+                  class="reponse-textarea"
+                  [(ngModel)]="reponseTexte"
+                  [placeholder]="'Rédigez votre réponse à ' + (a.client?.prenom || 'ce client') + '...'"
+                  rows="4"
+                  [maxlength]="500"
+                ></textarea>
+
+                <!-- Compteur -->
+                <div class="reponse-char-count"
+                     [class.reponse-char-warn]="reponseTexte.length > 450">
+                  {{ reponseTexte.length }}/500 caractères
+                </div>
+
+                <!-- Erreur -->
+                <div *ngIf="reponseError" class="reponse-error">
+                  <i class="nc-icon nc-alert-circle-i"></i>
+                  {{ reponseError }}
+                </div>
+
+                <!-- Actions -->
+                <div class="reponse-form-actions">
+                  <button class="btn-annuler" (click)="fermerReponse()">
+                    Annuler
+                  </button>
+
+                  <!-- ✅ On passe l'objet complet "a" pour détecter POST vs PUT -->
+                  <button
+                    class="btn-envoyer"
+                    (click)="envoyerReponse(a)"
+                    [disabled]="reponseTexte.trim().length === 0 || reponseLoading"
+                  >
+                    <ng-container *ngIf="reponseLoading">
+                      <i class="nc-icon nc-refresh-69" style="animation:spin .7s linear infinite;display:inline-block"></i>
+                      Envoi...
+                    </ng-container>
+                    <ng-container *ngIf="!reponseLoading">
+                      <i class="nc-icon nc-send"></i>
+                      {{ a.reponse?.contenu ? 'Modifier' : 'Envoyer la réponse' }}
+                    </ng-container>
+                  </button>
+                </div>
+
+              </div>
+            </div>
 
           </div>
         </div>
 
+        <!-- PAGINATION -->
+        <div class="card-footer" *ngIf="totalPages > 1">
+          <nav>
+            <ul class="pagination justify-content-end mb-0">
+              <li class="page-item" [class.disabled]="currentPage === 1">
+                <a class="page-link" (click)="goToPage(currentPage - 1)">‹ Précédent</a>
+              </li>
+              <li class="page-item" *ngFor="let p of pages" [class.active]="p === currentPage">
+                <a class="page-link" (click)="goToPage(p)">{{ p }}</a>
+              </li>
+              <li class="page-item" [class.disabled]="currentPage === totalPages">
+                <a class="page-link" (click)="goToPage(currentPage + 1)">Suivant ›</a>
+              </li>
+            </ul>
+          </nav>
+        </div>
+
       </div>
-
     </div>
-
   </div>
 </div>
