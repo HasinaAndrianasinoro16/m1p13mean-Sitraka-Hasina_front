@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import {CommandeService} from "../../services/commande/commande.service";
+import { CommandeService } from '../../services/commande/commande.service';
 
 @Component({
   selector: 'app-commandes',
@@ -8,48 +8,53 @@ import {CommandeService} from "../../services/commande/commande.service";
 })
 export class CommandesComponent implements OnInit {
 
-  commandes: any = null;
+  // ✅ Initialisé à [] — jamais null
+  commandes: any[] = [];
 
-  //erreur
   loading: boolean = false;
-  error: string = '';
+  error:   string  = '';
+  successMessage: string = '';
 
-  //pagination
-  currentPage: number = 1;
-  limit: number = 5;
-  totalPages: number = 0;
-  pages: number[] = [];
+  // Confirmation annulation
+  confirmAnnulId: string | null = null;
 
-  constructor(private commandeService: CommandeService) { }
+  // Pagination
+  currentPage: number   = 1;
+  limit:       number   = 5;
+  totalPages:  number   = 0;
+  pages:       number[] = [];
+
+  constructor(private commandeService: CommandeService) {}
 
   ngOnInit(): void {
-    this.loadCommande(this.currentPage)
+    this.loadCommande(this.currentPage);
   }
 
   loadCommande(page: number): void {
     this.loading = true;
-    this.error = '';
+    this.error   = '';
+
     this.commandeService.getListeCommandes(page, this.limit).subscribe({
-      next: (res: any) =>{
-        if(res.success){
-          this.commandes = res.data.commandes;
+      next: (res: any) => {
+        this.loading = false;
+        if (res.success && res.data) {
+          // ✅ Filtre les nulls
+          this.commandes = (Array.isArray(res.data.commandes)
+            ? res.data.commandes : [])
+            .filter((c: any) => c != null);
 
-          const pagination =res.data.pagination;
-          this.currentPage = pagination.page;
-          this.totalPages =pagination.totalPages;
-
-          this.pages = Array.from(
-            {length: this.totalPages},
-            (_, i )=> i+1
-          );
+          const p        = res.data.pagination;
+          this.currentPage = p.page;
+          this.totalPages  = p.totalPages;
+          this.pages       = Array.from({ length: this.totalPages }, (_, i) => i + 1);
         }
       },
       error: (err) => {
-        console.error(err);
-        this.error = "Erreur lors de la récupération des commandes.";
         this.loading = false;
+        console.error(err);
+        this.error = 'Erreur lors de la récupération des commandes.';
       }
-    })
+    });
   }
 
   goToPage(page: number): void {
@@ -58,55 +63,75 @@ export class CommandesComponent implements OnInit {
     }
   }
 
-  getStatutBadgeClass(statut: string): string {
-    const classes: { [key: string]: string } = {
-      'en_attente': 'bg-warning text-dark',
-      'confirmee': 'bg-info text-white',
-      'en_preparation': 'bg-primary',
-      'en_livraison': 'bg-secondary',
-      'livree': 'bg-success',
-      'annulee': 'bg-danger'
-    };
-    return classes[statut] || 'bg-secondary';
+  // ── Annulation avec confirmation inline ──
+  demanderAnnulation(id: string): void {
+    this.confirmAnnulId = id;
   }
 
-  getStatutTexte(statut: string): string {
-    const textes: { [key: string]: string } = {
-      'en_attente': 'En attente',
-      'confirmee': 'Confirmée',
-      'en_preparation': 'En préparation',
-      'en_livraison': 'En livraison',
-      'livree': 'Livrée',
-      'annulee': 'Annulée'
-    };
-    return textes[statut] || statut;
+  annulerDemande(): void {
+    this.confirmAnnulId = null;
   }
 
-  getStatutIcon(statut: string): string {
-    const icons: { [key: string]: string } = {
-      'en_attente': 'nc-time-alarm',
-      'confirmee': 'nc-check-2',
-      'en_preparation': 'nc-box',
-      'en_livraison': 'nc-delivery-fast',
-      'livree': 'nc-check-2',
-      'annulee': 'nc-simple-remove'
-    };
-    return icons[statut] || 'nc-bullet-list-67';
-  }
+  confirmerAnnulation(id: string): void {
+    this.confirmAnnulId = null;
 
-  clickAnnulerCommande(id:string): void {
     this.commandeService.annulerCommande(id).subscribe({
-      next: (res: any) =>{
-        if(res.success){
-          alert('commande annulé');
-          this.loadCommande(this.currentPage);
+      next: (res: any) => {
+        if (res.success) {
+          // ✅ Mise à jour locale — pas de rechargement
+          const idx = this.commandes.findIndex((c: any) => c._id === id);
+          if (idx !== -1) {
+            this.commandes[idx] = { ...this.commandes[idx], statut: 'annulee' };
+          }
+          this.showSuccess('Commande annulée avec succès.');
         }
       },
       error: (err) => {
         console.error(err);
+        this.error = err?.error?.message || 'Erreur lors de l\'annulation.';
       }
-    })
+    });
   }
 
+  // ── Helpers statut ──
+  getStatutBadgeClass(statut: string): string {
+    const m: { [k: string]: string } = {
+      'en_attente':    'badge-attente',
+      'confirmee':     'badge-confirmee',
+      'en_preparation':'badge-en-cours',
+      'en_livraison':  'badge-en-cours',
+      'livree':        'badge-livree',
+      'annulee':       'badge-annulee'
+    };
+    return m[statut] || 'badge-attente';
+  }
 
+  getStatutTexte(statut: string): string {
+    const m: { [k: string]: string } = {
+      'en_attente':    'En attente',
+      'confirmee':     'Confirmée',
+      'en_preparation':'En préparation',
+      'en_livraison':  'En livraison',
+      'livree':        'Livrée',
+      'annulee':       'Annulée'
+    };
+    return m[statut] || statut;
+  }
+
+  getStatutIcon(statut: string): string {
+    const m: { [k: string]: string } = {
+      'en_attente':    'nc-watch-time',
+      'confirmee':     'nc-check-2',
+      'en_preparation':'nc-box',
+      'en_livraison':  'nc-delivery-fast',
+      'livree':        'nc-check-2',
+      'annulee':       'nc-simple-remove'
+    };
+    return m[statut] || 'nc-bullet-list-67';
+  }
+
+  showSuccess(msg: string): void {
+    this.successMessage = msg;
+    setTimeout(() => this.successMessage = '', 3500);
+  }
 }

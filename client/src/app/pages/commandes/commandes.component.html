@@ -1,93 +1,160 @@
-<div class="container-fluid mt-4">
-  <!-- LISTE DES COMMANDES -->
-  <div class="row">
-    <div class="col-md-12">
-      <div class="card">
-        <div class="card-body p-0">
+<div class="row">
+  <div class="col-md-12">
 
-          <!-- TABLE -->
-          <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0">
-              <thead class="table-light">
-              <tr>
-                <th>N° Commande</th>
-                <th>Date</th>
-                <th>Articles</th>
-                <th>Total</th>
-                <th>Statut</th>
-                <th class="text-end">Actions</th>
-              </tr>
-              </thead>
+    <!-- SUCCESS -->
+    <div *ngIf="successMessage" class="cl-alert cl-alert-success">
+      <i class="nc-icon nc-check-2"></i>
+      {{ successMessage }}
+    </div>
 
-              <tbody>
+    <!-- ERROR -->
+    <div *ngIf="error" class="cl-alert cl-alert-error">
+      <i class="nc-icon nc-alert-circle-i"></i>
+      {{ error }}
+      <button (click)="error = ''">×</button>
+    </div>
 
-              <!-- Exemple de commande 1 -->
-              <tr *ngFor="let commande of commandes">
+    <div class="card cl-card">
+
+      <!-- HEADER -->
+      <div class="card-header cl-header">
+        <div class="cl-header-left">
+          <div class="cl-header-icon">
+            <i class="nc-icon nc-bag-16"></i>
+          </div>
+          <div>
+            <h5 class="card-title">Mes Commandes</h5>
+            <p class="card-category">Historique et suivi de vos commandes</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- BODY -->
+      <div class="card-body p-0">
+
+        <!-- LOADING -->
+        <div *ngIf="loading" class="cl-loading">
+          <div class="cl-spinner"></div>
+          <p>Chargement...</p>
+        </div>
+
+        <!-- VIDE -->
+        <div *ngIf="!loading && commandes.length === 0" class="cl-empty">
+          <div class="cl-empty-icon">
+            <i class="nc-icon nc-bag-16"></i>
+          </div>
+          <p class="cl-empty-title">Aucune commande</p>
+          <p class="cl-empty-sub">Vous n'avez pas encore passé de commande</p>
+        </div>
+
+        <!-- TABLE -->
+        <div class="table-responsive" *ngIf="!loading && commandes.length > 0">
+          <table class="table table-hover align-middle cl-table">
+            <thead>
+            <tr>
+              <th>N° Commande</th>
+              <th>Date</th>
+              <th>Articles</th>
+              <th>Total</th>
+              <th>Statut</th>
+              <th class="text-end">Action</th>
+            </tr>
+            </thead>
+            <tbody>
+            <ng-container *ngFor="let c of commandes">
+              <tr class="cl-row" *ngIf="c">
+
+                <!-- Numéro -->
                 <td>
-                  <a class="link-warning"
+                  <a class="cl-numero"
                      [routerLink]="['/detail-commande']"
-                     [queryParams]="{id: commande._id}">
-                    #{{ commande.numero }}
+                     [queryParams]="{id: c?._id}">
+                    <i class="nc-icon nc-tag-content"></i>
+                    #{{ c?.numero }}
                   </a>
                 </td>
+
+                <!-- Date -->
                 <td>
-                  <small class="text-muted">{{ commande.createdAt | date:'d MMM y à HH:mm' }}</small>
+                  <span class="cl-date">{{ c?.createdAt | date:'d MMM y' }}</span>
+                  <span class="cl-heure">{{ c?.createdAt | date:'HH:mm' }}</span>
                 </td>
+
+                <!-- Articles -->
                 <td>
-                  {{ commande.itemsCount }} article(s)
+                  <span class="cl-articles">{{ c?.itemsCount }} article(s)</span>
                 </td>
+
+                <!-- Total -->
                 <td>
-                  <strong class="text-success">{{ commande.total | number }} Ar</strong>
+                  <span class="cl-total">{{ c?.total | number }}</span>
+                  <span class="cl-devise">Ar</span>
                 </td>
+
+                <!-- Statut -->
                 <td>
-                  <span class="badge" [ngClass]="getStatutBadgeClass(commande.statut)">
-                    <i class="nc-icon" [ngClass]="getStatutIcon(commande.statut)"></i>
-                    {{ getStatutTexte(commande.statut) }}
-                  </span>
+                    <span class="cl-statut-badge" [ngClass]="getStatutBadgeClass(c?.statut)">
+                      <i class="nc-icon" [ngClass]="getStatutIcon(c?.statut)"></i>
+                      {{ getStatutTexte(c?.statut) }}
+                    </span>
                 </td>
-                <td class="text-end"  >
-                  <button
-                    *ngIf="getStatutTexte(commande.statut) === 'En attente'"
-                    class="btn btn-sm btn-outline-danger"
-                    (click)="clickAnnulerCommande(commande._id)"
-                    [disabled]="commande.statut === 'livree' || commande.statut === 'annulee'">
+
+                <!-- Action -->
+                <td class="text-end">
+
+                  <!-- Bouton annuler (si en_attente) -->
+                  <button *ngIf="c?.statut === 'en_attente' && confirmAnnulId !== c?._id"
+                          class="cl-btn-annuler"
+                          (click)="demanderAnnulation(c?._id)">
                     <i class="nc-icon nc-simple-remove"></i>
                     Annuler
                   </button>
+
+                  <!-- Confirmation inline -->
+                  <div *ngIf="confirmAnnulId === c?._id" class="cl-confirm-wrap">
+                    <span class="cl-confirm-text">Confirmer ?</span>
+                    <button class="cl-confirm-oui" (click)="confirmerAnnulation(c?._id)">
+                      Oui
+                    </button>
+                    <button class="cl-confirm-non" (click)="annulerDemande()">
+                      Non
+                    </button>
+                  </div>
+
+                  <!-- Lien voir détail (autres statuts) -->
+                  <a *ngIf="c?.statut !== 'en_attente'"
+                     class="cl-btn-voir"
+                     [routerLink]="['/detail-commande']"
+                     [queryParams]="{id: c?._id}">
+                    Voir →
+                  </a>
+
                 </td>
+
               </tr>
+            </ng-container>
+            </tbody>
+          </table>
+        </div>
 
-              </tbody>
-            </table>
-          </div>
-
-          <!-- PAGINATION -->
-          <nav class="p-3" *ngIf="totalPages > 1" >
+        <!-- PAGINATION -->
+        <div class="cl-pagination" *ngIf="totalPages > 1">
+          <nav>
             <ul class="pagination justify-content-end mb-0">
-              <li class="page-item disabled" [class.disabled]="currentPage === 1" >
-                <a class="page-link" (click)="goToPage(currentPage -1)" >
-                  <i class="nc-icon nc-minimal-left"></i>
-                  Précédent
-                </a>
+              <li class="page-item" [class.disabled]="currentPage === 1">
+                <a class="page-link" (click)="goToPage(currentPage - 1)">‹ Précédent</a>
               </li>
-              <li class="page-item active"
-                  *ngFor="let p of pages"
-                  [class.active]="p === currentPage"
-              >
-                <a class="page-link" (click)="goToPage(p)" >{{ p }}</a>
+              <li class="page-item" *ngFor="let p of pages" [class.active]="p === currentPage">
+                <a class="page-link" (click)="goToPage(p)">{{ p }}</a>
               </li>
               <li class="page-item" [class.disabled]="currentPage === totalPages">
-                <a class="page-link"  (click)="goToPage(currentPage + 1)">
-                  Suivant
-                  <i class="nc-icon nc-minimal-right"></i>
-                </a>
+                <a class="page-link" (click)="goToPage(currentPage + 1)">Suivant ›</a>
               </li>
             </ul>
           </nav>
-
         </div>
+
       </div>
     </div>
   </div>
-
 </div>
