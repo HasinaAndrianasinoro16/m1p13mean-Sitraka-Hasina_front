@@ -93,7 +93,7 @@ export class LoginComponent implements OnInit {
           });
         },
         error: (err) => {
-          alert('Erreur de connexion: '+err.message);
+          // alert('Erreur de connexion: '+err.message);
           console.error('Erreur de connexion:', err);
 
           // Gestion des différents types d'erreurs
