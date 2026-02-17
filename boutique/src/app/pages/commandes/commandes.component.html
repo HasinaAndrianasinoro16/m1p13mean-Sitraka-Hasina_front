@@ -1,166 +1,159 @@
-<div class="container-fluid mt-4">
+<div class="row">
+  <div class="col-md-12">
 
-  <!-- HEADER -->
-  <div class="row mb-4">
-    <div class="col-md-12">
-      <div class="card">
-        <div class="card-header d-flex justify-content-between align-items-center">
-          <div>
-            <h4 class="mb-0">
-              <i class="nc-icon nc-bag-16"></i>
-              Mes Commandes
-            </h4>
+    <!-- ERROR -->
+    <div *ngIf="error && !loading" class="cmnd-alert">
+      <i class="nc-icon nc-alert-circle-i"></i>
+      {{ error }}
+      <button (click)="error = ''">×</button>
+    </div>
+
+    <div class="card cmnd-card">
+
+      <!-- HEADER -->
+      <div class="card-header cmnd-header">
+        <div class="cmnd-header-left">
+          <div class="cmnd-header-icon">
+            <i class="nc-icon nc-bag-16"></i>
           </div>
-          <button class="btn btn-primary btn-sm" (click)="refresh()">
-            <i class="nc-icon nc-refresh-69"></i>
-            Actualiser
-          </button>
+          <div>
+            <h5 class="card-title">Mes Commandes</h5>
+            <p class="card-category">Gérez et suivez toutes vos commandes</p>
+          </div>
         </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- LOADING -->
-  <div *ngIf="loading" class="row">
-    <div class="col-12 text-center py-5">
-      <div class="spinner-border text-primary" role="status">
-        <span class="sr-only">Chargement...</span>
-      </div>
-      <p class="mt-3 text-muted">Chargement des commandes...</p>
-    </div>
-  </div>
-
-  <!-- ERROR -->
-  <div *ngIf="error && !loading" class="row">
-    <div class="col-12">
-      <div class="alert alert-danger alert-dismissible fade show" role="alert">
-        <i class="nc-icon nc-simple-remove"></i>
-        {{ error }}
-        <button type="button" class="close" (click)="error = ''" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
+        <button class="cmnd-btn-refresh" (click)="refresh()">
+          <i class="nc-icon nc-refresh-69"></i>
+          Actualiser
         </button>
       </div>
-    </div>
-  </div>
 
-  <!-- LISTE DES COMMANDES -->
-  <div *ngIf="!loading" class="row">
-    <div class="col-md-12">
-      <div class="card">
-        <div class="card-body p-0">
+      <!-- BODY -->
+      <div class="card-body p-0">
 
-          <!-- TABLE -->
-          <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0">
-              <thead class="table-light">
-              <tr>
-                <th>N° Commande</th>
-                <th>Date</th>
-                <th>Client</th>
-                <th>Articles</th>
-                <th>Total</th>
-                <th>Statut</th>
-                <th class="text-end">Actions</th>
-              </tr>
-              </thead>
+        <!-- LOADING -->
+        <div *ngIf="loading" class="cmnd-loading">
+          <div class="cmnd-spinner"></div>
+          <p>Chargement des commandes...</p>
+        </div>
 
-              <tbody>
+        <!-- VIDE -->
+        <div *ngIf="!loading && commandes.length === 0" class="cmnd-empty">
+          <div class="cmnd-empty-icon">
+            <i class="nc-icon nc-bag-16"></i>
+          </div>
+          <p class="cmnd-empty-title">Aucune commande</p>
+          <p class="cmnd-empty-sub">Vous n'avez pas encore reçu de commandes</p>
+        </div>
 
-              <!-- Aucune commande -->
-              <tr *ngIf="commandes.length === 0">
-                <td colspan="7" class="text-center text-muted py-5">
-                  <i class="nc-icon nc-bag-16" style="font-size: 48px; opacity: 0.3;"></i>
-                  <br><br>
-                  <strong>Aucune commande trouvée</strong>
-                  <br>
-                  <small>Vous n'avez pas encore de commandes</small>
-                </td>
-              </tr>
+        <!-- TABLE -->
+        <div class="table-responsive" *ngIf="!loading && commandes.length > 0">
+          <table class="table table-hover align-middle cmnd-table">
+            <thead>
+            <tr>
+              <th>N° Commande</th>
+              <th>Date</th>
+              <th>Client</th>
+              <th>Articles</th>
+              <th>Total</th>
+              <th>Statut</th>
+              <th class="text-end">Action</th>
+            </tr>
+            </thead>
+            <tbody>
 
-              <!-- Liste des commandes -->
-              <tr *ngFor="let commande of commandes">
+            <!-- ✅ ngIf="c" filtre les éléments null du tableau -->
+            <ng-container *ngFor="let c of commandes">
+              <tr class="cmnd-row" *ngIf="c">
+
+                <!-- Numéro -->
                 <td>
-                  <a
-                    class="text-primary"
-                    [routerLink]="['/detail-commande']"
-                    [queryParams]="{id: commande._id}">
-                    #{{ commande.numero }}
+                  <a class="cmnd-numero"
+                     [routerLink]="['/detail-commande']"
+                     [queryParams]="{id: c?._id}">
+                    <i class="nc-icon nc-tag-content"></i>
+                    #{{ c?.numero }}
                   </a>
                 </td>
+
+                <!-- Date — ✅ suppression du 4e arg 'fr' qui cause NG02100 -->
                 <td>
-                  <small class="text-muted">
-                    {{ commande.createdAt | date:'d MMM y, HH:mm' }}
-                  </small>
+                  <span class="cmnd-date">{{ c?.createdAt | date:'d MMM y' }}</span>
+                  <span class="cmnd-heure">{{ c?.createdAt | date:'HH:mm' }}</span>
                 </td>
+
+                <!-- Client -->
                 <td>
-                  <div>
-                    <strong>{{ commande.client.nomComplet }}</strong>
-                    <br>
-                    <small class="text-muted">{{ commande.client.email }}</small>
+                  <div class="cmnd-client">
+                    <div class="cmnd-avatar" [style.background]="getAvatarColor(c?.client)">
+                      {{ getInitiales(c?.client) }}
+                    </div>
+                    <div>
+                      <span class="cmnd-client-nom">{{ c?.client?.nomComplet }}</span>
+                      <span class="cmnd-client-email">{{ c?.client?.email }}</span>
+                    </div>
                   </div>
                 </td>
+
+                <!-- Articles -->
                 <td>
-                  {{ commande.itemsCount }} article(s)
+                  <span class="cmnd-articles">{{ c?.itemsCount }} article(s)</span>
                 </td>
+
+                <!-- Total -->
                 <td>
-                  <strong class="text-success">{{ commande.total | number }} Ar</strong>
+                  <span class="cmnd-total">{{ c?.total | number }}</span>
+                  <span class="cmnd-devise">Ar</span>
                 </td>
+
+                <!-- Statut -->
                 <td>
-                  <span class="badge" [ngClass]="getStatutBadgeClass(commande.statut)">
-                    <i class="nc-icon" [ngClass]="getStatutIcon(commande.statut)"></i>
-                    {{ getStatutTexte(commande.statut) }}
-                  </span>
+                    <span class="cmnd-statut-badge" [ngClass]="getStatutBadgeClass(c?.statut)">
+                      <i class="nc-icon" [ngClass]="getStatutIcon(c?.statut)"></i>
+                      {{ getStatutTexte(c?.statut) }}
+                    </span>
                 </td>
+
+                <!-- Action -->
                 <td class="text-end">
-                  <div class="d-flex flex-column align-items-end gap-2" *ngIf="commande.statut === 'en_attente'" >
-
-                    <button class="btn btn-sm btn-outline-success" (click)="clickConfirmerCommande(commande._id)" >
-                      <i class="nc-icon nc-check-2"></i>
-                      Valider
-                    </button>
-<!--                    <button class="btn btn-sm btn-outline-danger mt-3">-->
-<!--                      <i class="nc-icon nc-simple-remove"></i>-->
-<!--                      Annuler-->
-<!--                    </button>-->
-
-                  </div>
+                  <button *ngIf="c?.statut === 'en_attente'"
+                          class="cmnd-btn-valider"
+                          (click)="clickConfirmerCommande(c?._id)">
+                    <i class="nc-icon nc-check-2"></i>
+                    Valider
+                  </button>
+                  <a *ngIf="c?.statut !== 'en_attente'"
+                     class="cmnd-btn-voir"
+                     [routerLink]="['/detail-commande']"
+                     [queryParams]="{id: c?._id}">
+                    Voir →
+                  </a>
                 </td>
 
               </tr>
+            </ng-container>
 
-              </tbody>
-            </table>
-          </div>
+            </tbody>
+          </table>
+        </div>
 
-          <!-- PAGINATION -->
-          <nav *ngIf="totalPages > 1" class="p-3">
+        <!-- PAGINATION -->
+        <div class="cmnd-pagination" *ngIf="totalPages > 1">
+          <nav>
             <ul class="pagination justify-content-end mb-0">
               <li class="page-item" [class.disabled]="currentPage === 1">
-                <a class="page-link" (click)="goToPage(currentPage - 1)" style="cursor: pointer;">
-                  <i class="nc-icon nc-minimal-left"></i>
-                  Précédent
-                </a>
+                <a class="page-link" (click)="goToPage(currentPage - 1)">‹ Précédent</a>
               </li>
-              <li
-                class="page-item"
-                *ngFor="let p of pages"
-                [class.active]="currentPage === p">
-                <a class="page-link" (click)="goToPage(p)" style="cursor: pointer;">
-                  {{ p }}
-                </a>
+              <li class="page-item" *ngFor="let p of pages" [class.active]="currentPage === p">
+                <a class="page-link" (click)="goToPage(p)">{{ p }}</a>
               </li>
               <li class="page-item" [class.disabled]="currentPage === totalPages">
-                <a class="page-link" (click)="goToPage(currentPage + 1)" style="cursor: pointer;">
-                  Suivant
-                  <i class="nc-icon nc-minimal-right"></i>
-                </a>
+                <a class="page-link" (click)="goToPage(currentPage + 1)">Suivant ›</a>
               </li>
             </ul>
           </nav>
-
         </div>
+
       </div>
     </div>
   </div>
-
 </div>
