@@ -1,9 +1,54 @@
 import { Injectable } from '@angular/core';
+import {getAPIUrl} from "../../link/url";
+import {HttpClient, HttpHeaders} from "@angular/common/http";
+import contains from "@popperjs/core/lib/dom-utils/contains";
+import {Observable} from "rxjs";
 
 @Injectable({
   providedIn: 'root'
 })
 export class NotificationService {
 
-  constructor() { }
+  baseUrl = getAPIUrl('notifications');
+
+  constructor(private http: HttpClient) { }
+
+  getListeNotifications(page: number =1, limit: number = 5): Observable<any> {
+    const token = localStorage.getItem('token');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`
+    });
+
+    return this.http.get<any>(`${this.baseUrl}?page=${page}&limit=${limit}`, {headers});
+  }
+
+  getCompteurNonLue(): Observable<any>{
+    const token = localStorage.getItem('token');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`
+    });
+    return this.http.get<any>(`${this.baseUrl}/count`, {headers});
+  }
+
+  toutMarquerLue():Observable<any>{
+    const token = localStorage.getItem('token');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`
+    });
+
+    return this.http.put<any>(`${this.baseUrl}/read-all`,null, {headers});
+
+  }
+
+  supprimerNotification(id: string): Observable<any>{
+    const token = localStorage.getItem('token');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`
+    });
+
+    return this.http.delete<any>(`${this.baseUrl}/${id}`, {headers});
+
+  }
+
+
 }

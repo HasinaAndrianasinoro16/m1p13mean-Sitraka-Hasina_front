@@ -14,12 +14,14 @@ import { AppRoutes } from './app.routing';
 
 import { AdminLayoutComponent } from './layouts/admin-layout/admin-layout.component';
 import {HttpClientModule} from "@angular/common/http";
+import { NotificationsComponent } from './pages/notifications/notifications.component';
 
 
 @NgModule({
   declarations: [
     AppComponent,
     AdminLayoutComponent,
+    NotificationsComponent,
   ],
   imports: [
     BrowserAnimationsModule,

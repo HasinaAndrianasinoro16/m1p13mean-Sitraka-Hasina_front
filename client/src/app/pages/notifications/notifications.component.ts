@@ -1,86 +1,104 @@
-import { Component } from '@angular/core';
-import { ToastrService } from "ngx-toastr";
-
+import { Component, OnInit } from '@angular/core';
+import { NotificationService } from '../../services/notification/notification.service';
 
 @Component({
-    selector: 'notifications-cmp',
-    moduleId: module.id,
-    templateUrl: 'notifications.component.html'
+  selector: 'app-notifications',
+  templateUrl: './notifications.component.html',
+  styleUrls: ['./notifications.component.css']
 })
+export class NotificationsComponent implements OnInit {
 
-export class NotificationsComponent{
-  constructor(private toastr: ToastrService) {}
-  showNotification(from, align) {
-    const color = Math.floor(Math.random() * 5 + 1);
+  loading: boolean = false;
+  error: string    = '';
 
-    switch (color) {
-      case 1:
-        this.toastr.info(
-        '<span data-notify="icon" class="nc-icon nc-bell-55"></span><span data-notify="message">Welcome to <b>Paper Dashboard Angular</b> - a beautiful bootstrap dashboard for every web developer.</span>',
-          "",
-          {
-            timeOut: 4000,
-            closeButton: true,
-            enableHtml: true,
-            toastClass: "alert alert-info alert-with-icon",
-            positionClass: "toast-" + from + "-" + align
-          }
-        );
-        break;
-      case 2:
-        this.toastr.success(
-          '<span data-notify="icon" class="nc-icon nc-bell-55"></span><span data-notify="message">Welcome to <b>Paper Dashboard Angular</b> - a beautiful bootstrap dashboard for every web developer.</span>',
-          "",
-          {
-            timeOut: 4000,
-            closeButton: true,
-            enableHtml: true,
-            toastClass: "alert alert-success alert-with-icon",
-            positionClass: "toast-" + from + "-" + align
-          }
-        );
-        break;
-      case 3:
-        this.toastr.warning(
-        '<span data-notify="icon" class="nc-icon nc-bell-55"></span><span data-notify="message">Welcome to <b>Paper Dashboard Angular</b> - a beautiful bootstrap dashboard for every web developer.</span>',
-          "",
-          {
-            timeOut: 4000,
-            closeButton: true,
-            enableHtml: true,
-            toastClass: "alert alert-warning alert-with-icon",
-            positionClass: "toast-" + from + "-" + align
-          }
-        );
-        break;
-      case 4:
-        this.toastr.error(
-        '<span data-notify="icon" class="nc-icon nc-bell-55"></span><span data-notify="message">Welcome to <b>Paper Dashboard Angular</b> - a beautiful bootstrap dashboard for every web developer.</span>',
-          "",
-          {
-            timeOut: 4000,
-            enableHtml: true,
-            closeButton: true,
-            toastClass: "alert alert-danger alert-with-icon",
-            positionClass: "toast-" + from + "-" + align
-          }
-        );
-        break;
-      case 5:
-        this.toastr.show(
-        '<span data-notify="icon" class="nc-icon nc-bell-55"></span><span data-notify="message">Welcome to <b>Paper Dashboard Angular</b> - a beautiful bootstrap dashboard for every web developer.</span>',
-          "",
-          {
-            timeOut: 4000,
-            closeButton: true,
-            enableHtml: true,
-            toastClass: "alert alert-primary alert-with-icon",
-            positionClass: "toast-" + from + "-" + align
-          }
-        );
-        break;
-      default:
-        break;
+  notifications: any[] = [];
+
+  currentPage: number  = 1;
+  limit: number        = 5;
+  totalPages: number   = 0;
+  pages: number[]      = [];
+
+  constructor(private notificationService: NotificationService) {}
+
+  ngOnInit(): void {
+    this.loadNotification(this.currentPage);
+  }
+
+  loadNotification(page: number): void {
+    this.loading = true;
+    this.error   = '';
+
+    this.notificationService.getListeNotifications(page, this.limit).subscribe({
+      next: (res: any) => {
+        this.loading = false;
+        if (res.success && res.data) {
+          // ✅ Guard Array.isArray pour éviter null
+          this.notifications = Array.isArray(res.data.notifications)
+            ? res.data.notifications : [];
+
+          const pagination   = res.data.pagination;
+          this.currentPage   = pagination.page;
+          this.totalPages    = pagination.totalPages;
+          this.pages         = Array.from({ length: this.totalPages }, (_, i) => i + 1);
+        }
+      },
+      error: (err) => {
+        console.error(err);
+        this.loading = false;
+        this.error   = 'Erreur lors de la récupération des notifications.';
+      }
+    });
+  }
+
+  goToPage(page: number): void {
+    if (page >= 1 && page <= this.totalPages && page !== this.currentPage) {
+      this.loadNotification(page);
     }
+  }
+
+  toutMarquerLue(): void {
+    this.notificationService.toutMarquerLue().subscribe({
+      next: (res: any) => {
+        if (res.success) {
+          this.notifications = this.notifications.map(n => ({ ...n, lu: true }));
+          window.location.reload();
+        }
+      },
+      error: (err) => console.error(err)
+    });
+  }
+
+  get nonLuesCount(): number {
+    return this.notifications.filter(n => !n.lu).length;
+  }
+
+  getIconClass(n: any): string {
+    const type = (n.type || '').toUpperCase();
+    if (type.includes('CONFIRM') || type.includes('LIVR') || type.includes('SUCCESS'))
+      return 'icon-success';
+    if (type.includes('ANNUL') || type.includes('REFUS') || type.includes('ECHOU'))
+      return 'icon-danger';
+    if (type.includes('ATTENTE') || type.includes('RETARD') || type.includes('PENDING'))
+      return 'icon-warning';
+    if (type.includes('MESSAGE') || type.includes('INFO'))
+      return 'icon-info';
+    return 'icon-default';
+  }
+
+  getIcon(n: any): string {
+    const type = (n.type || '').toUpperCase();
+    if (type.includes('CONFIRM') || type.includes('LIVR')) return 'nc-check-2';
+    if (type.includes('ANNUL')   || type.includes('REFUS')) return 'nc-simple-remove';
+    if (type.includes('ATTENTE') || type.includes('RETARD'))return 'nc-watch-time';
+    if (type.includes('MESSAGE'))                           return 'nc-chat-33';
+    return 'nc-bell-55';
+  }
+
+  formatDate(dateStr: string): string {
+    if (!dateStr) return '';
+    return new Date(dateStr).toLocaleDateString('fr-FR', {
+      day: 'numeric', month: 'short', year: 'numeric',
+      hour: '2-digit', minute: '2-digit'
+    });
   }
 }
