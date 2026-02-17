@@ -24,4 +24,25 @@ export class DashboardService {
       { headers }
     );
   }
+
+  getGraphVentes(): Observable<any>{
+    const token = localStorage.getItem('token');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`
+    });
+
+    return this.http.get<any>(`${this.baseUrl}/dashboard/graphique-ventes`,{headers});
+  }
+
+  getGraphperiodique(periode: String): Observable<any>{
+    const token = localStorage.getItem('token');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`
+    });
+
+    return this.http.get<any>(`${this.baseUrl}/dashboard/graphique-ventes?periode=${periode}`, {headers});
+
+  }
+
+
 }

@@ -14,6 +14,7 @@ export class DashboardComponent implements OnInit{
   produit: number = 0;
   stock: number = 0;
   commande: number = 0;
+  valeurTotal: number = 0;
 
   loading: boolean = true;
   error: string = '';
@@ -31,7 +32,8 @@ export class DashboardComponent implements OnInit{
             const stat = response.data.stats;
             this.produit = stat.produits.total;
             this.stock = stat.stock.quantiteTotale;
-            this.commande = response.data.commandes.enAttente;
+            this.commande = stat.commandes.enCours;
+            this.valeurTotal = stat.stock.valeurTotale;
           }
           this.loading = false;
         },

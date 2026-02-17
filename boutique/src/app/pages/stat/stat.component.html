@@ -1,54 +1,210 @@
 <div class="row">
   <div class="col-md-12">
-    <div class="card ">
-      <div class="card-header ">
-        <h5 class="card-title">Users Behavior</h5>
-        <p class="card-category">24 Hours performance</p>
-      </div>
-      <div class="card-body ">
-        <canvas id=chartHours width="400" height="100"></canvas>
-      </div>
-    </div>
-  </div>
-</div>
-<div class="row">
-  <div class="col-md-4">
-    <div class="card ">
-      <div class="card-header ">
-        <h5 class="card-title">Email Statistics</h5>
-        <p class="card-category">Last Campaign Performance</p>
-      </div>
-      <div class="card-body ">
-        <canvas id="chartEmail"></canvas>
-      </div>
-      <div class="card-footer ">
-        <div class="legend">
-          <i class="fa fa-circle text-primary"></i> Opened
-          <i class="fa fa-circle text-warning"></i> Read
-          <i class="fa fa-circle text-danger"></i> Deleted
-          <i class="fa fa-circle text-gray"></i> Unopened
-        </div>
-        <hr>
-      </div>
-    </div>
-  </div>
-  <div class="col-md-8">
-    <div class="card card-chart">
-      <div class="card-header">
-        <h5 class="card-title">NASDAQ: AAPL</h5>
-        <p class="card-category">Line Chart with Points</p>
-      </div>
-      <div class="card-body">
-        <canvas id="speedChart" width="400" height="100"></canvas>
-      </div>
-      <div class="card-footer">
-        <div class="chart-legend">
-          <i class="fa fa-circle text-info"></i> Tesla Model S
-          <i class="fa fa-circle text-warning"></i> BMW 5 Series
-        </div>
-        <hr/>
 
+    <div *ngIf="error" class="alert alert-danger alert-dismissible mb-3">
+      <i class="nc-icon nc-alert-circle-i mr-2"></i>{{ error }}
+      <button type="button" class="close" (click)="error=''"><span>&times;</span></button>
+    </div>
+
+    <!-- ══════════════════════════════
+         HEADER + SÉLECTEUR PÉRIODE
+    ══════════════════════════════ -->
+    <div class="stat-header">
+      <div>
+        <h4 class="stat-title">Tableau de bord</h4>
+        <p class="stat-subtitle">Suivi des ventes et performances</p>
+      </div>
+
+      <!-- Sélecteur de période -->
+      <div class="periode-selector">
+        <button
+          *ngFor="let p of periodes"
+          class="periode-btn"
+          [class.periode-btn-active]="periodeActive === p.value"
+          (click)="changerPeriode(p.value)"
+        >
+          {{ p.label }}
+        </button>
       </div>
     </div>
+
+    <!-- ══════════════════════════════
+         MINI KPI CARDS
+    ══════════════════════════════ -->
+    <div class="kpi-grid">
+
+      <div class="kpi-card">
+        <div class="kpi-icon kpi-icon-orange">
+          <i class="nc-icon nc-money-coins"></i>
+        </div>
+        <div class="kpi-info">
+          <span class="kpi-value">
+            <span *ngIf="loading" class="kpi-loading">—</span>
+            <span *ngIf="!loading">{{ formatNumber(getTotalCA()) }} Ar</span>
+          </span>
+          <span class="kpi-label">Chiffre d'affaires</span>
+        </div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-icon kpi-icon-blue">
+          <i class="nc-icon nc-cart-simple"></i>
+        </div>
+        <div class="kpi-info">
+          <span class="kpi-value">
+            <span *ngIf="loading">—</span>
+            <span *ngIf="!loading">{{ getTotalCommandes() }}</span>
+          </span>
+          <span class="kpi-label">Commandes</span>
+        </div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-icon kpi-icon-green">
+          <i class="nc-icon nc-delivery-fast"></i>
+        </div>
+        <div class="kpi-info">
+          <span class="kpi-value">
+            <span *ngIf="loading">—</span>
+            <span *ngIf="!loading">{{ getTotalLivrees() }}</span>
+          </span>
+          <span class="kpi-label">Livrées</span>
+        </div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-icon kpi-icon-red">
+          <i class="nc-icon nc-simple-remove"></i>
+        </div>
+        <div class="kpi-info">
+          <span class="kpi-value">
+            <span *ngIf="loading">—</span>
+            <span *ngIf="!loading">{{ getTotalAnnulees() }}</span>
+          </span>
+          <span class="kpi-label">Annulées</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ══════════════════════════════
+         GRAPHIQUE ÉVOLUTION VENTES
+    ══════════════════════════════ -->
+    <div class="card stat-card mb-4">
+      <div class="card-header stat-card-header">
+        <div>
+          <h5 class="card-title">Évolution des ventes</h5>
+          <p class="card-category">CA, commandes et livraisons sur la période</p>
+        </div>
+
+        <!-- Légende -->
+        <div class="chart-legend">
+          <span class="legend-item">
+            <span class="legend-dot" style="background:#b84a14"></span> CA
+          </span>
+          <span class="legend-item">
+            <span class="legend-dot" style="background:#1a4b8c"></span> Commandes
+          </span>
+          <span class="legend-item">
+            <span class="legend-dot" style="background:#2d7a4f; border: 2px dashed #2d7a4f; background: transparent;"></span> Livrées
+          </span>
+        </div>
+      </div>
+
+      <div class="card-body stat-card-body">
+        <!-- Spinner -->
+        <div *ngIf="loading" class="chart-loading">
+          <div class="spinner-border text-primary"></div>
+          <p>Chargement...</p>
+        </div>
+
+        <!-- Aucune donnée -->
+        <div *ngIf="!loading && ventesData.length === 0" class="chart-empty">
+          <i class="nc-icon nc-chart-bar-32"></i>
+          <p>Aucune donnée pour cette période</p>
+        </div>
+
+        <canvas id="chartVentes" height="110" *ngIf="!loading && ventesData.length > 0"></canvas>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════
+         TOP PRODUITS
+    ══════════════════════════════ -->
+    <div class="row">
+
+      <!-- Graphique barres horizontales -->
+      <div class="col-md-7">
+        <div class="card stat-card">
+          <div class="card-header stat-card-header">
+            <div>
+              <h5 class="card-title">Top produits</h5>
+              <p class="card-category">CA généré par produit</p>
+            </div>
+          </div>
+          <div class="card-body stat-card-body">
+            <div *ngIf="loading" class="chart-loading">
+              <div class="spinner-border text-primary"></div>
+            </div>
+            <div *ngIf="!loading && topProduits.length === 0" class="chart-empty">
+              <i class="nc-icon nc-bag-16"></i>
+              <p>Aucun produit vendu</p>
+            </div>
+            <canvas id="chartProduits" style="height:220px" *ngIf="!loading && topProduits.length > 0"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tableau top produits -->
+      <div class="col-md-5">
+        <div class="card stat-card">
+          <div class="card-header stat-card-header">
+            <div>
+              <h5 class="card-title">Détail des ventes</h5>
+              <p class="card-category">Classement par CA</p>
+            </div>
+          </div>
+          <div class="card-body p-0">
+
+            <div *ngIf="loading" class="chart-loading">
+              <div class="spinner-border text-primary"></div>
+            </div>
+
+            <div *ngIf="!loading && topProduits.length === 0" class="chart-empty">
+              <i class="nc-icon nc-bag-16"></i>
+              <p>Aucune donnée</p>
+            </div>
+
+            <div class="top-produits-list" *ngIf="!loading && topProduits.length > 0">
+              <div class="top-produit-item" *ngFor="let p of topProduits; let i = index">
+
+                <div class="top-produit-rank" [ngClass]="'rank-' + (i + 1)">
+                  {{ i + 1 }}
+                </div>
+
+                <div class="top-produit-info">
+                  <span class="top-produit-nom">{{ p.nom }}</span>
+                  <div class="top-produit-bar-wrap">
+                    <div class="top-produit-bar"
+                         [style.width.%]="(topProduits?.length > 0 && topProduits[0].caGenere > 0) ? (p.caGenere / topProduits[0].caGenere * 100) : 0"
+                         [ngClass]="'bar-rank-' + (i + 1)">
+                    </div>
+                  </div>
+                </div>
+
+                <div class="top-produit-stats">
+                  <span class="top-produit-ca">{{ formatNumber(p.caGenere) }} Ar</span>
+                  <span class="top-produit-qte">{{ p.quantiteVendue }} vente(s)</span>
+                </div>
+
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+    </div>
+
   </div>
 </div>
