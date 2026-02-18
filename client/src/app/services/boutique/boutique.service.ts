@@ -16,4 +16,8 @@ export class BoutiqueService {
     return this.http.get(`${this.baseUrl}/boutiques?page=${page}&limit=${limit}`);
   }
 
+  getDetailBoutique(id: string): Observable<any>{
+    return this.http.get(`${this.baseUrl}/boutiques/${id}`);
+  }
+
 }

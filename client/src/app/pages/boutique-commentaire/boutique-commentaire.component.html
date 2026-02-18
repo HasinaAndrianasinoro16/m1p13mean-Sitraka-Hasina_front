@@ -1,0 +1,208 @@
+<div class="row">
+  <div class="col-md-12">
+
+    <!-- SUCCESS -->
+    <div *ngIf="successMessage" class="avis-alert avis-alert-success">
+      <i class="nc-icon nc-check-2"></i>
+      {{ successMessage }}
+    </div>
+
+    <!-- ERROR -->
+    <div *ngIf="error" class="avis-alert avis-alert-error">
+      <i class="nc-icon nc-alert-circle-i"></i>
+      {{ error }}
+      <button (click)="error = ''">×</button>
+    </div>
+
+    <div class="card avis-card">
+
+      <!-- HEADER -->
+      <div class="card-header avis-header">
+        <div class="avis-header-left">
+          <div class="avis-header-icon">
+            <i class="nc-icon nc-chat-33"></i>
+          </div>
+          <div>
+            <h5 class="card-title">Avis clients</h5>
+            <p class="card-category">
+              Consultez et gérez les avis de la boutique
+            </p>
+          </div>
+        </div>
+        <button class="avis-btn-add" (click)="ouvrirFormulaire()">
+          <i class="nc-icon nc-simple-add"></i>
+          Laisser un avis
+        </button>
+      </div>
+
+      <!-- BODY -->
+      <div class="card-body">
+
+        <!-- LOADING -->
+        <div *ngIf="loading" class="avis-loading">
+          <div class="avis-spinner"></div>
+          <p>Chargement...</p>
+        </div>
+
+        <!-- STATS CARD -->
+        <div class="avis-stats-card" *ngIf="!loading && stats">
+          <div class="avis-stats-left">
+            <div class="avis-note-large">{{ stats.noteMoyenne }}/5</div>
+            <div class="avis-stars-large">
+              <i *ngFor="let s of getStars(stats.noteMoyenne)"
+                 class="nc-icon nc-favourite-28 star-full"></i>
+              <i *ngFor="let s of getEmptyStars(stats.noteMoyenne)"
+                 class="nc-icon nc-favourite-28 star-empty"></i>
+            </div>
+            <p class="avis-total-text">{{ stats.totalAvis }} avis</p>
+          </div>
+
+          <!-- Répartition barres -->
+          <div class="avis-stats-right">
+            <div class="avis-bar-row" *ngFor="let n of [5,4,3,2,1]">
+              <span class="avis-bar-label">{{ n }} ★</span>
+              <div class="avis-bar-track">
+                <div class="avis-bar-fill"
+                     [style.width.%]="stats.totalAvis > 0 ? (stats.repartition[n] / stats.totalAvis * 100) : 0"
+                     [ngClass]="n >= 4 ? 'bar-high' : n >= 2 ? 'bar-mid' : 'bar-low'">
+                </div>
+              </div>
+              <span class="avis-bar-count">{{ stats.repartition[n] }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- FORMULAIRE AJOUT/MODIFICATION -->
+        <div class="avis-form-wrap" *ngIf="showForm">
+          <div class="avis-form">
+            <div class="avis-form-header">
+              <h6>{{ editMode ? 'Modifier mon avis' : 'Laisser un avis' }}</h6>
+              <button class="avis-form-close" (click)="fermerFormulaire()">×</button>
+            </div>
+
+            <div class="avis-form-body">
+              <div class="avis-form-group">
+                <label class="avis-form-label">Note</label>
+                <div class="avis-note-select">
+                  <button *ngFor="let n of [1,2,3,4,5]"
+                          class="note-btn"
+                          [class.note-btn-active]="noteSelect === n"
+                          (click)="noteSelect = n">
+                    {{ n }} ★
+                  </button>
+                </div>
+              </div>
+
+              <div class="avis-form-group">
+                <label class="avis-form-label">Commentaire</label>
+                <textarea class="avis-form-textarea"
+                          placeholder="Partagez votre expérience..."
+                          [(ngModel)]="commentaireText"
+                          rows="4"></textarea>
+              </div>
+            </div>
+
+            <div class="avis-form-footer">
+              <button class="avis-btn-cancel" (click)="fermerFormulaire()">
+                Annuler
+              </button>
+              <button class="avis-btn-confirm" (click)="envoyerAvis()" [disabled]="loading">
+                <i class="nc-icon nc-check-2"></i>
+                {{ editMode ? 'Modifier' : 'Publier' }}
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- LISTE AVIS -->
+        <div class="avis-list" *ngIf="!loading && avis.length > 0">
+
+          <div class="avis-item" *ngFor="let a of avis">
+
+            <!-- Avatar + Info client -->
+            <div class="avis-client">
+              <div class="avis-avatar" [style.background]="getAvatarColor(a.client)">
+                {{ getInitiales(a.client) }}
+              </div>
+              <div class="avis-client-info">
+                <span class="avis-client-nom">{{ a.client?.nomComplet }}</span>
+                <span class="avis-client-date">{{ formatDate(a.createdAt) }}</span>
+              </div>
+            </div>
+
+            <!-- Note + Étoiles -->
+            <div class="avis-note-row">
+              <span class="avis-note-badge" [ngClass]="getNoteClass(a.note)">
+                {{ a.note }}/5
+              </span>
+              <div class="avis-stars">
+                <i *ngFor="let s of getStars(a.note)"
+                   class="nc-icon nc-favourite-28 star-full"></i>
+                <i *ngFor="let s of getEmptyStars(a.note)"
+                   class="nc-icon nc-favourite-28 star-empty"></i>
+              </div>
+            </div>
+
+            <!-- Commentaire -->
+            <p class="avis-commentaire">{{ a.commentaire }}</p>
+
+            <!-- Réponse boutique -->
+            <div class="avis-reponse" *ngIf="a.reponse?.contenu">
+              <div class="avis-reponse-header">
+                <i class="nc-icon nc-shop"></i>
+                <span>Réponse de la boutique</span>
+                <span class="avis-reponse-date">{{ formatDate(a.reponse.date) }}</span>
+              </div>
+              <p class="avis-reponse-text">{{ a.reponse.contenu }}</p>
+            </div>
+
+            <!-- Actions client -->
+            <div class="avis-actions" *ngIf="myId === a.client.id" >
+              <button class="avis-action-btn" (click)="ouvrirModification(a)">
+                <i class="nc-icon nc-settings-gear-65"></i>
+                Modifier
+              </button>
+              <button class="avis-action-btn avis-action-delete" (click)="supprimerAvis(a._id)">
+                <i class="nc-icon nc-simple-remove"></i>
+                Supprimer
+              </button>
+            </div>
+
+          </div>
+
+        </div>
+
+        <!-- VIDE -->
+        <div *ngIf="!loading && avis.length === 0" class="avis-empty">
+          <div class="avis-empty-icon">
+            <i class="nc-icon nc-chat-33"></i>
+          </div>
+          <p class="avis-empty-title">Aucun avis</p>
+          <p class="avis-empty-sub">Soyez le premier à laisser un avis !</p>
+          <button class="avis-btn-add mt-3" (click)="ouvrirFormulaire()">
+            <i class="nc-icon nc-simple-add"></i>
+            Laisser un avis
+          </button>
+        </div>
+
+        <!-- PAGINATION -->
+        <div class="avis-pagination" *ngIf="totalPages > 1">
+          <nav>
+            <ul class="pagination justify-content-center mb-0">
+              <li class="page-item" [class.disabled]="currentPage === 1">
+                <a class="page-link" (click)="goToPage(currentPage - 1)">‹ Précédent</a>
+              </li>
+              <li class="page-item" *ngFor="let p of pages" [class.active]="p === currentPage">
+                <a class="page-link" (click)="goToPage(p)">{{ p }}</a>
+              </li>
+              <li class="page-item" [class.disabled]="currentPage === totalPages">
+                <a class="page-link" (click)="goToPage(currentPage + 1)">Suivant ›</a>
+              </li>
+            </ul>
+          </nav>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>

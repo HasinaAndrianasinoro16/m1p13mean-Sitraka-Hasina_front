@@ -11,16 +11,18 @@ import {AuthGuard} from "../../guards/auth.guard";
 import {DetailProduitsComponent} from "../../pages/detail-produits/detail-produits.component";
 import {CommandesComponent} from "../../pages/commandes/commandes.component";
 import {DetailsCommandeComponent} from "../../pages/details-commande/details-commande.component";
+import {BoutiqueCommentaireComponent} from "../../pages/boutique-commentaire/boutique-commentaire.component";
 
 export const AdminLayoutRoutes: Routes = [
     { path: 'notifications',  component: NotificationsComponent, canActivate: [AuthGuard] },
     {path: 'login',           component: LoginComponent },
     {path: 'achats',     component: AchatsComponent },
     {path: 'panier',     component: PanierComponent, canActivate: [AuthGuard] },
-    {path: 'commentaire', component: CommentairesComponent, canActivate: [AuthGuard] },
+    {path: 'boutiques', component: CommentairesComponent, canActivate: [AuthGuard] },
     {path: 'register', component: RegisterComponent },
     {path: 'profile', component: ProfileComponent, canActivate: [AuthGuard] },
     {path: 'detail-produit', component: DetailProduitsComponent},
     {path: 'commande', component: CommandesComponent, canActivate: [AuthGuard] },
     {path: 'detail-commande', component: DetailsCommandeComponent, canActivate: [AuthGuard] },
+    {path: 'boutique-commentaire', component: BoutiqueCommentaireComponent, canActivate: [AuthGuard] },
 ];

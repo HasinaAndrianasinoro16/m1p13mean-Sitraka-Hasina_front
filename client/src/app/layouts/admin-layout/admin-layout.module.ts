@@ -16,6 +16,7 @@ import {ProfileComponent} from "../../pages/profile/profile.component";
 import {DetailProduitsComponent} from "../../pages/detail-produits/detail-produits.component";
 import {CommandesComponent} from "../../pages/commandes/commandes.component";
 import {DetailsCommandeComponent} from "../../pages/details-commande/details-commande.component";
+import {BoutiqueCommentaireComponent} from "../../pages/boutique-commentaire/boutique-commentaire.component";
 
 @NgModule({
   imports: [
@@ -28,6 +29,7 @@ import {DetailsCommandeComponent} from "../../pages/details-commande/details-com
     LoginComponent,
     AchatsComponent,
     PanierComponent,
+    BoutiqueCommentaireComponent,
     CommentairesComponent,
     RegisterComponent,
     ProfileComponent,
