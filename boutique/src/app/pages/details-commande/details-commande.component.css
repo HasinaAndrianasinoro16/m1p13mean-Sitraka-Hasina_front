@@ -1,0 +1,553 @@
+/* ========================================
+   DETAILS COMMANDE - details-commande.component.css
+   ======================================== */
+
+/* ── LOADING / ERROR ── */
+.det-loading {
+  text-align: center;
+  padding: 80px 24px;
+  color: #9e9a92;
+}
+.det-spinner {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 3px solid #f0ece6;
+  border-top-color: #b84a14;
+  animation: spin .75s linear infinite;
+  margin: 0 auto;
+}
+.det-loading p {
+  margin-top: 14px;
+  font-size: .9rem;
+}
+
+.det-alert {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 18px;
+  border-radius: 10px;
+  background: #fff0f0;
+  border-left: 3px solid #c02020;
+  color: #c02020;
+  font-size: .88rem;
+  margin-bottom: 16px;
+}
+.det-alert i {
+  font-size: 18px;
+  flex-shrink: 0;
+}
+.det-btn-retour-alert {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 7px;
+  font-size: .82rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1.5px solid #c02020;
+  background: white;
+  color: #c02020;
+  transition: all .15s;
+}
+.det-btn-retour-alert:hover {
+  background: #c02020;
+  color: white;
+}
+
+/* ── HEADER COMMANDE ── */
+.det-header-card {
+  border: none !important;
+  border-radius: 12px !important;
+  box-shadow: 0 2px 6px rgba(15,12,8,.05), 0 10px 28px rgba(15,12,8,.06) !important;
+  padding: 18px 24px !important;
+  margin-bottom: 20px !important;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  animation: fadeUp .4s ease both;
+}
+
+.det-header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.det-btn-back {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  border: 1.5px solid #e8e4de;
+  background: white;
+  color: #6c6c6c;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all .15s;
+  flex-shrink: 0;
+}
+.det-btn-back:hover {
+  background: #f5f3ef;
+  border-color: #b84a14;
+  color: #b84a14;
+}
+.det-btn-back i {
+  font-size: 14px;
+}
+
+.det-header-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 11px;
+  background: #fdf0e8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.det-header-icon i {
+  font-size: 20px;
+  color: #b84a14;
+}
+
+.det-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin: 0;
+}
+
+.det-subtitle {
+  font-size: .82rem;
+  color: #9e9a92;
+  margin: 2px 0 0;
+}
+
+.det-header-right {
+  display: flex;
+  align-items: center;
+}
+
+.det-statut-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 99px;
+  font-size: .78rem;
+  font-weight: 700;
+  letter-spacing: .03em;
+  text-transform: uppercase;
+}
+.det-statut-badge i {
+  font-size: 13px;
+}
+.badge-attente {
+  background: #fff8e6;
+  color: #a07010;
+}
+.badge-confirmee {
+  background: #eaf4ee;
+  color: #2d7a4f;
+}
+.badge-livree {
+  background: #eaf0f9;
+  color: #1a4b8c;
+}
+.badge-annulee {
+  background: #fff0f0;
+  color: #c02020;
+}
+.badge-en-cours {
+  background: #fdf0e8;
+  color: #b84a14;
+}
+
+/* ── INFO CARDS ROW ── */
+.det-info-row {
+  margin-bottom: 20px;
+}
+
+.det-info-card {
+  border: none !important;
+  border-radius: 12px !important;
+  box-shadow: 0 2px 6px rgba(15,12,8,.05), 0 10px 28px rgba(15,12,8,.06) !important;
+  overflow: hidden;
+  height: 100%;
+  animation: fadeUp .4s .06s ease both;
+}
+
+.det-info-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 20px;
+  background: #fafaf8;
+  border-bottom: 1px solid #f0ece6;
+  font-size: .88rem;
+  font-weight: 700;
+  color: #1a1a1a;
+}
+.det-info-header i {
+  font-size: 16px;
+  color: #b84a14;
+}
+
+.det-info-body {
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.det-info-line {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.det-info-label {
+  font-size: .8rem;
+  font-weight: 600;
+  color: #6c6c6c;
+  flex-shrink: 0;
+  min-width: 100px;
+}
+
+.det-info-value {
+  font-size: .86rem;
+  font-weight: 500;
+  color: #1a1a1a;
+  text-align: right;
+}
+
+.det-info-instructions {
+  font-style: italic;
+  color: #6c6c6c;
+  line-height: 1.5;
+}
+
+/* ── PRODUITS CARD ── */
+.det-produits-card {
+  border: none !important;
+  border-radius: 12px !important;
+  box-shadow: 0 2px 6px rgba(15,12,8,.05), 0 10px 28px rgba(15,12,8,.06) !important;
+  overflow: hidden;
+  margin-bottom: 20px;
+  animation: fadeUp .4s .12s ease both;
+}
+
+.det-produits-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 20px;
+  background: #fafaf8;
+  border-bottom: 1px solid #f0ece6;
+  font-size: .88rem;
+  font-weight: 700;
+  color: #1a1a1a;
+}
+.det-produits-header i {
+  font-size: 16px;
+  color: #b84a14;
+}
+.det-produits-count {
+  margin-left: auto;
+  padding: 3px 10px;
+  border-radius: 99px;
+  background: #f0ece6;
+  color: #6c6c6c;
+  font-size: .74rem;
+  font-weight: 600;
+}
+
+/* ── TABLE PRODUITS ── */
+.det-table {
+  margin-bottom: 0 !important;
+}
+:host ::ng-deep .det-table thead tr th {
+  font-size: .7rem !important;
+  font-weight: 700 !important;
+  text-transform: uppercase !important;
+  letter-spacing: .06em !important;
+  color: #9e9a92 !important;
+  border-bottom: 1px solid #f0ece6 !important;
+  padding: 13px 20px !important;
+  background: transparent !important;
+}
+:host ::ng-deep .det-table tbody tr.det-row td {
+  padding: 16px 20px !important;
+  vertical-align: middle !important;
+  border-bottom: 1px solid #f8f5f2 !important;
+}
+:host ::ng-deep .det-table tbody tr.det-row:last-child td {
+  border-bottom: none !important;
+}
+:host ::ng-deep .det-table tbody tr.det-row:hover td {
+  background: #fdfaf7 !important;
+}
+
+.det-produit {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.det-img-wrap {
+  width: 56px;
+  height: 56px;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1.5px solid #f0ece6;
+  flex-shrink: 0;
+}
+
+.det-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.det-produit-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.det-produit-nom {
+  font-size: .88rem;
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+.det-produit-slug {
+  font-size: .74rem;
+  color: #9e9a92;
+}
+
+.det-prix {
+  font-size: .88rem;
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+.det-devise {
+  font-size: .74rem;
+  color: #9e9a92;
+  margin-left: 3px;
+}
+
+.det-quantite {
+  font-size: .86rem;
+  font-weight: 600;
+  color: #6c6c6c;
+}
+
+.det-sous-total {
+  font-size: .92rem;
+  font-weight: 800;
+  color: #1a1a1a;
+}
+
+/* ── FOOTER ROW ── */
+.det-footer-row {
+  margin-bottom: 0;
+}
+
+/* ── RÉSUMÉ CARD ── */
+.det-resume-card {
+  border: none !important;
+  border-radius: 12px !important;
+  box-shadow: 0 2px 6px rgba(15,12,8,.05), 0 10px 28px rgba(15,12,8,.06) !important;
+  overflow: hidden;
+  animation: fadeUp .4s .18s ease both;
+}
+
+.det-resume-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 20px;
+  background: #fafaf8;
+  border-bottom: 1px solid #f0ece6;
+  font-size: .88rem;
+  font-weight: 700;
+  color: #1a1a1a;
+}
+.det-resume-header i {
+  font-size: 16px;
+  color: #b84a14;
+}
+
+.det-resume-body {
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.det-resume-line {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: .88rem;
+  color: #6c6c6c;
+}
+.det-resume-line strong {
+  font-weight: 700;
+  color: #1a1a1a;
+}
+
+.det-resume-economies strong {
+  color: #2d7a4f;
+}
+
+.det-resume-divider {
+  height: 1px;
+  background: #f0ece6;
+  margin: 6px 0;
+}
+
+.det-resume-total {
+  padding-top: 6px;
+}
+.det-resume-total span {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #1a1a1a;
+}
+.det-resume-total strong {
+  font-size: 1.3rem;
+  color: #b84a14;
+}
+
+/* ── PAIEMENT CARD ── */
+.det-paiement-card {
+  border: none !important;
+  border-radius: 12px !important;
+  box-shadow: 0 2px 6px rgba(15,12,8,.05), 0 10px 28px rgba(15,12,8,.06) !important;
+  overflow: hidden;
+  animation: fadeUp .4s .24s ease both;
+}
+
+.det-paiement-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 20px;
+  background: #fafaf8;
+  border-bottom: 1px solid #f0ece6;
+  font-size: .88rem;
+  font-weight: 700;
+  color: #1a1a1a;
+}
+.det-paiement-header i {
+  font-size: 16px;
+  color: #b84a14;
+}
+
+.det-paiement-body {
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.det-paiement-line {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.det-paiement-line span:first-child {
+  font-size: .76rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  color: #9e9a92;
+}
+.det-paiement-line strong {
+  font-size: .9rem;
+  font-weight: 700;
+  color: #1a1a1a;
+}
+
+.det-paiement-statut {
+  display: inline-block;
+  padding: 5px 12px;
+  border-radius: 99px;
+  font-size: .8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+.paiement-ok {
+  background: #eaf4ee;
+  color: #2d7a4f;
+}
+.paiement-pending {
+  background: #fff8e6;
+  color: #a07010;
+}
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 768px) {
+  .det-header-card {
+    flex-direction: column;
+    align-items: flex-start !important;
+  }
+
+  .det-info-line {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .det-info-label {
+    min-width: 0;
+  }
+
+  .det-info-value {
+    text-align: left;
+  }
+
+  :host ::ng-deep .det-table thead {
+    display: none;
+  }
+  :host ::ng-deep .det-table tbody tr.det-row {
+    display: block;
+    padding: 14px 16px;
+    border-bottom: 1px solid #f0ece6 !important;
+  }
+  :host ::ng-deep .det-table tbody tr.det-row td {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: none !important;
+    padding: 5px 0 !important;
+  }
+}

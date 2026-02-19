@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import {CommandeService} from "../../services/commande/commande.service";
-import {ActivatedRoute} from "@angular/router";
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-details-commande',
@@ -10,37 +10,64 @@ import {ActivatedRoute} from "@angular/router";
 export class DetailsCommandeComponent implements OnInit {
 
   commande: any = null;
+  loading: boolean = false;
   error: string = '';
 
-  constructor(private commandeService: CommandeService, private route: ActivatedRoute) { }
+  constructor(private commandeService: CommandeService, private route: ActivatedRoute, private router: Router) { }
 
   ngOnInit(): void {
     this.loadDetailCommande();
   }
 
   getStatutBadgeClass(statut: string): string {
-    const classes: { [key: string]: string } = {
-      'en_attente': 'bg-warning text-dark',
-      'confirmee': 'bg-info text-white',
-      'en_preparation': 'bg-primary',
-      'en_livraison': 'bg-secondary',
-      'livree': 'bg-success',
-      'annulee': 'bg-danger'
+    const m: { [k: string]: string } = {
+      'en_attente':    'badge-attente',
+      'confirmee':     'badge-confirmee',
+      'en_preparation':'badge-en-cours',
+      'en_livraison':  'badge-en-cours',
+      'livree':        'badge-livree',
+      'annulee':       'badge-annulee'
     };
-    return classes[statut] || 'bg-secondary';
+    return m[statut] || 'badge-attente';
   }
 
-  // Obtenir le texte du statut
   getStatutTexte(statut: string): string {
-    const textes: { [key: string]: string } = {
-      'en_attente': 'En attente',
-      'confirmee': 'Confirmée',
-      'en_preparation': 'En préparation',
-      'en_livraison': 'En livraison',
-      'livree': 'Livrée',
-      'annulee': 'Annulée'
+    const m: { [k: string]: string } = {
+      'en_attente':    'En attente',
+      'confirmee':     'Confirmée',
+      'en_preparation':'En préparation',
+      'en_livraison':  'En livraison',
+      'livree':        'Livrée',
+      'annulee':       'Annulée'
     };
-    return textes[statut] || statut;
+    return m[statut] || statut;
+  }
+
+  getStatutIcon(statut: string): string {
+    const m: { [k: string]: string } = {
+      'en_attente':    'nc-watch-time',
+      'confirmee':     'nc-check-2',
+      'en_preparation':'nc-box',
+      'en_livraison':  'nc-delivery-fast',
+      'livree':        'nc-check-2',
+      'annulee':       'nc-simple-remove'
+    };
+    return m[statut] || 'nc-bullet-list-67';
+  }
+
+  retour(): void {
+    this.router.navigate(['/commandes']);
+  }
+
+  formatDate(dateStr: string): string {
+    if (!dateStr) return '';
+    return new Date(dateStr).toLocaleDateString('fr-FR', {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
   }
 
   loadDetailCommande(): void {
