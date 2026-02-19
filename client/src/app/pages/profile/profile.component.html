@@ -1,249 +1,233 @@
-<div class="main-content">
-  <div class="container-fluid">
-    <div class="row">
-      <div class="col-md-12">
-        <div class="card">
-          <div class="card-header">
-            <h4 class="card-title">
-              <i class="nc-icon nc-single-02"></i>
-              Mon Profil
-            </h4>
+<div class="row">
+  <div class="col-md-12">
+
+    <!-- SUCCESS -->
+    <div *ngIf="successMessage" class="prof-alert prof-alert-success">
+      <i class="nc-icon nc-check-2"></i>
+      {{ successMessage }}
+    </div>
+
+    <!-- ERROR -->
+    <div *ngIf="error" class="prof-alert prof-alert-error">
+      <i class="nc-icon nc-alert-circle-i"></i>
+      {{ error }}
+      <button (click)="error = ''">×</button>
+    </div>
+
+    <!-- LOADING -->
+    <div *ngIf="loading && !profile" class="prof-loading">
+      <div class="prof-spinner"></div>
+      <p>Chargement du profil...</p>
+    </div>
+
+    <!-- CONTENU -->
+    <div *ngIf="!loading || profile" class="row">
+
+      <!-- COLONNE GAUCHE - AVATAR & ACTIONS -->
+      <div class="col-lg-4">
+        <div class="card prof-avatar-card">
+          <div class="prof-avatar-wrap">
+            <div class="prof-avatar" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+              {{ getInitiales() }}
+            </div>
           </div>
-          <div class="card-body">
-
-            <div class="row">
-
-              <!-- Left Column - Avatar & Info -->
-              <div class="col-md-4">
-                <div class="card card-user">
-                  <div class="card-body">
-                    <div class="author">
-                      <div class="block block-one"></div>
-                      <div class="block block-two"></div>
-                      <div class="block block-three"></div>
-                      <div class="block block-four"></div>
-                      <a href="javascript:void(0)">
-                        <img class="avatar" src="assets/img/logo-small.png" alt="Avatar">
-                        <h5 class="title">{{profile.nomComplet}}</h5>
-                      </a>
-                    </div>
-                    <div class="card-description text-center">
-                      <p class="mb-2">
-                        <i class="nc-icon nc-email-85"></i>
-                        {{ profile.email }}
-                      </p>
-                      <p class="mb-2">
-                        <i class="nc-icon nc-mobile"></i>
-                        {{ profile.telephone }}
-                      </p>
-                      <p class="text-muted small">
-                        <i class="nc-icon nc-calendar-60"></i>
-                        Membre depuis le {{ profile.createdAt | date:'dd MMM yyyy'  }}
-                      </p>
-                    </div>
-                  </div>
-                  <div class="card-footer">
-                    <div class="button-container text-center">
-                      <button class="btn btn-primary btn-sm btn-round" data-toggle="modal" data-target="#editProfileModal">
-                        <i class="nc-icon nc-settings-gear-65"></i>
-                        Modifier le profil
-                      </button>
-                    </div>
-                  </div>
-                </div>
+          <div class="prof-avatar-content">
+            <h3 class="prof-name">{{ profile?.nomComplet }}</h3>
+            <p class="prof-role">
+              <i class="nc-icon nc-badge"></i>
+              Client
+            </p>
+            <div class="prof-contact">
+              <div class="prof-contact-item">
+                <i class="nc-icon nc-email-85"></i>
+                <span>{{ profile?.email }}</span>
               </div>
-
-              <!-- Right Column - Information -->
-              <div class="col-md-8">
-
-                <!-- Personal Information Card -->
-                <div class="card">
-                  <div class="card-header">
-                    <h5 class="card-title">Informations personnelles</h5>
-                  </div>
-                  <div class="card-body">
-                    <div class="row mb-3">
-                      <div class="col-md-6">
-                        <label class="text-muted">Prénom</label>
-                        <p class="font-weight-bold">{{ profile.prenom }}</p>
-                      </div>
-                      <div class="col-md-6">
-                        <label class="text-muted">Nom</label>
-                        <p class="font-weight-bold">{{ profile.nom }}</p>
-                      </div>
-                    </div>
-                    <div class="row mb-3">
-                      <div class="col-md-6">
-                        <label class="text-muted">Email</label>
-                        <p class="font-weight-bold">{{ profile.email }}</p>
-                      </div>
-                      <div class="col-md-6">
-                        <label class="text-muted">Téléphone</label>
-                        <p class="font-weight-bold">{{ profile.telephone }}</p>
-                      </div>
-                    </div>
-                    <div class="row mb-3">
-                      <div class="col-md-6">
-                        <label class="text-muted">Rôle</label>
-                        <p><span class="badge badge-success">CLIENT</span></p>
-                      </div>
-                      <div class="col-md-6">
-                        <label class="text-muted">Date d'inscription</label>
-                        <p class="font-weight-bold">{{ profile.createdAt | date:'dd MMM yyyy'  }}</p>
-                      </div>
-                    </div>
-                    <hr>
-                    <div class="row">
-                      <div class="col-md-12">
-                        <button class="btn btn-warning btn-sm" data-toggle="modal" data-target="#changePasswordModal">
-                          <i class="nc-icon nc-key-25"></i>
-                          Changer le mot de passe
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Statistics Card -->
-<!--                <div class="card mt-3">-->
-<!--                  <div class="card-header">-->
-<!--                    <h5 class="card-title">Statistiques du compte</h5>-->
-<!--                  </div>-->
-<!--                  <div class="card-body">-->
-<!--                    <div class="row text-center">-->
-<!--                      <div class="col-md-4">-->
-<!--                        <div class="mb-3">-->
-<!--                          <i class="nc-icon nc-bag-16" style="font-size: 32px; color: #51CBCE;"></i>-->
-<!--                          <h4 class="mt-2 mb-0">156</h4>-->
-<!--                          <p class="text-muted">Commandes</p>-->
-<!--                        </div>-->
-<!--                      </div>-->
-<!--                      <div class="col-md-4">-->
-<!--                        <div class="mb-3">-->
-<!--                          <i class="nc-icon nc-favourite-28" style="font-size: 32px; color: #6BD098;"></i>-->
-<!--                          <h4 class="mt-2 mb-0">42</h4>-->
-<!--                          <p class="text-muted">Favoris</p>-->
-<!--                        </div>-->
-<!--                      </div>-->
-<!--                    </div>-->
-<!--                  </div>-->
-<!--                </div>-->
-
+              <div class="prof-contact-item">
+                <i class="nc-icon nc-mobile"></i>
+                <span>{{ profile?.telephone || 'Non renseigné' }}</span>
+              </div>
+              <div class="prof-contact-item">
+                <i class="nc-icon nc-calendar-60"></i>
+                <span>Membre depuis {{ formatDate(profile?.createdAt) }}</span>
               </div>
             </div>
-
+          </div>
+          <div class="prof-avatar-actions">
+            <button class="prof-btn-edit"
+                    data-toggle="modal"
+                    data-target="#editProfileModal">
+              <i class="nc-icon nc-settings-gear-65"></i>
+              Modifier le profil
+            </button>
+            <button class="prof-btn-password"
+                    data-toggle="modal"
+                    data-target="#changePasswordModal">
+              <i class="nc-icon nc-key-25"></i>
+              Changer le mot de passe
+            </button>
           </div>
         </div>
       </div>
+
+      <!-- COLONNE DROITE - INFORMATIONS -->
+      <div class="col-lg-8">
+
+        <!-- INFORMATIONS PERSONNELLES -->
+        <div class="card prof-info-card">
+          <div class="prof-info-header">
+            <i class="nc-icon nc-single-02"></i>
+            <span>Informations personnelles</span>
+          </div>
+          <div class="prof-info-body">
+            <div class="prof-info-grid">
+              <div class="prof-info-item">
+                <span class="prof-info-label">Prénom</span>
+                <span class="prof-info-value">{{ profile?.prenom }}</span>
+              </div>
+              <div class="prof-info-item">
+                <span class="prof-info-label">Nom</span>
+                <span class="prof-info-value">{{ profile?.nom }}</span>
+              </div>
+              <div class="prof-info-item">
+                <span class="prof-info-label">Email</span>
+                <span class="prof-info-value">{{ profile?.email }}</span>
+              </div>
+              <div class="prof-info-item">
+                <span class="prof-info-label">Téléphone</span>
+                <span class="prof-info-value">{{ profile?.telephone || 'Non renseigné' }}</span>
+              </div>
+              <div class="prof-info-item">
+                <span class="prof-info-label">Statut</span>
+                <span class="prof-status-badge">
+                  <i class="nc-icon nc-check-2"></i>
+                  Actif
+                </span>
+              </div>
+              <div class="prof-info-item">
+                <span class="prof-info-label">Membre depuis</span>
+                <span class="prof-info-value">{{ formatDate(profile?.createdAt) }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
     </div>
+
   </div>
 </div>
 
-<!-- Modal - Modifier le profil -->
-<div class="modal fade" id="editProfileModal" tabindex="-1" role="dialog" aria-labelledby="editProfileModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="editProfileModalLabel">
+
+<!-- ═══════════════════════════════════
+     MODAL MODIFIER PROFIL
+═══════════════════════════════════ -->
+<div class="modal fade" id="editProfileModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content prof-modal-content">
+
+      <div class="modal-header prof-modal-header">
+        <div class="prof-modal-icon">
           <i class="nc-icon nc-settings-gear-65"></i>
-          Modifier le profil
-        </h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
+        </div>
+        <div>
+          <h5 class="modal-title">Modifier le profil</h5>
+          <p class="prof-modal-sub">Mettez à jour vos informations</p>
+        </div>
+        <button type="button" class="prof-modal-close" data-dismiss="modal">
+          <i class="nc-icon nc-simple-remove"></i>
         </button>
       </div>
-      <div class="modal-body">
-        <form>
 
-          <div class="form-group mb-3">
-            <label>
-              Prénom <span class="text-danger">*</span>
-            </label>
-            <input
-              type="text"
-              class="form-control"
-              placeholder="Votre prénom"
-              name="prenom"
-              [(ngModel)]="profile.prenom"
-            />
-          </div>
+      <div class="modal-body prof-modal-body">
 
-          <div class="form-group mb-3">
-            <label>
-              Nom <span class="text-danger">*</span>
-            </label>
-            <input
-              type="text"
-              class="form-control"
-              placeholder="Votre nom"
-              name="nom"
-              [(ngModel)]="profile.nom"
-            />
-          </div>
+        <div class="prof-form-group">
+          <label class="prof-form-label">Prénom <span class="required">*</span></label>
+          <input type="text" class="prof-form-input"
+                 placeholder="Votre prénom"
+                 [(ngModel)]="profile.prenom" />
+        </div>
 
-          <div class="form-group mb-3">
-            <label>Numéro de téléphone</label>
-            <input
-              type="tel"
-              class="form-control"
-              placeholder="06 12 34 56 78"
-              name="telephone"
-              [(ngModel)]="profile.telephone"
-            />
-          </div>
+        <div class="prof-form-group">
+          <label class="prof-form-label">Nom <span class="required">*</span></label>
+          <input type="text" class="prof-form-input"
+                 placeholder="Votre nom"
+                 [(ngModel)]="profile.nom" />
+        </div>
 
-        </form>
+        <div class="prof-form-group">
+          <label class="prof-form-label">Téléphone</label>
+          <input type="tel" class="prof-form-input"
+                 placeholder="034 12 345 67"
+                 [(ngModel)]="profile.telephone" />
+        </div>
 
       </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">
-          <i class="nc-icon nc-simple-remove"></i>
+
+      <div class="modal-footer prof-modal-footer">
+        <button class="prof-btn-cancel" data-dismiss="modal">
           Annuler
         </button>
-        <button type="button" class="btn btn-success" (click)="clickChangeProfile()" >
+        <button class="prof-btn-confirm" (click)="clickChangeProfile()" [disabled]="loading">
           <i class="nc-icon nc-check-2"></i>
           Enregistrer
         </button>
       </div>
+
     </div>
   </div>
 </div>
 
-<!-- Modal - Changer le mot de passe -->
-<div class="modal fade" id="changePasswordModal" tabindex="-1" role="dialog" aria-labelledby="changePasswordModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="changePasswordModalLabel">
+
+<!-- ═══════════════════════════════════
+     MODAL CHANGER MOT DE PASSE
+═══════════════════════════════════ -->
+<div class="modal fade" id="changePasswordModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content prof-modal-content">
+
+      <div class="modal-header prof-modal-header">
+        <div class="prof-modal-icon prof-modal-icon-orange">
           <i class="nc-icon nc-key-25"></i>
-          Changer le mot de passe
-        </h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
+        </div>
+        <div>
+          <h5 class="modal-title">Changer le mot de passe</h5>
+          <p class="prof-modal-sub">Sécurisez votre compte</p>
+        </div>
+        <button type="button" class="prof-modal-close" data-dismiss="modal">
+          <i class="nc-icon nc-simple-remove"></i>
         </button>
       </div>
-      <div class="modal-body">
-        <form>
-          <div class="form-group">
-            <label>Ancien mot de passe <span class="text-danger">*</span></label>
-            <input type="password" class="form-control"  [ngModel]="currentPassword" placeholder="Entrez votre ancien mot de passe">
-          </div>
-          <div class="form-group">
-            <label>Nouveau mot de passe <span class="text-danger">*</span></label>
-            <input type="password" class="form-control"  [ngModel]="newPassword" placeholder="Entrez votre nouveau mot de passe">
-          </div>
-        </form>
+
+      <div class="modal-body prof-modal-body">
+
+        <div class="prof-form-group">
+          <label class="prof-form-label">Ancien mot de passe <span class="required">*</span></label>
+          <input type="password" class="prof-form-input"
+                 placeholder="••••••••"
+                 [(ngModel)]="currentPassword" />
+        </div>
+
+        <div class="prof-form-group">
+          <label class="prof-form-label">Nouveau mot de passe <span class="required">*</span></label>
+          <input type="password" class="prof-form-input"
+                 placeholder="••••••••"
+                 [(ngModel)]="newPassword" />
+          <small class="prof-form-hint">Au moins 8 caractères</small>
+        </div>
+
       </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">
-          <i class="nc-icon nc-simple-remove"></i>
+
+      <div class="modal-footer prof-modal-footer">
+        <button class="prof-btn-cancel" data-dismiss="modal">
           Annuler
         </button>
-        <button type="button" (click)="clickChangePassword()" class="btn btn-primary">
+        <button class="prof-btn-confirm" (click)="clickChangePassword()" [disabled]="loading">
           <i class="nc-icon nc-key-25"></i>
-          Modifier le mot de passe
+          Modifier
         </button>
       </div>
+
     </div>
   </div>
 </div>
