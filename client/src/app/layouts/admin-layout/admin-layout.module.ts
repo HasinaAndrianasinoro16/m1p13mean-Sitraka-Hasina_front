@@ -17,6 +17,7 @@ import {DetailProduitsComponent} from "../../pages/detail-produits/detail-produi
 import {CommandesComponent} from "../../pages/commandes/commandes.component";
 import {DetailsCommandeComponent} from "../../pages/details-commande/details-commande.component";
 import {BoutiqueCommentaireComponent} from "../../pages/boutique-commentaire/boutique-commentaire.component";
+import {MessagerieComponent} from "../../pages/messagerie/messagerie.component";
 
 @NgModule({
   imports: [
@@ -27,6 +28,7 @@ import {BoutiqueCommentaireComponent} from "../../pages/boutique-commentaire/bou
   ],
   declarations: [
     LoginComponent,
+    MessagerieComponent,
     AchatsComponent,
     PanierComponent,
     BoutiqueCommentaireComponent,

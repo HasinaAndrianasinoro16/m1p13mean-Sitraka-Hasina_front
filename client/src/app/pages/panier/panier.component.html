@@ -1,228 +1,235 @@
-<div class="row mb-4">
-  <div class="col-md-12 text-center">
-    <h3 class="fw-bold">
-      <i class="nc-icon nc-cart-simple"></i>
-      Mon Panier
-    </h3>
-    <p class="text-muted">
-      Vérifiez vos produits avant de valider votre commande
-    </p>
-  </div>
-</div>
-
 <div class="row">
+  <div class="col-md-12">
 
-  <!-- TABLE PANIER -->
-  <div class="col-lg-8">
-    <div class="card shadow-sm border-0">
-      <div class="card-body p-0">
+    <!-- SUCCESS -->
+    <div *ngIf="successMessage" class="pan-alert pan-alert-success">
+      <i class="nc-icon nc-check-2"></i>
+      {{ successMessage }}
+    </div>
 
-        <table class="table align-middle mb-0">
-          <thead class="table-light">
-          <tr>
-            <th>Produit</th>
-            <th>Prix unitaire</th>
-            <th>Quantité</th>
-            <th>Total</th>
-            <th class="text-end">Actions</th>
-          </tr>
-          </thead>
+    <!-- ERROR -->
+    <div *ngIf="error" class="pan-alert pan-alert-error">
+      <i class="nc-icon nc-alert-circle-i"></i>
+      {{ error }}
+      <button (click)="error = ''">×</button>
+    </div>
 
-          <tbody *ngIf="panier.length > 0">
-          <tr *ngFor="let produit of panier; let i = index">
-
-            <td>
-              <div class="d-flex align-items-center">
-                <img
-                  [src]="produit.image"
-                  class="rounded me-3"
-                  width="60"
-                  height="60"
-                />
-                <strong>{{ produit.nom }}</strong>
-              </div>
-            </td>
-
-            <td>{{ produit.prix | number }} Ar</td>
-
-            <!-- QUANTITÉ EN LECTURE SEULE -->
-            <td>
-                {{ produit.quantite }}
-            </td>
-
-            <td class="fw-bold">
-              {{ produit.prix * produit.quantite | number }} Ar
-            </td>
-
-            <td class="text-end">
-              <!-- BOUTON MODIFIER -->
-              <button
-                class="btn btn-sm btn-outline-primary me-2"
-                data-bs-toggle="modal"
-                data-bs-target="#quantiteModal"
-                (click)="clickinfo(produit.id, produit.nom, produit.quantite, produit.stocks)"
-              >
-                <i class="nc-icon nc-settings"></i>
-              </button>
-
-              <!-- SUPPRIMER -->
-              <button
-                class="btn btn-sm btn-outline-danger"
-                (click)="supprimerProduit(i)"
-              >
-                <i class="nc-icon nc-simple-remove"></i>
-              </button>
-            </td>
-
-          </tr>
-          </tbody>
-
-          <tbody *ngIf="panier.length === 0">
-          <tr>
-            <td colspan="5" class="text-center text-muted py-5">
-              <i class="nc-icon nc-basket"></i><br>
-              Votre panier est vide
-            </td>
-          </tr>
-          </tbody>
-
-        </table>
-
+    <!-- HEADER -->
+    <div class="pan-header">
+      <div class="pan-header-icon">
+        <i class="nc-icon nc-cart-simple"></i>
+      </div>
+      <div>
+        <h4 class="pan-title">Mon Panier</h4>
+        <p class="pan-subtitle">Vérifiez vos produits avant de valider</p>
       </div>
     </div>
-  </div>
 
-  <!-- RESUME -->
-  <div class="col-lg-4">
-    <div class="card shadow-sm border-0">
-      <div class="card-body">
+    <div class="row">
 
-        <h5 class="fw-bold mb-3">Résumé</h5>
+      <!-- TABLE PANIER -->
+      <div class="col-lg-8">
+        <div class="card pan-card">
 
-        <div class="d-flex justify-content-between mb-2">
-          <span>Total</span>
-          <strong>{{ getTotal() | number }} Ar</strong>
+          <!-- LOADING -->
+          <div *ngIf="loading" class="pan-loading">
+            <div class="pan-spinner"></div>
+            <p>Chargement...</p>
+          </div>
+
+          <!-- VIDE -->
+          <div *ngIf="!loading && panier.length === 0" class="pan-empty">
+            <div class="pan-empty-icon">
+              <i class="nc-icon nc-cart-simple"></i>
+            </div>
+            <p class="pan-empty-title">Votre panier est vide</p>
+            <p class="pan-empty-sub">Ajoutez des produits pour commencer</p>
+          </div>
+
+          <!-- TABLE -->
+          <div class="table-responsive" *ngIf="!loading && panier.length > 0">
+            <table class="table table-hover align-middle pan-table">
+              <thead>
+              <tr>
+                <th>Produit</th>
+                <th>Prix unitaire</th>
+                <th>Quantité</th>
+                <th>Total</th>
+                <th class="text-end">Actions</th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr *ngFor="let p of panier; let i = index" class="pan-row">
+
+                <!-- Produit -->
+                <td>
+                  <div class="pan-produit">
+                    <div class="pan-img-wrap">
+                      <img [src]="p.image" alt="{{ p.nom }}" class="pan-img" />
+                    </div>
+                    <span class="pan-nom">{{ p.nom }}</span>
+                  </div>
+                </td>
+
+                <!-- Prix unitaire -->
+                <td>
+                  <span class="pan-prix">{{ p.prix | number }}</span>
+                  <span class="pan-devise">Ar</span>
+                </td>
+
+                <!-- Quantité -->
+                <td>
+                  <span class="pan-quantite">{{ p.quantite }}</span>
+                </td>
+
+                <!-- Total -->
+                <td>
+                  <span class="pan-total">{{ p.prix * p.quantite | number }}</span>
+                  <span class="pan-devise">Ar</span>
+                </td>
+
+                <!-- Actions -->
+                <td class="text-end">
+                  <button class="pan-btn-edit"
+                          data-bs-toggle="modal"
+                          data-bs-target="#quantiteModal"
+                          (click)="clickinfo(p.id, p.nom, p.quantite, p.stocks)">
+                    <i class="nc-icon nc-settings-gear-65"></i>
+                  </button>
+                  <button class="pan-btn-delete" (click)="supprimerProduit(i)">
+                    <i class="nc-icon nc-simple-remove"></i>
+                  </button>
+                </td>
+
+              </tr>
+              </tbody>
+            </table>
+          </div>
+
         </div>
-
-        <hr>
-
-        <button
-          class="btn btn-dark w-100"
-          [disabled]="panier.length === 0"
-          data-bs-toggle="modal"
-          data-bs-target="#checkoutModal"
-        >
-          <i class="nc-icon nc-check-2"></i>
-          Valider le panier
-        </button>
-
-        <button
-          class="btn btn-danger w-100"
-          (click)="clickViderPanier()"
-          [disabled]="panier.length === 0"
-        >
-          <i class="nc-icon nc-simple-remove"></i>
-          Vider le panier
-        </button>
-
       </div>
+
+      <!-- RÉSUMÉ -->
+      <div class="col-lg-4">
+        <div class="card pan-resume">
+
+          <h5 class="pan-resume-title">Résumé</h5>
+
+          <div class="pan-resume-row">
+            <span>Articles</span>
+            <strong>{{ panier.length }}</strong>
+          </div>
+
+          <div class="pan-resume-divider"></div>
+
+          <div class="pan-resume-row pan-resume-total">
+            <span>Total</span>
+            <strong>{{ getTotal() | number }} Ar</strong>
+          </div>
+
+          <!-- Bouton valider -->
+          <button class="pan-btn-validate"
+                  [disabled]="panier.length === 0"
+                  data-bs-toggle="modal"
+                  data-bs-target="#checkoutModal">
+            <i class="nc-icon nc-check-2"></i>
+            Valider le panier
+          </button>
+
+          <!-- Bouton vider (avec confirmation inline) -->
+          <button class="pan-btn-clear"
+                  [disabled]="panier.length === 0"
+                  *ngIf="!showConfirmVider"
+                  (click)="clickViderPanier()">
+            <i class="nc-icon nc-simple-remove"></i>
+            Vider le panier
+          </button>
+
+          <!-- Confirmation vider -->
+          <div class="pan-confirm-wrap" *ngIf="showConfirmVider">
+            <p class="pan-confirm-text">Êtes-vous sûr ?</p>
+            <div class="pan-confirm-btns">
+              <button class="pan-confirm-non" (click)="annulerViderPanier()">
+                Non
+              </button>
+              <button class="pan-confirm-oui" (click)="confirmerViderPanier()">
+                Oui, vider
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
     </div>
   </div>
-
 </div>
 
-<!-- MODAL VALIDATION PANIER -->
-<div
-  class="modal fade"
-  id="checkoutModal"
-  tabindex="-1"
-  aria-hidden="true"
->
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
 
-      <!-- HEADER -->
-      <div class="modal-header">
-        <h5 class="modal-title">
-          Finalité de validation de votre panier
-        </h5>
-        <button
-          type="button"
-          class="btn-close"
-          data-bs-dismiss="modal"
-        ></button>
+<!-- ═══════════════════════════════════
+     MODAL VALIDATION PANIER
+═══════════════════════════════════ -->
+<div class="modal fade" id="checkoutModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content pan-modal-content">
+
+      <div class="modal-header pan-modal-header">
+        <div class="pan-modal-icon">
+          <i class="nc-icon nc-check-2"></i>
+        </div>
+        <div>
+          <h5 class="modal-title">Finaliser la commande</h5>
+          <p class="pan-modal-sub">Remplissez vos informations de livraison</p>
+        </div>
+        <button type="button" class="pan-modal-close" data-bs-dismiss="modal">
+          <i class="nc-icon nc-simple-remove"></i>
+        </button>
       </div>
 
-      <!-- BODY -->
-      <div class="modal-body">
+      <div class="modal-body pan-modal-body">
 
-        <div class="row g-3">
-
-          <div class="col-md-6">
-            <label class="form-label">Nom</label>
-            <input
-              type="text"
-              class="form-control"
-              placeholder="Jean"
-              [(ngModel)]="nom"
-            />
+        <div class="pan-form-row2">
+          <div class="pan-form-group">
+            <label class="pan-form-label">Nom <span class="required">*</span></label>
+            <input type="text" class="pan-form-input"
+                   placeholder="Dupont" [(ngModel)]="nom" />
           </div>
-
-          <div class="col-md-6">
-            <label class="form-label">Prénom</label>
-            <input
-              type="text"
-              class="form-control"
-              placeholder="Garcia"
-              [(ngModel)]="prenom"
-            />
+          <div class="pan-form-group">
+            <label class="pan-form-label">Prénom <span class="required">*</span></label>
+            <input type="text" class="pan-form-input"
+                   placeholder="Jean" [(ngModel)]="prenom" />
           </div>
+        </div>
 
-          <div class="col-md-6">
-            <label class="form-label">Téléphone</label>
-            <input
-              type="tel"
-              class="form-control"
-              placeholder="ex: 344112337"
-              [(ngModel)]="telephone"
-            />
+        <div class="pan-form-row2">
+          <div class="pan-form-group">
+            <label class="pan-form-label">Téléphone <span class="required">*</span></label>
+            <input type="tel" class="pan-form-input"
+                   placeholder="034 12 345 67" [(ngModel)]="telephone" />
           </div>
-
-          <div class="col-md-6">
-            <label class="form-label">Rue</label>
-            <input
-              type="text"
-              class="form-control"
-              [(ngModel)]="rue"
-            />
+          <div class="pan-form-group">
+            <label class="pan-form-label">Rue</label>
+            <input type="text" class="pan-form-input"
+                   placeholder="123 Avenue de la Paix" [(ngModel)]="rue" />
           </div>
+        </div>
 
-          <div class="col-12">
-            <label class="form-label">Instructions</label>
-            <textarea
-              class="form-control"
-              rows="3"
-              [(ngModel)]="instruction"
-            ></textarea>
-          </div>
-
+        <div class="pan-form-group">
+          <label class="pan-form-label">Instructions de livraison</label>
+          <textarea class="pan-form-input pan-form-textarea"
+                    placeholder="Sonnez 2 fois, bâtiment A..."
+                    [(ngModel)]="instruction"
+                    rows="3"></textarea>
         </div>
 
       </div>
 
-      <!-- FOOTER -->
-      <div class="modal-footer">
-        <button
-          class="btn btn-secondary"
-          data-bs-dismiss="modal"
-        >
+      <div class="modal-footer pan-modal-footer">
+        <button class="pan-btn-cancel" data-bs-dismiss="modal">
           Annuler
         </button>
-
-        <button
-          class="btn btn-success"
-          (click)="validerPanier()"
-        >
+        <button class="pan-btn-confirm" (click)="validerPanier()">
+          <i class="nc-icon nc-check-2"></i>
           Confirmer la commande
         </button>
       </div>
@@ -232,59 +239,51 @@
 </div>
 
 
-<!-- ================= MODAL MODIFIER QUANTITÉ ================= -->
-<div
-  class="modal fade"
-  id="quantiteModal"
-  tabindex="-1"
-  aria-hidden="true"
->
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
+<!-- ═══════════════════════════════════
+     MODAL MODIFIER QUANTITÉ
+═══════════════════════════════════ -->
+<div class="modal fade" id="quantiteModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-sm">
+    <div class="modal-content pan-modal-content">
 
-      <div class="modal-header">
-        <h5 class="modal-title">
-          Modifier la quantité
-        </h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      <div class="modal-header pan-modal-header">
+        <div class="pan-modal-icon pan-modal-icon-blue">
+          <i class="nc-icon nc-settings-gear-65"></i>
+        </div>
+        <div>
+          <h5 class="modal-title">Modifier la quantité</h5>
+          <p class="pan-modal-sub">{{ produitSelectionner }}</p>
+        </div>
+        <button type="button" class="pan-modal-close" data-bs-dismiss="modal">
+          <i class="nc-icon nc-simple-remove"></i>
+        </button>
       </div>
 
-      <div class="modal-body" >
+      <div class="modal-body pan-modal-body">
 
-        <div class="text-center mb-3">
-          <strong>{{ produitSelectionner }}</strong>
+        <div class="pan-stock-info">
+          <i class="nc-icon nc-box"></i>
+          <span>Stock disponible : <strong>{{ stock }}</strong></span>
         </div>
 
-        <div class="text-center mb-3">
-         quantite en stock: <strong>{{ stock }}</strong>
+        <div class="pan-form-group">
+          <label class="pan-form-label">Quantité</label>
+          <input type="number" class="pan-form-input"
+                 [(ngModel)]="quantite"
+                 min="1"
+                 [max]="stock"
+                 placeholder="1" />
         </div>
-
-        <label class="form-label">Quantité</label>
-        <input
-          type="number"
-          class="form-control"
-          [(ngModel)]="quantite"
-          value="{{ quantiteSelectionner }}"
-          min="1"
-        />
 
       </div>
 
-      <div class="modal-footer">
-        <button
-          type="button"
-          class="btn btn-secondary"
-          data-bs-dismiss="modal"
-        >
+      <div class="modal-footer pan-modal-footer">
+        <button class="pan-btn-cancel" data-bs-dismiss="modal">
           Annuler
         </button>
-
-        <button
-          (click)="clickModiferPanierQuantite()"
-          type="button"
-          class="btn btn-primary"
-          data-bs-dismiss="modal"
-        >
+        <button class="pan-btn-confirm" data-bs-dismiss="modal"
+                (click)="clickModifierPanierQuantite()">
+          <i class="nc-icon nc-check-2"></i>
           Enregistrer
         </button>
       </div>

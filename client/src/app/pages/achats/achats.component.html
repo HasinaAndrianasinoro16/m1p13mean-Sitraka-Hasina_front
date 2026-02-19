@@ -1,160 +1,184 @@
-<!-- Titre -->
-<div class="row mb-4">
-  <div class="col-12 text-center">
-    <h3 class="fw-bold">
-      <i class="nc-icon nc-cart-simple"></i>
-      Acheter des produits
-    </h3>
-    <p class="text-muted">
-      Choisissez vos produits et ajoutez-les à votre panier
-    </p>
-  </div>
-</div>
+<div class="row">
+  <div class="col-md-12">
 
-<!-- Filtres -->
-<div class="filter-card">
-  <div class="filter-body">
-    <div class="filter-row">
-
-      <!-- Produit -->
-      <div class="filter-group">
-        <label>Produit</label>
-        <input
-          type="text"
-          placeholder="Nom du produit"
-          [(ngModel)]="filters.nom"
-        />
-      </div>
-
-      <!-- Boutique -->
-      <div class="filter-group">
-        <label>Boutique</label>
-        <select [(ngModel)]="filters.boutique">
-          <option value="">Toutes les boutiques</option>
-          <option *ngFor="let b of boutiques" [value]="b">
-            {{ b }}
-          </option>
-        </select>
-      </div>
-
-      <!-- categorie -->
-      <div class="filter-group">
-        <label>categorie</label>
-        <select [(ngModel)]="filters.categorie">
-          <option value="">Toutes les categories</option>
-          <option *ngFor="let b of categories" [value]="b">
-            {{ b }}
-          </option>
-        </select>
-      </div>
-
-      <!-- Prix min -->
-      <div class="filter-group small">
-        <label>Prix min</label>
-        <input
-          type="number"
-          placeholder="0"
-          [(ngModel)]="filters.prixMin"
-        />
-      </div>
-
-      <!-- Prix max -->
-      <div class="filter-group small">
-        <label>Prix max</label>
-        <input
-          type="number"
-          placeholder="∞"
-          [(ngModel)]="filters.prixMax"
-        />
-      </div>
-
-      <!-- Stock -->
-      <div class="filter-group checkbox">
-        <label class="checkbox-label">
-          <input
-            type="checkbox"
-            [(ngModel)]="filters.stockOnly"
-          />
-          En stock seulement
-        </label>
-      </div>
-
+    <!-- SUCCESS -->
+    <div *ngIf="successMessage" class="ach-alert ach-alert-success">
+      <i class="nc-icon nc-check-2"></i>
+      {{ successMessage }}
     </div>
-  </div>
-</div>
 
-<!-- Liste des produits -->
-<div class="row g-4">
+    <!-- ERROR -->
+    <div *ngIf="error" class="ach-alert ach-alert-error">
+      <i class="nc-icon nc-alert-circle-i"></i>
+      {{ error }}
+      <button (click)="error = ''">×</button>
+    </div>
 
-  <div
-    class="col-xl-3 col-lg-4 col-md-6 mt-5"
-    *ngFor="let produit of produitsFiltres"
-  >
-    <div class="card product-card h-100 border-0 shadow-sm">
+    <!-- HEADER -->
+    <div class="ach-header">
+      <div class="ach-header-icon">
+        <i class="nc-icon nc-cart-simple"></i>
+      </div>
+      <div>
+        <h4 class="ach-title">Catalogue produits</h4>
+        <p class="ach-subtitle">Découvrez nos produits et ajoutez-les à votre panier</p>
+      </div>
+    </div>
 
-      <!-- Image -->
-      <img
-        [src]="produit.image"
-        class="card-img-top product-image"
-        alt="Produit"
-      />
+    <!-- FILTRES -->
+    <div class="card ach-filters-card">
+      <div class="ach-filters-header">
+        <div class="ach-filters-header-left">
+          <i class="nc-icon nc-settings-gear-65"></i>
+          <span>Filtres de recherche</span>
+        </div>
+        <button class="ach-btn-reset" (click)="resetFilters()">
+          <i class="nc-icon nc-refresh-69"></i>
+          Réinitialiser
+        </button>
+      </div>
+      <div class="ach-filters-body">
 
-      <!-- Body -->
-      <div class="card-body d-flex flex-column">
+        <!-- Ligne 1 -->
+        <div class="ach-filters-row">
+          <div class="ach-filter-group ach-filter-large">
+            <label class="ach-filter-label">Nom du produit</label>
+            <input type="text" class="ach-filter-input"
+                   placeholder="Rechercher..."
+                   [(ngModel)]="filters.nom" />
+          </div>
 
-        <h5 class="fw-semibold mb-1">
-         <a   class="link-warning"
-              [routerLink]="['/detail-produit']"
-              [queryParams]="{id: produit.id}">
-           {{ produit.nom }}
-         </a>
-        </h5>
+          <div class="ach-filter-group">
+            <label class="ach-filter-label">Boutique</label>
+            <select class="ach-filter-input" [(ngModel)]="filters.boutique">
+              <option value="">Toutes les boutiques</option>
+              <option *ngFor="let b of boutiques" [value]="b">{{ b }}</option>
+            </select>
+          </div>
 
-        <small class="text-muted mb-2">
-          <i class="nc-icon nc-shop"></i>
-          {{ produit.boutique }}
-        </small>
-
-        <small class="text-muted mb-2">
-          <i class="nc-icon nc-book-bookmark"></i>
-          {{ produit.categorie }}
-        </small>
-
-        <h6 class="text-primary fw-bold mb-3">
-          {{ produit.prix | number }} Ar
-        </h6>
-
-        <!-- Quantité -->
-        <div class="d-flex align-items-center mb-3">
-          <label class="me-2 text-muted">Qté</label>
-          <input
-            type="number"
-            class="form-control form-control-sm w-50"
-            [(ngModel)]="produit.quantite"
-            [min]="1"
-            [disabled]="produit.stock === 0"
-          />
+          <div class="ach-filter-group">
+            <label class="ach-filter-label">Catégorie</label>
+            <select class="ach-filter-input" [(ngModel)]="filters.categorie">
+              <option value="">Toutes les catégories</option>
+              <option *ngFor="let c of categories" [value]="c">{{ c }}</option>
+            </select>
+          </div>
         </div>
 
-        <!-- Stock -->
-        <p class="text-muted small mb-3">
-          <i class="nc-icon nc-box"></i>
-          Stock disponible :
-          <strong>{{ produit.stock }}</strong>
-        </p>
+        <!-- Ligne 2 -->
+        <div class="ach-filters-row">
+          <div class="ach-filter-group ach-filter-small">
+            <label class="ach-filter-label">Prix min</label>
+            <input type="number" class="ach-filter-input"
+                   placeholder="0" [(ngModel)]="filters.prixMin" />
+          </div>
 
-        <!-- Bouton -->
-        <button
-          class="btn btn-dark w-100 mt-auto"
-          (click)="ajouterAuPanier(produit)"
-          [disabled]="produit.stock === 0"
-        >
-          <i class="nc-icon nc-cart-simple"></i>
-          Ajouter au panier
-        </button>
+          <div class="ach-filter-group ach-filter-small">
+            <label class="ach-filter-label">Prix max</label>
+            <input type="number" class="ach-filter-input"
+                   placeholder="∞" [(ngModel)]="filters.prixMax" />
+          </div>
+
+          <div class="ach-filter-group ach-filter-checkbox">
+            <label class="ach-checkbox-label">
+              <input type="checkbox" class="ach-checkbox"
+                     [(ngModel)]="filters.stockOnly" />
+              <span>En stock seulement</span>
+            </label>
+          </div>
+        </div>
 
       </div>
     </div>
-  </div>
 
+    <!-- LOADING -->
+    <div *ngIf="loading" class="ach-loading">
+      <div class="ach-spinner"></div>
+      <p>Chargement des produits...</p>
+    </div>
+
+    <!-- RÉSULTATS -->
+    <div *ngIf="!loading" class="ach-results">
+      <div class="ach-results-header">
+        <span class="ach-results-count">
+          {{ produitsFiltres.length }} produit(s)
+        </span>
+      </div>
+
+      <!-- VIDE -->
+      <div *ngIf="produitsFiltres.length === 0" class="ach-empty">
+        <div class="ach-empty-icon">
+          <i class="nc-icon nc-box"></i>
+        </div>
+        <p class="ach-empty-title">Aucun produit trouvé</p>
+        <p class="ach-empty-sub">Essayez de modifier vos filtres</p>
+        <button class="ach-btn-reset-empty" (click)="resetFilters()">
+          <i class="nc-icon nc-refresh-69"></i>
+          Réinitialiser les filtres
+        </button>
+      </div>
+
+      <!-- GRILLE PRODUITS -->
+      <div class="ach-grid" *ngIf="produitsFiltres.length > 0">
+
+        <div class="ach-product" *ngFor="let p of produitsFiltres">
+
+          <!-- Image -->
+          <div class="ach-product-img-wrap">
+            <img [src]="p.image" alt="{{ p.nom }}" class="ach-product-img" />
+            <span class="ach-stock-badge" [ngClass]="getStockClass(p.stock)">
+              <i class="nc-icon nc-box"></i>
+              {{ p.stock }}
+            </span>
+          </div>
+
+          <!-- Contenu -->
+          <div class="ach-product-content">
+            <h3 class="ach-product-nom">
+              <a [routerLink]="['/detail-produit']"
+                 [queryParams]="{id: p.id}">
+                {{ p.nom }}
+              </a>
+            </h3>
+
+            <div class="ach-product-meta">
+              <span class="ach-product-boutique">
+                <i class="nc-icon nc-shop"></i>
+                {{ p.boutique }}
+              </span>
+              <span class="ach-product-categorie">
+                <i class="nc-icon nc-book-bookmark"></i>
+                {{ p.categorie }}
+              </span>
+            </div>
+
+            <div class="ach-product-prix">
+              {{ p.prix | number }} <span class="ach-devise">Ar</span>
+            </div>
+
+            <!-- Quantité -->
+            <div class="ach-quantite-wrap">
+              <label class="ach-quantite-label">Quantité</label>
+              <input type="number" class="ach-quantite-input"
+                     [(ngModel)]="p.quantite"
+                     [min]="1"
+                     [max]="p.stock"
+                     [disabled]="p.stock === 0" />
+            </div>
+
+            <!-- Bouton -->
+            <button class="ach-btn-add"
+                    (click)="ajouterAuPanier(p)"
+                    [disabled]="p.stock === 0">
+              <i class="nc-icon nc-cart-simple"></i>
+              {{ p.stock > 0 ? 'Ajouter au panier' : 'Rupture de stock' }}
+            </button>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+
+  </div>
 </div>

@@ -1,0 +1,289 @@
+<div class="row">
+  <div class="col-md-12">
+
+    <!-- SUCCESS -->
+<!--    <div *ngIf="successMessage" class="msg-alert msg-alert-success">-->
+<!--      <i class="nc-icon nc-check-2"></i>-->
+<!--      {{ successMessage }}-->
+<!--    </div>-->
+
+<!--    &lt;!&ndash; ERROR &ndash;&gt;-->
+<!--    <div *ngIf="error" class="msg-alert msg-alert-error">-->
+<!--      <i class="nc-icon nc-alert-circle-i"></i>-->
+<!--      {{ error }}-->
+<!--      <button (click)="error = ''">×</button>-->
+<!--    </div>-->
+
+    <div class="card msg-card">
+
+      <!-- HEADER -->
+      <div class="card-header msg-header">
+        <div class="msg-header-left">
+          <div class="msg-header-icon">
+            <i class="nc-icon nc-chat-33"></i>
+          </div>
+          <div>
+            <h5 class="card-title">Messagerie</h5>
+            <p class="card-category">Conversations avec les boutiques et clients</p>
+          </div>
+        </div>
+        <button class="msg-btn-compose">
+          <i class="nc-icon nc-simple-add"></i>
+          Nouveau message
+        </button>
+      </div>
+
+      <!-- BODY -->
+      <div class="card-body p-0">
+
+        <div class="msg-layout">
+
+          <!-- ══════════════════════════════════════════════
+               SIDEBAR CONVERSATIONS
+          ══════════════════════════════════════════════ -->
+          <aside class="msg-sidebar">
+
+            <!-- Recherche -->
+            <div class="msg-search">
+              <i class="nc-icon nc-zoom-split msg-search-icon"></i>
+              <input type="text" class="msg-search-input" placeholder="Rechercher..." />
+            </div>
+
+            <!-- Filtres -->
+            <div class="msg-filters">
+              <button class="msg-filter msg-filter-active">Tous</button>
+              <button class="msg-filter">Non lus</button>
+              <button class="msg-filter">Archivés</button>
+            </div>
+
+            <!-- Liste conversations -->
+            <div class="msg-conversations">
+
+              <!-- Conversation active -->
+              <div class="msg-conv msg-conv-active">
+                <div class="msg-conv-avatar" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                  <span>SL</span>
+                  <span class="msg-status-dot"></span>
+                </div>
+                <div class="msg-conv-content">
+                  <div class="msg-conv-top">
+                    <h3 class="msg-conv-name">Sophie Lemaire</h3>
+                    <span class="msg-conv-time">14:32</span>
+                  </div>
+                  <p class="msg-conv-preview">Parfait ! Je te confirme la livraison...</p>
+                  <span class="msg-unread-badge">3</span>
+                </div>
+              </div>
+
+              <!-- Conversation -->
+              <div class="msg-conv">
+                <div class="msg-conv-avatar" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                  <span>MD</span>
+                </div>
+                <div class="msg-conv-content">
+                  <div class="msg-conv-top">
+                    <h3 class="msg-conv-name">Marc Dubois</h3>
+                    <span class="msg-conv-time">Hier</span>
+                  </div>
+                  <p class="msg-conv-preview">D'accord, merci pour l'info !</p>
+                </div>
+              </div>
+
+              <!-- Conversation -->
+              <div class="msg-conv">
+                <div class="msg-conv-avatar" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+                  <span>AB</span>
+                </div>
+                <div class="msg-conv-content">
+                  <div class="msg-conv-top">
+                    <h3 class="msg-conv-name">Boutique Analakely</h3>
+                    <span class="msg-conv-time">2j</span>
+                  </div>
+                  <p class="msg-conv-preview">Bonjour, votre commande est prête...</p>
+                  <span class="msg-unread-badge">1</span>
+                </div>
+              </div>
+
+              <!-- Conversation -->
+              <div class="msg-conv">
+                <div class="msg-conv-avatar" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">
+                  <span>LM</span>
+                </div>
+                <div class="msg-conv-content">
+                  <div class="msg-conv-top">
+                    <h3 class="msg-conv-name">Laura Martin</h3>
+                    <span class="msg-conv-time">3j</span>
+                  </div>
+                  <p class="msg-conv-preview">Vous : Merci beaucoup...</p>
+                </div>
+              </div>
+
+              <!-- Conversation -->
+              <div class="msg-conv">
+                <div class="msg-conv-avatar" style="background: linear-gradient(135deg, #30cfd0 0%, #330867 100%);">
+                  <span>TM</span>
+                </div>
+                <div class="msg-conv-content">
+                  <div class="msg-conv-top">
+                    <h3 class="msg-conv-name">Tana Market</h3>
+                    <span class="msg-conv-time">1sem</span>
+                  </div>
+                  <p class="msg-conv-preview">Bonjour, nous avons bien reçu...</p>
+                </div>
+              </div>
+
+            </div>
+
+          </aside>
+
+          <!-- ══════════════════════════════════════════════
+               ZONE DE CHAT
+          ══════════════════════════════════════════════ -->
+          <main class="msg-chat">
+
+            <!-- Header chat -->
+            <header class="msg-chat-header">
+              <div class="msg-chat-avatar" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                <span>SL</span>
+                <span class="msg-status-dot-large"></span>
+              </div>
+              <div class="msg-chat-info">
+                <h2 class="msg-chat-name">Sophie Lemaire</h2>
+                <p class="msg-chat-status">
+                  <span class="msg-status-online"></span>
+                  En ligne
+                </p>
+              </div>
+              <div class="msg-chat-actions">
+                <button class="msg-action-btn" title="Rechercher">
+                  <i class="nc-icon nc-zoom-split"></i>
+                </button>
+                <button class="msg-action-btn" title="Plus">
+                  <i class="nc-icon nc-settings-gear-65"></i>
+                </button>
+              </div>
+            </header>
+
+            <!-- Messages -->
+            <div class="msg-messages">
+
+              <!-- Message reçu -->
+              <div class="msg-message msg-received">
+                <div class="msg-message-avatar" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                  SL
+                </div>
+                <div class="msg-message-content">
+                  <div class="msg-bubble msg-bubble-received">
+                    <p>Bonjour ! J'ai une question concernant ma commande #CMD-2024-0312</p>
+                  </div>
+                  <span class="msg-message-time">14:28</span>
+                </div>
+              </div>
+
+              <!-- Message reçu -->
+              <div class="msg-message msg-received">
+                <div class="msg-message-avatar"></div>
+                <div class="msg-message-content">
+                  <div class="msg-bubble msg-bubble-received">
+                    <p>Est-ce qu'il est possible de modifier l'adresse de livraison ?</p>
+                  </div>
+                  <span class="msg-message-time">14:28</span>
+                </div>
+              </div>
+
+              <!-- Message envoyé -->
+              <div class="msg-message msg-sent">
+                <div class="msg-message-content">
+                  <div class="msg-bubble msg-bubble-sent">
+                    <p>Bonjour Sophie ! Bien sûr, je peux vous aider avec ça 😊</p>
+                  </div>
+                  <span class="msg-message-time">14:29 • Lu</span>
+                </div>
+              </div>
+
+              <!-- Message envoyé -->
+              <div class="msg-message msg-sent">
+                <div class="msg-message-content">
+                  <div class="msg-bubble msg-bubble-sent">
+                    <p>Quelle est la nouvelle adresse de livraison ?</p>
+                  </div>
+                  <span class="msg-message-time">14:29 • Lu</span>
+                </div>
+              </div>
+
+              <!-- Message reçu -->
+              <div class="msg-message msg-received">
+                <div class="msg-message-avatar" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                  SL
+                </div>
+                <div class="msg-message-content">
+                  <div class="msg-bubble msg-bubble-received">
+                    <p>123 Avenue de la Liberté, Antananarivo</p>
+                  </div>
+                  <span class="msg-message-time">14:30</span>
+                </div>
+              </div>
+
+              <!-- Message envoyé -->
+              <div class="msg-message msg-sent">
+                <div class="msg-message-content">
+                  <div class="msg-bubble msg-bubble-sent">
+                    <p>Parfait, c'est noté ! L'adresse a été mise à jour ✅</p>
+                  </div>
+                  <span class="msg-message-time">14:31 • Lu</span>
+                </div>
+              </div>
+
+              <!-- Message reçu -->
+              <div class="msg-message msg-received">
+                <div class="msg-message-avatar" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                  SL
+                </div>
+                <div class="msg-message-content">
+                  <div class="msg-bubble msg-bubble-received">
+                    <p>Parfait ! Je te confirme la livraison pour demain matin 🚚</p>
+                  </div>
+                  <span class="msg-message-time">14:32</span>
+                </div>
+              </div>
+
+              <!-- Typing indicator -->
+              <div class="msg-typing">
+                <div class="msg-typing-avatar" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                  SL
+                </div>
+                <div class="msg-typing-bubble">
+                  <div class="msg-typing-dot"></div>
+                  <div class="msg-typing-dot"></div>
+                  <div class="msg-typing-dot"></div>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- Input zone -->
+            <footer class="msg-input-zone">
+              <button class="msg-attach-btn">
+                <i class="nc-icon nc-pin-3"></i>
+              </button>
+
+              <div class="msg-input-wrapper">
+                <input type="text" class="msg-input" placeholder="Écrivez votre message..." />
+                <button class="msg-emoji-btn">
+                  😊
+                </button>
+              </div>
+
+              <button class="msg-send-btn">
+                <i class="nc-icon nc-send"></i>
+              </button>
+            </footer>
+
+          </main>
+
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>

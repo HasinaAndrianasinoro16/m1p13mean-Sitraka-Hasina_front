@@ -1,139 +1,218 @@
-<div class="container my-4">
+<div class="row">
+  <div class="col-md-12">
 
-  <!-- HEADER COMMANDE -->
-  <div class="card shadow-sm mb-4">
-    <div class="card-body d-flex justify-content-between align-items-center">
-      <div>
-        <h5 class="mb-1">Commande <strong>{{ commande.numero }}</strong></h5>
-        <small class="text-muted">
-          Passée le {{ commande.createdAt |  date:'d MMM y à HH:mm' }}
-        </small>
-      </div>
-
-      <span class="badge text-dark px-3 py-2"  [ngClass]="getStatutBadgeClass(commande.statut)">
-        {{ commande.statut | uppercase }}
-      </span>
-    </div>
-  </div>
-
-  <!-- CLIENT & ADRESSE -->
-  <div class="row mb-4">
-
-    <!-- CLIENT -->
-    <div class="col-md-6">
-      <div class="card shadow-sm h-100">
-        <div class="card-header fw-bold">
-          Client
-        </div>
-        <div class="card-body">
-          <p class="mb-1"><strong>Nom :</strong> {{ commande.client.nomComplet }}</p>
-          <p class="mb-1"><strong>Email :</strong> {{ commande.client.email }}</p>
-          <p class="mb-0"><strong>Téléphone :</strong> {{ commande.client.telephone }}</p>
-        </div>
-      </div>
+    <!-- ERROR -->
+    <div *ngIf="error && !loading" class="det-alert">
+      <i class="nc-icon nc-alert-circle-i"></i>
+      {{ error }}
+      <button (click)="retour()" class="det-btn-retour-alert">
+        <i class="nc-icon nc-minimal-left"></i>
+        Retour
+      </button>
     </div>
 
-    <!-- ADRESSE -->
-    <div class="col-md-6">
-      <div class="card shadow-sm h-100">
-        <div class="card-header fw-bold">
-          Adresse de livraison
+    <!-- LOADING -->
+    <div *ngIf="loading" class="det-loading">
+      <div class="det-spinner"></div>
+      <p>Chargement de la commande...</p>
+    </div>
+
+    <!-- CONTENU -->
+    <div *ngIf="!loading && !error && commande">
+
+      <!-- HEADER COMMANDE -->
+      <div class="card det-header-card">
+        <div class="det-header-left">
+          <button class="det-btn-back" (click)="retour()">
+            <i class="nc-icon nc-minimal-left"></i>
+          </button>
+          <div class="det-header-icon">
+            <i class="nc-icon nc-bag-16"></i>
+          </div>
+          <div>
+            <h5 class="det-title">Commande #{{ commande.numero }}</h5>
+            <p class="det-subtitle">{{ formatDate(commande.createdAt) }}</p>
+          </div>
         </div>
-        <div class="card-body">
-          <p class="mb-1">
-            {{ commande.adresseLivraison.prenom }}
-            {{ commande.adresseLivraison.nom }}
-          </p>
-          <p class="mb-1" >
-            {{commande.adresseLivraison.telephone || 'aucun contact'}}
-          </p>
-          <p class="mb-1">{{ commande.adresseLivraison.rue }}</p>
-          <p class="mb-1">
-            {{ commande.adresseLivraison.codePostal }},
-            {{ commande.adresseLivraison.ville }}
-          </p>
-          <p class="mb-1">{{ commande.adresseLivraison.pays }}</p>
-          <p class="text-muted fst-italic mb-0">
-            {{ commande.adresseLivraison.instructions }}
-          </p>
+        <div class="det-header-right">
+          <span class="det-statut-badge" [ngClass]="getStatutBadgeClass(commande.statut)">
+            <i class="nc-icon" [ngClass]="getStatutIcon(commande.statut)"></i>
+            {{ getStatutTexte(commande.statut) }}
+          </span>
         </div>
       </div>
-    </div>
 
-  </div>
+      <!-- CLIENT & ADRESSE -->
+      <div class="row det-info-row">
 
-  <!-- PRODUITS -->
-  <div class="card shadow-sm mb-4">
-    <div class="card-header fw-bold">
-      Produits commandés
-    </div>
-
-    <div class="table-responsive">
-      <table class="table table-hover align-middle mb-0">
-        <thead class="table-light">
-        <tr>
-          <th>Produit</th>
-          <th>Prix</th>
-          <th>Quantité</th>
-          <th>Sous-total</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr *ngFor="let item of commande.items">
-          <td>
-            <div class="d-flex align-items-center gap-3">
-              <img
-                [src]="item.imagePrincipaleUrl"
-                class="rounded"
-                style="width:60px;height:60px;object-fit:cover"
-                alt="produit"
-              />
-              <div>
-                <div class="fw-semibold">{{ item.nom }}</div>
-                <small class="text-muted">{{ item.slug }}</small>
+        <!-- CLIENT -->
+        <div class="col-md-6">
+          <div class="card det-info-card">
+            <div class="det-info-header">
+              <i class="nc-icon nc-single-02"></i>
+              <span>Informations client</span>
+            </div>
+            <div class="det-info-body">
+              <div class="det-info-line">
+                <span class="det-info-label">Nom complet</span>
+                <span class="det-info-value">{{ commande.client?.nomComplet }}</span>
+              </div>
+              <div class="det-info-line">
+                <span class="det-info-label">Email</span>
+                <span class="det-info-value">{{ commande.client?.email }}</span>
+              </div>
+              <div class="det-info-line">
+                <span class="det-info-label">Téléphone</span>
+                <span class="det-info-value">{{ commande.client?.telephone || 'Non renseigné' }}</span>
               </div>
             </div>
-          </td>
+          </div>
+        </div>
 
-          <td>{{ item.prix | number }} Ar</td>
-          <td>x{{ item.quantite }}</td>
-          <td class="fw-bold">{{ item.sousTotal | number }} Ar</td>
-        </tr>
-        </tbody>
-      </table>
+        <!-- ADRESSE -->
+        <div class="col-md-6">
+          <div class="card det-info-card">
+            <div class="det-info-header">
+              <i class="nc-icon nc-pin-3"></i>
+              <span>Adresse de livraison</span>
+            </div>
+            <div class="det-info-body">
+              <div class="det-info-line">
+                <span class="det-info-label">Destinataire</span>
+                <span class="det-info-value">
+                  {{ commande.adresseLivraison?.prenom }} {{ commande.adresseLivraison?.nom }}
+                </span>
+              </div>
+              <div class="det-info-line">
+                <span class="det-info-label">Contact</span>
+                <span class="det-info-value">{{ commande.adresseLivraison?.telephone || 'Non renseigné' }}</span>
+              </div>
+              <div class="det-info-line">
+                <span class="det-info-label">Adresse</span>
+                <span class="det-info-value">{{ commande.adresseLivraison?.rue }}</span>
+              </div>
+              <div class="det-info-line">
+                <span class="det-info-label">Ville</span>
+                <span class="det-info-value">
+                  {{ commande.adresseLivraison?.codePostal }}, {{ commande.adresseLivraison?.ville }}
+                </span>
+              </div>
+              <div class="det-info-line" *ngIf="commande.adresseLivraison?.instructions">
+                <span class="det-info-label">Instructions</span>
+                <span class="det-info-value det-info-instructions">
+                  {{ commande.adresseLivraison.instructions }}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- PRODUITS -->
+      <div class="card det-produits-card">
+        <div class="det-produits-header">
+          <i class="nc-icon nc-box"></i>
+          <span>Produits commandés</span>
+          <span class="det-produits-count">{{ commande.items?.length }} article(s)</span>
+        </div>
+
+        <div class="table-responsive">
+          <table class="table table-hover align-middle det-table">
+            <thead>
+            <tr>
+              <th>Produit</th>
+              <th>Prix unitaire</th>
+              <th>Quantité</th>
+              <th>Sous-total</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let item of commande.items" class="det-row">
+              <td>
+                <div class="det-produit">
+                  <div class="det-img-wrap">
+                    <img [src]="item.imagePrincipaleUrl || 'assets/img/default-product.jpg'"
+                         alt="{{ item.nom }}"
+                         class="det-img" />
+                  </div>
+                  <div class="det-produit-info">
+                    <span class="det-produit-nom">{{ item.nom }}</span>
+                    <span class="det-produit-slug" *ngIf="item.slug">{{ item.slug }}</span>
+                  </div>
+                </div>
+              </td>
+              <td>
+                <span class="det-prix">{{ item.prix | number }}</span>
+                <span class="det-devise">Ar</span>
+              </td>
+              <td>
+                <span class="det-quantite">x{{ item.quantite }}</span>
+              </td>
+              <td>
+                <span class="det-sous-total">{{ item.sousTotal | number }}</span>
+                <span class="det-devise">Ar</span>
+              </td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- RÉSUMÉ & PAIEMENT -->
+      <div class="row det-footer-row">
+
+        <!-- RÉSUMÉ -->
+        <div class="col-md-7">
+          <div class="card det-resume-card">
+            <div class="det-resume-header">
+              <i class="nc-icon nc-money-coins"></i>
+              <span>Résumé de la commande</span>
+            </div>
+            <div class="det-resume-body">
+              <div class="det-resume-line">
+                <span>Sous-total</span>
+                <strong>{{ commande.sousTotal | number }} Ar</strong>
+              </div>
+              <div class="det-resume-line det-resume-economies" *ngIf="commande.economies > 0">
+                <span>Économies</span>
+                <strong>- {{ commande.economies | number }} Ar</strong>
+              </div>
+              <div class="det-resume-divider"></div>
+              <div class="det-resume-line det-resume-total">
+                <span>Total</span>
+                <strong>{{ commande.total | number }} Ar</strong>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- PAIEMENT -->
+        <div class="col-md-5">
+          <div class="card det-paiement-card">
+            <div class="det-paiement-header">
+              <i class="nc-icon nc-credit-card"></i>
+              <span>Paiement</span>
+            </div>
+            <div class="det-paiement-body">
+              <div class="det-paiement-line">
+                <span>Mode de paiement</span>
+                <strong>{{ commande.modePaiement || 'Non renseigné' }}</strong>
+              </div>
+              <div class="det-paiement-line">
+                <span>Statut</span>
+                <span class="det-paiement-statut"
+                      [ngClass]="commande.paiementStatut === 'payé' ? 'paiement-ok' : 'paiement-pending'">
+                  {{ commande.paiementStatut || 'En attente' }}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
     </div>
+
   </div>
-
-  <!-- TOTAL -->
-  <div class="card shadow-sm">
-    <div class="card-body">
-      <div class="d-flex justify-content-between mb-2">
-        <span>Sous-total</span>
-        <strong>{{ commande.sousTotal | number }} Ar</strong>
-      </div>
-
-      <div class="d-flex justify-content-between mb-2">
-        <span>Économies</span>
-        <strong class="text-success">- {{ commande.economies | number }} Ar</strong>
-      </div>
-
-      <hr>
-
-      <div class="d-flex justify-content-between fs-5">
-        <span>Total</span>
-        <strong class="text-primary">{{ commande.total | number }} Ar</strong>
-      </div>
-
-      <div class="mt-3 d-flex justify-content-between fs-5">
-          Paiement : <span class="text-info" > {{ commande.modePaiement }}</span>
-      </div>
-      <div class="mt-3 d-flex justify-content-between fs-5">
-        Statut paiement :<span>{{ commande.paiementStatut }}</span>
-      </div>
-      <div class="mt-3 d-flex justify-content-between fs-5">
-        <div></div><span><a routerLink="/commande" class="btn btn-secondary"><i class="nc-icon nc-minimal-left"></i> Retour</a> </span>
-      </div>
-    </div>
-  </div>
-
 </div>

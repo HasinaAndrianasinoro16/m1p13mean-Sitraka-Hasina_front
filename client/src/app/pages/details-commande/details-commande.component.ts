@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import {CommandeService} from "../../services/commande/commande.service";
-import {ActivatedRoute} from "@angular/router";
+import { CommandeService } from '../../services/commande/commande.service';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-details-commande',
@@ -10,9 +10,14 @@ import {ActivatedRoute} from "@angular/router";
 export class DetailsCommandeComponent implements OnInit {
 
   commande: any = null;
+  loading: boolean = false;
   error: string = '';
 
-  constructor(private commandeService: CommandeService, private route: ActivatedRoute) { }
+  constructor(
+    private commandeService: CommandeService,
+    private route: ActivatedRoute,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
     this.loadDetailCommande();
@@ -20,32 +25,79 @@ export class DetailsCommandeComponent implements OnInit {
 
   loadDetailCommande(): void {
     const id = this.route.snapshot.queryParamMap.get('id');
-    if(!id){
-      this.error = 'Commande introuvable';
+    if (!id) {
+      this.error = 'Commande introuvable.';
       return;
     }
 
+    this.loading = true;
+    this.error = '';
+
     this.commandeService.getDetailsCommandes(id).subscribe({
-      next: (response: any)=>{
-        this.commande = response.data.commande;
+      next: (response: any) => {
+        this.loading = false;
+        if (response?.data?.commande) {
+          this.commande = response.data.commande;
+        } else {
+          this.error = 'Commande introuvable.';
+        }
       },
       error: (err) => {
+        this.loading = false;
         console.error(err);
-        this.error = 'Erreur lors de la récupération du produit';
+        this.error = err?.error?.message || 'Erreur lors de la récupération de la commande.';
       }
     });
   }
 
   getStatutBadgeClass(statut: string): string {
-    const classes: { [key: string]: string } = {
-      'en_attente': 'bg-warning text-dark',
-      'confirmee': 'bg-info text-white',
-      'en_preparation': 'bg-primary',
-      'en_livraison': 'bg-secondary',
-      'livree': 'bg-success',
-      'annulee': 'bg-danger'
+    const m: { [k: string]: string } = {
+      'en_attente':    'badge-attente',
+      'confirmee':     'badge-confirmee',
+      'en_preparation':'badge-en-cours',
+      'en_livraison':  'badge-en-cours',
+      'livree':        'badge-livree',
+      'annulee':       'badge-annulee'
     };
-    return classes[statut] || 'bg-secondary';
+    return m[statut] || 'badge-attente';
   }
 
+  getStatutTexte(statut: string): string {
+    const m: { [k: string]: string } = {
+      'en_attente':    'En attente',
+      'confirmee':     'Confirmée',
+      'en_preparation':'En préparation',
+      'en_livraison':  'En livraison',
+      'livree':        'Livrée',
+      'annulee':       'Annulée'
+    };
+    return m[statut] || statut;
+  }
+
+  getStatutIcon(statut: string): string {
+    const m: { [k: string]: string } = {
+      'en_attente':    'nc-watch-time',
+      'confirmee':     'nc-check-2',
+      'en_preparation':'nc-box',
+      'en_livraison':  'nc-delivery-fast',
+      'livree':        'nc-check-2',
+      'annulee':       'nc-simple-remove'
+    };
+    return m[statut] || 'nc-bullet-list-67';
+  }
+
+  retour(): void {
+    this.router.navigate(['/commande']);
+  }
+
+  formatDate(dateStr: string): string {
+    if (!dateStr) return '';
+    return new Date(dateStr).toLocaleDateString('fr-FR', {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  }
 }
