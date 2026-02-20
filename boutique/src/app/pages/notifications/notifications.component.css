@@ -1,0 +1,341 @@
+/* ========================================
+   NOTIFICATIONS - notifications.component.css
+   Angular + Paper Dashboard
+   ======================================== */
+
+/* ─────────────────────────────────────
+   CARD
+   ───────────────────────────────────── */
+.notif-card {
+  border: none !important;
+  border-radius: 12px !important;
+  box-shadow: 0 2px 6px rgba(15,12,8,.05), 0 10px 28px rgba(15,12,8,.06) !important;
+  overflow: hidden;
+  animation: fadeUp .4s ease both;
+}
+
+/* ─────────────────────────────────────
+   HEADER
+   ───────────────────────────────────── */
+:host ::ng-deep .notif-card .card-header,
+.notif-header {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  padding: 20px 24px 18px !important;
+  border-bottom: 1px solid #f0ece6 !important;
+  background: #fafaf8 !important;
+  margin: 0 !important;
+  flex-wrap: wrap;
+  gap: 14px;
+}
+
+.notif-header-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.notif-header-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 11px;
+  background: #fdf0e8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.notif-header-icon i { font-size: 20px; color: #b84a14; }
+
+:host ::ng-deep .notif-card .card-title,
+.notif-header .card-title {
+  font-size: 1rem !important;
+  font-weight: 700 !important;
+  color: #1a1a1a !important;
+  margin: 0 !important;
+}
+
+:host ::ng-deep .notif-card .card-category,
+.notif-header .card-category {
+  font-size: .82rem !important;
+  color: #9e9a92 !important;
+  margin: 3px 0 0 !important;
+}
+
+.notif-header-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Compteur */
+.notif-count {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 12px;
+  border-radius: 99px;
+  background: #fdf0e8;
+  color: #b84a14;
+  font-size: .75rem;
+  font-weight: 700;
+}
+
+/* Bouton tout marquer */
+.btn-mark-all {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: .84rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1.5px solid #e0dcd6;
+  background: white;
+  color: #3d3a35;
+  transition: all .2s;
+  font-family: inherit;
+}
+
+.btn-mark-all:hover {
+  background: #f5f3ef;
+  border-color: #9e9a92;
+}
+
+.btn-mark-all i { font-size: 13px; color: #2d7a4f; }
+
+/* ─────────────────────────────────────
+   LISTE NOTIFICATIONS
+   ───────────────────────────────────── */
+.notif-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.notif-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 18px 24px;
+  border-bottom: 1px solid #f8f5f2;
+  transition: background .15s;
+  animation: fadeUp .3s ease both;
+  position: relative;
+}
+
+.notif-item:last-child { border-bottom: none; }
+
+.notif-item:hover { background: #fdfaf7; }
+
+/* Non lue : fond légèrement coloré */
+.notif-unread {
+  background: #fffdf9 !important;
+}
+
+.notif-unread::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 3px;
+  background: #b84a14;
+  border-radius: 0 2px 2px 0;
+}
+
+/* ─────────────────────────────────────
+   ICÔNE STATUT
+   ───────────────────────────────────── */
+.notif-icon-wrap {
+  width: 40px;
+  height: 40px;
+  border-radius: 11px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.notif-icon-wrap i { font-size: 17px; }
+
+/* Couleurs selon le type */
+.icon-success { background: #eaf4ee; }
+.icon-success i { color: #2d7a4f; }
+
+.icon-warning { background: #fff8e6; }
+.icon-warning i { color: #a07010; }
+
+.icon-danger  { background: #fff0f0; }
+.icon-danger i  { color: #c02020; }
+
+.icon-info    { background: #eaf0f9; }
+.icon-info i    { color: #1a4b8c; }
+
+.icon-default { background: #fdf0e8; }
+.icon-default i { color: #b84a14; }
+
+/* ─────────────────────────────────────
+   CONTENU NOTIFICATION
+   ───────────────────────────────────── */
+.notif-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.notif-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 5px;
+}
+
+.notif-titre {
+  font-size: .92rem;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin: 0;
+  line-height: 1.3;
+}
+
+.notif-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.notif-date {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: .74rem;
+  color: #9e9a92;
+  white-space: nowrap;
+}
+
+.notif-date i { font-size: 11px; }
+
+/* Point rouge non lue */
+.notif-dot-unread {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #b84a14;
+  flex-shrink: 0;
+}
+
+/* Nom boutique */
+.notif-boutique {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: .78rem;
+  font-weight: 600;
+  color: #b84a14;
+  margin: 0 0 6px;
+}
+
+.notif-boutique i { font-size: 12px; }
+
+/* Message */
+.notif-message {
+  font-size: .88rem;
+  color: #6c6c6c;
+  line-height: 1.55;
+  margin: 0;
+}
+
+/* ─────────────────────────────────────
+   ÉTAT VIDE
+   ───────────────────────────────────── */
+.notif-empty {
+  text-align: center;
+  padding: 64px 24px;
+}
+
+.notif-empty-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 18px;
+  background: #f5f3ef;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 16px;
+}
+
+.notif-empty-icon i { font-size: 28px; color: #c8c4bc; }
+
+.notif-empty-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #3d3a35;
+  margin: 0 0 6px;
+}
+
+.notif-empty-sub {
+  font-size: .86rem;
+  color: #9e9a92;
+  margin: 0;
+}
+
+/* ─────────────────────────────────────
+   PAGINATION
+   ───────────────────────────────────── */
+.notif-pagination {
+  padding: 14px 20px;
+  border-top: 1px solid #f0ece6;
+}
+
+:host ::ng-deep .notif-pagination .pagination { gap: 4px; }
+
+:host ::ng-deep .notif-pagination .page-item .page-link {
+  border-radius: 7px !important;
+  border: 1.5px solid #ece8e1 !important;
+  color: #3d3a35 !important;
+  font-size: .84rem !important;
+  font-weight: 500 !important;
+  padding: 7px 13px !important;
+  transition: all .15s !important;
+  cursor: pointer;
+}
+
+:host ::ng-deep .notif-pagination .page-item .page-link:hover {
+  background: #fdf0e8 !important;
+  border-color: #b84a14 !important;
+  color: #b84a14 !important;
+}
+
+:host ::ng-deep .notif-pagination .page-item.active .page-link {
+  background: #b84a14 !important;
+  border-color: #b84a14 !important;
+  color: white !important;
+}
+
+:host ::ng-deep .notif-pagination .page-item.disabled .page-link {
+  background: #fafaf8 !important;
+  color: #ccc !important;
+  cursor: not-allowed !important;
+}
+
+/* ─────────────────────────────────────
+   ANIMATIONS
+   ───────────────────────────────────── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ─────────────────────────────────────
+   RESPONSIVE
+   ───────────────────────────────────── */
+@media (max-width: 768px) {
+  .notif-header { flex-direction: column; align-items: flex-start !important; }
+  .notif-header-right { flex-wrap: wrap; }
+  .notif-item   { padding: 14px 16px; gap: 12px; }
+  .notif-top    { flex-direction: column; gap: 4px; }
+  .btn-mark-all { width: 100%; justify-content: center; }
+}

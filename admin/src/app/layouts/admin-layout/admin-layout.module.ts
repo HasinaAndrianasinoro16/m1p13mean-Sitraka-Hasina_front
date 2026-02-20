@@ -13,6 +13,7 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import {ExportComponent} from "../../pages/export/export.component";
 import {LoginComponent} from "../../pages/login/login.component";
 import {DetailBoutiqueComponent} from "../../pages/detail-boutique/detail-boutique.component";
+import {NotificationsComponent} from "../../pages/notifications/notifications.component";
 
 @NgModule({
   imports: [
@@ -27,6 +28,7 @@ import {DetailBoutiqueComponent} from "../../pages/detail-boutique/detail-boutiq
     StatComponent,
     ExportComponent,
     LoginComponent,
+    NotificationsComponent,
     DetailBoutiqueComponent
   ]
 })

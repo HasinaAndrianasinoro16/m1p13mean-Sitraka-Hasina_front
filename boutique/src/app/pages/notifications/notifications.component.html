@@ -1,0 +1,136 @@
+<div class="row">
+  <div class="col-md-12">
+    <div class="card notif-card">
+
+      <!-- HEADER -->
+      <div class="card-header notif-header">
+        <div class="notif-header-left">
+          <div class="notif-header-icon">
+            <i class="nc-icon nc-bell-55"></i>
+          </div>
+          <div>
+            <h5 class="card-title">Notifications</h5>
+            <p class="card-category">
+              Notifications des boutiques où vous avez effectué des commandes
+            </p>
+          </div>
+        </div>
+
+        <div class="notif-header-right">
+          <!-- Compteur non lues -->
+          <span class="notif-count" *ngIf="nonLuesCount > 0">
+            {{ nonLuesCount }} non lue(s)
+          </span>
+          <button class="btn-mark-all" (click)="toutMarquerLue()">
+            <i class="nc-icon nc-check-2"></i>
+            Tout marquer comme lu
+          </button>
+        </div>
+      </div>
+
+      <!-- BODY -->
+      <div class="card-body p-0">
+
+        <!-- LOADING -->
+        <div *ngIf="loading" class="notif-loading">
+          <div class="spinner-border text-primary"></div>
+          <p>Chargement...</p>
+        </div>
+
+        <!-- ERREUR -->
+        <div *ngIf="error" class="alert alert-danger m-3">
+          <i class="nc-icon nc-alert-circle-i mr-2"></i>{{ error }}
+        </div>
+
+        <!-- ÉTAT VIDE -->
+        <div *ngIf="!loading && notifications.length === 0" class="notif-empty">
+          <div class="notif-empty-icon">
+            <i class="nc-icon nc-bell-55"></i>
+          </div>
+          <p class="notif-empty-title">Aucune notification</p>
+          <p class="notif-empty-sub">
+            Vous recevrez ici les mises à jour de vos commandes
+          </p>
+        </div>
+
+        <!-- LISTE -->
+        <ul class="notif-list" *ngIf="!loading && notifications.length > 0">
+
+          <li class="notif-item"
+              *ngFor="let n of notifications"
+              [class.notif-unread]="!n.lu">
+
+            <!-- Icône -->
+            <div class="notif-icon-wrap" [ngClass]="getIconClass(n)">
+              <i class="nc-icon" [ngClass]="getIcon(n)"></i>
+            </div>
+
+            <!-- Contenu -->
+            <div class="notif-content">
+              <div class="notif-top">
+                <h6 class="notif-titre">{{ n.titre }}</h6>
+                <div class="notif-meta">
+                  <span class="notif-date">
+                    <i class="nc-icon nc-watch-time"></i>
+                    {{ formatDate(n.createdAt) }}
+                  </span>
+                  <span class="notif-dot-unread" *ngIf="!n.lu"></span>
+                </div>
+              </div>
+
+              <!-- Nom boutique -->
+              <p class="notif-boutique" *ngIf="n.metadata?.extra?.nomBoutique">
+                <i class="nc-icon nc-shop"></i>
+                {{ n.metadata.extra.nomBoutique }}
+              </p>
+
+              <!-- Numéro commande si disponible -->
+              <p class="notif-commande" *ngIf="n.metadata?.extra?.numeroCommande">
+                <a [routerLink]="['/detail-commande']"
+                   [queryParams]="{id: n.metadata.extra.commandeId}">
+                  <i class="nc-icon nc-tag-content"></i>
+                  {{ n.metadata.extra.numeroCommande }}
+                </a>
+              </p>
+
+              <!-- Message -->
+              <p class="notif-message">{{ n.message }}</p>
+
+              <!-- Raison si disponible -->
+              <p class="notif-raison" *ngIf="n.metadata?.extra?.raison">
+                <i class="nc-icon nc-alert-circle-i"></i>
+                {{ n.metadata.extra.raison }}
+              </p>
+            </div>
+
+          </li>
+
+        </ul>
+
+        <!-- PAGINATION -->
+        <div class="notif-pagination" *ngIf="totalPages > 1">
+          <nav>
+            <ul class="pagination justify-content-end mb-0">
+              <li class="page-item" [class.disabled]="currentPage === 1">
+                <a class="page-link" (click)="goToPage(currentPage - 1)">
+                  ‹ Précédent
+                </a>
+              </li>
+              <li class="page-item"
+                  *ngFor="let p of pages"
+                  [class.active]="p === currentPage">
+                <a class="page-link" (click)="goToPage(p)">{{ p }}</a>
+              </li>
+              <li class="page-item" [class.disabled]="currentPage === totalPages">
+                <a class="page-link" (click)="goToPage(currentPage + 1)">
+                  Suivant ›
+                </a>
+              </li>
+            </ul>
+          </nav>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>

@@ -7,6 +7,7 @@ import {LoginComponent} from '../../pages/login/login.component';
 import {ExportComponent} from "../../pages/export/export.component";
 import {AuthGuard} from "../../guards/auth.guard";
 import {DetailBoutiqueComponent} from "../../pages/detail-boutique/detail-boutique.component";
+import {NotificationsComponent} from "../../pages/notifications/notifications.component";
 
 export const AdminLayoutRoutes: Routes = [
     {path: 'dashboard',       component: DashboardComponent,    canActivate: [AuthGuard] },
@@ -15,4 +16,5 @@ export const AdminLayoutRoutes: Routes = [
     {path: 'login',           component: LoginComponent, },
     {path: 'import',          component: ExportComponent,       canActivate: [AuthGuard] },
     {path: 'detail-boutique', component: DetailBoutiqueComponent, canActivate: [AuthGuard] },
+    {path: 'notifications', component: NotificationsComponent, canActivate: [AuthGuard] },
 ];

@@ -17,6 +17,7 @@ import {RegisterBoutiqueComponent} from "../../pages/register-boutique/register-
 import {DetailProduitsComponent} from "../../pages/detail-produits/detail-produits.component";
 import {ProfileComponent} from "../../pages/profile/profile.component";
 import {DetailsCommandeComponent} from "../../pages/details-commande/details-commande.component";
+import {NotificationsComponent} from "../../pages/notifications/notifications.component";
 
 @NgModule({
   imports: [
@@ -28,6 +29,7 @@ import {DetailsCommandeComponent} from "../../pages/details-commande/details-com
   declarations: [
     DashboardComponent,
     LoginComponent,
+    NotificationsComponent,
     ProduitsComponent,
     CommandesComponent,
     StatComponent,
