@@ -1,54 +1,59 @@
 import { Component, OnInit } from '@angular/core';
-import { getAPIUrl } from "../../link/url";
-import {DashboardService} from "../../services/dashboard/dashboard.service";
-
+import { DashboardService } from '../../services/dashboard/dashboard.service';
 
 @Component({
   selector: 'dashboard-cmp',
-  templateUrl: 'dashboard.component.html'
+  templateUrl: 'dashboard.component.html',
+  styleUrls: ['dashboard.component.css']
 })
 export class DashboardComponent implements OnInit {
 
-  magasin: number = 0;
-  user: number = 0;
-  attente: number = 0;
-  valide: number = 0;
-  chiffreAffaire: number = 0;
-  chiffreAffaireMoi: number = 0;
+  stats = {
+    boutiques: 0,
+    utilisateurs: 0,
+    boutiquesPendantes: 0,
+    boutiquesValidees: 0,
+    chiffreTotal: 0,
+    chiffreMois: 0
+  };
 
-  // URL de base
-  baseurl = getAPIUrl('admin');
-
-  loading: boolean = true;
+  loading: boolean = false;
   error: string = '';
 
-  constructor(private dashboardService: DashboardService) {
-  }
+  constructor(private dashboardService: DashboardService) {}
 
   ngOnInit() {
-    this.loadStat();
+    this.loadStats();
   }
 
-  loadStat() {
+  loadStats() {
+    this.loading = true;
+    this.error = '';
+
     this.dashboardService.getStats().subscribe({
       next: (response: any) => {
-        if (response.success) {
-          const stats = response.data.stats;
-          this.magasin = stats.boutiques.total;
-          this.user = stats.utilisateurs.total;
-          this.attente = stats.boutiques.enAttente;
-          this.valide = stats.boutiques.validees;
-          this.chiffreAffaire = stats.chiffreAffaires.total;
-          this.chiffreAffaireMoi = stats.chiffreAffaires.mois;
-        }
         this.loading = false;
+        if (response.success && response.data?.stats) {
+          const s = response.data.stats;
+          this.stats = {
+            boutiques: s.boutiques?.total || 0,
+            utilisateurs: s.utilisateurs?.total || 0,
+            boutiquesPendantes: s.boutiques?.enAttente || 0,
+            boutiquesValidees: s.boutiques?.validees || 0,
+            chiffreTotal: s.chiffreAffaires?.total || 0,
+            chiffreMois: s.chiffreAffaires?.mois || 0
+          };
+        }
       },
       error: (err) => {
-        console.error(err);
-        this.error = "Erreur lors de la récupération des statistiques";
         this.loading = false;
+        console.error(err);
+        this.error = 'Erreur lors du chargement des statistiques.';
       }
     });
   }
 
+  formatNumber(num: number): string {
+    return new Intl.NumberFormat('fr-FR').format(num);
+  }
 }

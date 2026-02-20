@@ -100,6 +100,15 @@
 .stock-low   { background: #fff8e6; color: #a07010; }
 .stock-empty { background: #fff0f0; color: #c02020; }
 
+/* ── CONTENEUR DES BOUTONS D'ACTION ── */
+.prod-actions {
+  display: flex;
+  gap: 8px; /* Espace entre les boutons */
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+/* ── BOUTON STOCK ── */
 .prod-btn-stock {
   display: inline-flex; align-items: center; gap: 6px;
   padding: 7px 13px; border-radius: 8px;
@@ -107,8 +116,29 @@
   background: transparent; border: 1.5px solid #2d7a4f; color: #2d7a4f;
   transition: all .2s; font-family: inherit;
 }
-.prod-btn-stock:hover { background: #2d7a4f; color: white; box-shadow: 0 4px 12px rgba(45,122,79,.25); transform: translateY(-1px); }
-.prod-btn-stock i     { font-size: 12px; }
+.prod-btn-stock:hover {
+  background: #2d7a4f;
+  color: white;
+  box-shadow: 0 4px 12px rgba(45,122,79,0.3);
+  transform: translateY(-1px);
+}
+.prod-btn-stock i { font-size: 12px; }
+
+/* ── BOUTON SUPPRIMER ── */
+.prod-btn-sup {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 7px 13px; border-radius: 8px;
+  font-size: .8rem; font-weight: 600; cursor: pointer;
+  background: transparent; border: 1.5px solid #f80101; color: #cc0000;
+  transition: all .2s; font-family: inherit;
+}
+.prod-btn-sup:hover {
+  background: #f80101;
+  color: white;
+  box-shadow: 0 4px 12px rgba(248, 1, 1, 0.3);
+  transform: translateY(-1px);
+}
+.prod-btn-sup i { font-size: 12px; }
 
 /* ── ALERTES ── */
 .prod-alert {
@@ -136,8 +166,7 @@
 :host ::ng-deep .prod-pagination .page-item.disabled .page-link { background: #fafaf8 !important; color: #ccc !important; cursor: not-allowed !important; }
 
 /* ═══════════════════
-   MODALS (global → à coller dans styles.css)
-   Les modals Bootstrap sont rendus hors du component
+   MODALS
 ═══════════════════ */
 
 /* ── Modal content ── */
@@ -263,4 +292,17 @@
   :host ::ng-deep .prod-table thead { display: none; }
   :host ::ng-deep .prod-table tbody tr.prod-row { display: block; padding: 14px 16px; border-bottom: 1px solid #f0ece6 !important; }
   :host ::ng-deep .prod-table tbody tr.prod-row td { display: flex; justify-content: space-between; align-items: center; border: none !important; padding: 5px 0 !important; }
+
+  /* Correction responsive pour les boutons */
+  .prod-actions {
+    flex-direction: column;
+    width: 100%;
+    gap: 6px;
+  }
+
+  .prod-btn-stock,
+  .prod-btn-sup {
+    width: 100%;
+    justify-content: center;
+  }
 }

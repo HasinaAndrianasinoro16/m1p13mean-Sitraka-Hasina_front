@@ -93,6 +93,16 @@ export class ProduitService {
     );
   }
 
+  supprimerProduit(id: string): Observable<any>{
+    const token = localStorage.getItem('token');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
+
+    return this.http.delete(`${this.baseUrl}/produits/${id}`, {headers});
+
+  }
+
 
 
   //ne fonctione pas reste la pour inspiration

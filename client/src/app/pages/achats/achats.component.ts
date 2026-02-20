@@ -107,8 +107,9 @@ export class AchatsComponent implements OnInit {
 
   ajouterAuPanier(produit: any): void {
     if (!localStorage.getItem('token')) {
-      this.error = 'Vous devez être connecté pour ajouter des produits au panier.';
-      setTimeout(() => this.router.navigate(['/login']), 2000);
+      alert('Vous devez être connecté pour ajouter des produits au panier.');
+      // this.error = 'Vous devez être connecté pour ajouter des produits au panier.';
+      setTimeout(() => this.router.navigate(['/login']));
       return;
     }
 

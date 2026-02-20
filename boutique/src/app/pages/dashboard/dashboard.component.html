@@ -1,125 +1,153 @@
 <div class="row">
-  <div class="col-lg-3 col-md-6 col-sm-6">
-    <div class="card card-stats">
-      <div class="card-body ">
-        <div class="row">
-          <div class="col-5 col-md-4">
-            <div class="icon-big text-center icon-warning">
-              <i class="nc-icon nc-spaceship text-danger"></i>
-            </div>
-          </div>
-          <div class="col-7 col-md-8">
-            <div class="numbers">
-              <p class="card-category">Commande</p>
-              <p class="card-title">{{ commande }}
-              <p>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="card-footer ">
-        <hr>
-        <div class="stats">
-          Nombre total de commande en cours
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="col-lg-3 col-md-6 col-sm-6">
-    <div class="card card-stats">
-      <div class="card-body ">
-        <div class="row">
-          <div class="col-5 col-md-4">
-            <div class="icon-big text-center icon-primary">
-              <i class="nc-icon nc-bag-16 text-primary"></i>
-            </div>
-          </div>
-          <div class="col-7 col-md-8">
-            <div class="numbers">
-              <p class="card-category">Produits</p>
-              <p class="card-title">{{produit}}
-              <p>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="card-footer ">
-        <hr>
-        <div class="stats">
-          Nombre total de produits
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="col-lg-3 col-md-6 col-sm-6">
-    <div class="card card-stats">
-      <div class="card-body ">
-        <div class="row">
-          <div class="col-5 col-md-4">
-            <div class="icon-big text-center icon-secondary">
-              <i class="nc-icon nc-box-2 text-primary"></i>
-            </div>
-          </div>
-          <div class="col-7 col-md-8">
-            <div class="numbers">
-              <p class="card-category">Stock</p>
-              <p class="card-title">{{stock}}
-              <p>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="card-footer ">
-        <hr>
-        <div class="stats">
-          Nombre total de produits en stock
-        </div>
-      </div>
-    </div>
-  </div>
+  <div class="col-md-12">
 
-  <div class="col-lg-3 col-md-6 col-sm-6">
-    <div class="card card-stats">
-      <div class="card-body ">
-        <div class="row">
-          <div class="col-5 col-md-4">
-            <div class="icon-big text-center icon-secondary">
-              <i class="nc-icon nc-money-coins text-success"></i>
-            </div>
-          </div>
-          <div class="col-7 col-md-8">
-            <div class="numbers">
-              <p class="card-category">Valeur total</p>
-              <p class="card-title">{{valeurTotal}}
-              <p>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="card-footer ">
-        <hr>
-        <div class="stats">
-          Valeur total du stock.
-        </div>
-      </div>
+    <!-- ERROR -->
+    <div *ngIf="error" class="dash-alert">
+      <i class="nc-icon nc-alert-circle-i"></i>
+      {{ error }}
+      <button (click)="error = ''">×</button>
     </div>
-  </div>
 
-  <div class="row">
-    <div class="col-xxl-8 px-4 py-5">
-      <div class="row flex-lg-row-reverse align-items-center g-5 py-5">
-        <div class="col-10 col-sm-8 col-lg-6">
-          <img src="assets/img/aff.jpg" class="d-block mx-lg-auto img-fluid" alt="Bootstrap Themes" width="700" height="500" loading="lazy">
+    <!-- HEADER -->
+    <div class="dash-header">
+      <div class="dash-header-icon">
+        <i class="nc-icon nc-chart-bar-32"></i>
+      </div>
+      <div>
+        <h4 class="dash-title">Tableau de bord</h4>
+        <p class="dash-subtitle">Vue d'ensemble de votre boutique</p>
+      </div>
+    </div>
+
+    <!-- LOADING -->
+    <div *ngIf="loading" class="dash-loading">
+      <div class="dash-spinner"></div>
+      <p>Chargement des statistiques...</p>
+    </div>
+
+    <!-- STATS KPI -->
+    <div class="row dash-stats-row" *ngIf="!loading">
+
+      <!-- Commandes en cours -->
+      <div class="col-lg-3 col-md-6">
+        <div class="card dash-kpi-card dash-kpi-red">
+          <div class="dash-kpi-icon">
+            <i class="nc-icon nc-delivery-fast"></i>
+          </div>
+          <div class="dash-kpi-content">
+            <span class="dash-kpi-label">Commandes en cours</span>
+            <h2 class="dash-kpi-value">{{ formatNumber(stats.commandes) }}</h2>
+          </div>
+          <div class="dash-kpi-footer">
+            <i class="nc-icon nc-spaceship"></i>
+            <span>À traiter</span>
+          </div>
         </div>
-        <div class="col-lg-6">
-          <h1 class="display-5 fw-bold lh-1 mb-3">Page Boutique</h1>
-          <p class="lead">Bienvenue dans votre espace boutique.
-            Cette page vous permet de gérer votre boutique au sein du centre commercial
-            en toute simplicité. Vous pouvez y consulter et mettre à jour vos informations, suivre l’état
-            de votre compte et accéder aux fonctionnalités mises à votre disposition.</p>
+      </div>
+
+      <!-- Produits -->
+      <div class="col-lg-3 col-md-6">
+        <div class="card dash-kpi-card dash-kpi-orange">
+          <div class="dash-kpi-icon">
+            <i class="nc-icon nc-bag-16"></i>
+          </div>
+          <div class="dash-kpi-content">
+            <span class="dash-kpi-label">Produits</span>
+            <h2 class="dash-kpi-value">{{ formatNumber(stats.produits) }}</h2>
+          </div>
+          <div class="dash-kpi-footer">
+            <i class="nc-icon nc-box"></i>
+            <span>Total catalogue</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Stock -->
+      <div class="col-lg-3 col-md-6">
+        <div class="card dash-kpi-card dash-kpi-blue">
+          <div class="dash-kpi-icon">
+            <i class="nc-icon nc-box-2"></i>
+          </div>
+          <div class="dash-kpi-content">
+            <span class="dash-kpi-label">Stock total</span>
+            <h2 class="dash-kpi-value">{{ formatNumber(stats.stock) }}</h2>
+          </div>
+          <div class="dash-kpi-footer">
+            <i class="nc-icon nc-layers-3"></i>
+            <span>Unités disponibles</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Valeur totale -->
+      <div class="col-lg-3 col-md-6">
+        <div class="card dash-kpi-card dash-kpi-green">
+          <div class="dash-kpi-icon">
+            <i class="nc-icon nc-money-coins"></i>
+          </div>
+          <div class="dash-kpi-content">
+            <span class="dash-kpi-label">Valeur du stock</span>
+            <h2 class="dash-kpi-value">{{ formatNumber(stats.valeurTotale) }}</h2>
+            <span class="dash-kpi-currency">Ar</span>
+          </div>
+          <div class="dash-kpi-footer">
+            <i class="nc-icon nc-chart-pie-36"></i>
+            <span>Inventaire valorisé</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- SECTION BIENVENUE -->
+    <div class="row dash-welcome-row" *ngIf="!loading">
+      <div class="col-md-12">
+        <div class="card dash-welcome-card">
+          <div class="row g-0 align-items-center">
+
+            <!-- Image -->
+            <div class="col-md-5 dash-welcome-img-col">
+              <img src="assets/img/aff.jpg"
+                   class="dash-welcome-img"
+                   alt="Boutique" />
+            </div>
+
+            <!-- Contenu -->
+            <div class="col-md-7 dash-welcome-content">
+              <div class="dash-welcome-badge">
+                <i class="nc-icon nc-shop"></i>
+                <span>Espace boutique</span>
+              </div>
+              <h2 class="dash-welcome-title">Bienvenue dans votre espace boutique</h2>
+              <p class="dash-welcome-text">
+                Gérez votre boutique au sein du centre commercial en toute simplicité.
+                Vous pouvez consulter vos statistiques, mettre à jour vos informations,
+                gérer vos produits et suivre vos commandes en temps réel.
+              </p>
+              <div class="dash-welcome-features">
+                <div class="dash-feature">
+                  <i class="nc-icon nc-check-2"></i>
+                  <span>Gestion des produits</span>
+                </div>
+                <div class="dash-feature">
+                  <i class="nc-icon nc-check-2"></i>
+                  <span>Suivi des commandes</span>
+                </div>
+                <div class="dash-feature">
+                  <i class="nc-icon nc-check-2"></i>
+                  <span>Statistiques détaillées</span>
+                </div>
+                <div class="dash-feature">
+                  <i class="nc-icon nc-check-2"></i>
+                  <span>Support dédié</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
         </div>
       </div>
     </div>
+
   </div>
 </div>
-

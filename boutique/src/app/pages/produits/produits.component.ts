@@ -167,6 +167,26 @@ export class ProduitsComponent implements OnInit {
     this.error        = '';
   }
 
+  clickSupprimerProduits(id: string): void {
+    if(confirm('voulez vous supprimer ce produit definitivement')){
+      this.loadingAction = true;
+      this.error= '';
+      this.produitService.supprimerProduit(id).subscribe({
+        next: (res: any) => {
+          this.loadingAction = false;
+          if(res.success) {
+            this.showSuccess('le produits a été suprimer definitivement');
+            this.loadProduits(this.currentPage);
+          }
+        }, error: (err) => {
+          this.loadingAction = false;
+          console.error(err);
+          this.error = err?.error?.message || 'Erreur lors de la suppression du produit.';
+        }
+      })
+    }
+  }
+
   // ── Helpers ──
   resetFormulaire(): void {
     this.nomProduit  = '';

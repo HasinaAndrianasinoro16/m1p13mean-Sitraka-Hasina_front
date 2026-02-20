@@ -1,146 +1,170 @@
-<div class="main-content">
-  <div class="container-fluid">
-    <div class="row">
-      <div class="col-md-12">
-        <div class="card">
-          <div class="card-header">
-            <h4 class="card-title">
-              <i class="nc-icon nc-single-02"></i>
-              Mon Profil
-            </h4>
+<div class="row">
+  <div class="col-md-12">
+
+    <!-- SUCCESS -->
+    <div *ngIf="successMessage" class="pbou-alert pbou-alert-success">
+      <i class="nc-icon nc-check-2"></i>
+      {{ successMessage }}
+    </div>
+
+    <!-- ERROR -->
+    <div *ngIf="error" class="pbou-alert pbou-alert-error">
+      <i class="nc-icon nc-alert-circle-i"></i>
+      {{ error }}
+      <button (click)="error = ''">×</button>
+    </div>
+
+    <!-- LOADING -->
+    <div *ngIf="loading && !profile" class="pbou-loading">
+      <div class="pbou-spinner"></div>
+      <p>Chargement du profil...</p>
+    </div>
+
+    <!-- CONTENU -->
+    <div *ngIf="!loading || profile" class="row">
+
+      <!-- COLONNE GAUCHE - BOUTIQUE -->
+      <div class="col-lg-4">
+        <div class="card pbou-boutique-card">
+
+          <!-- Logo boutique -->
+          <div class="pbou-logo-wrap">
+            <div class="pbou-logo"
+                 *ngIf="!profile?.boutique?.logoUrl"
+                 [style.background]="getLogoColor()">
+              {{ getInitiales() }}
+            </div>
+            <img *ngIf="profile?.boutique?.logoUrl"
+                 [src]="profile.boutique.logoUrl"
+                 alt="Logo"
+                 class="pbou-logo-img" />
           </div>
-          <div class="card-body">
 
-            <div class="row">
+          <!-- Infos boutique -->
+          <div class="pbou-boutique-content">
+            <h3 class="pbou-boutique-nom">{{ profile?.boutique?.nomBoutique }}</h3>
+            <p class="pbou-boutique-desc" *ngIf="profile?.boutique?.description">
+              {{ profile.boutique.description }}
+            </p>
 
-              <!-- Left Column - Avatar & Info -->
-              <div class="col-md-4">
-                <div class="card card-user">
-                  <div class="card-body">
-                    <div class="author">
-                      <div class="block block-one"></div>
-                      <div class="block block-two"></div>
-                      <div class="block block-three"></div>
-                      <div class="block block-four"></div>
-                      <a href="javascript:void(0)">
-                        <img class="avatar" src="assets/img/logo-small.png" alt="Avatar">
-                        <h5 class="title">{{profile.boutique.nomBoutique}}</h5>
-                      </a>
-                    </div>
-                    <div class="card-description text-center">
-                      <p class="mb-2">
-                        <i class="nc-icon nc-email-85"></i>
-                        {{ profile.email }}
-                      </p>
-                      <p class="text-muted small">
-                        <i class="nc-icon nc-calendar-60"></i>
-                        Membre depuis le {{ profile.createdAt | date:'dd MMM yyyy'  }}
-                      </p>
-                    </div>
-                  </div>
-<!--                  <div class="card-footer">-->
-<!--                    <div class="button-container text-center">-->
-<!--                      <button class="btn btn-primary btn-sm btn-round" data-toggle="modal" data-target="#editProfileModal">-->
-<!--                        <i class="nc-icon nc-settings-gear-65"></i>-->
-<!--                        Modifier le profil-->
-<!--                      </button>-->
-<!--                    </div>-->
-<!--                  </div>-->
-                </div>
+            <div class="pbou-boutique-meta">
+              <div class="pbou-meta-item">
+                <i class="nc-icon nc-email-85"></i>
+                <span>{{ profile?.email }}</span>
               </div>
-
-              <!-- Right Column - Information -->
-              <div class="col-md-8">
-
-                <!-- Personal Information Card -->
-                <div class="card">
-                  <div class="card-header">
-                    <h5 class="card-title">Informations personnelles</h5>
-                  </div>
-                  <div class="card-body">
-                    <div class="row mb-3">
-                      <div class="col-md-6">
-                        <label class="text-muted">Prénom proprietaire</label>
-                        <p class="font-weight-bold">{{ profile.prenom }}</p>
-                      </div>
-                      <div class="col-md-6">
-                        <label class="text-muted">Nom proprietaire</label>
-                        <p class="font-weight-bold">{{ profile.nom }}</p>
-                      </div>
-                    </div>
-                    <div class="row mb-3">
-                      <div class="col-md-6">
-                        <label class="text-muted">Email</label>
-                        <p class="font-weight-bold">{{ profile.email }}</p>
-                      </div>
-                      <div class="col-md-6">
-                        <label class="text-muted">Téléphone</label>
-                        <p class="font-weight-bold">{{ profile.telephone || 'aucun contanct' }}</p>
-                      </div>
-                    </div>
-                    <div class="row mb-3">
-                      <div class="col-md-6">
-                        <label class="text-muted">Rôle</label>
-                        <p><span class="badge badge-warning">{{profile.role}}</span></p>
-                      </div>
-                      <div class="col-md-6">
-                        <label class="text-muted">Date d'inscription</label>
-                        <p class="font-weight-bold">{{ profile.createdAt | date:'dd MMM yyyy'  }}</p>
-                      </div>
-                    </div>
-                    <hr>
-                  </div>
-                </div>
+              <div class="pbou-meta-item" *ngIf="profile?.telephone">
+                <i class="nc-icon nc-mobile"></i>
+                <span>{{ profile.telephone }}</span>
+              </div>
+              <div class="pbou-meta-item">
+                <i class="nc-icon nc-calendar-60"></i>
+                <span>Membre depuis {{ formatDate(profile?.createdAt) }}</span>
               </div>
             </div>
 
+            <!-- Stats -->
+            <div class="pbou-stats" *ngIf="profile?.boutique">
+<!--              <div class="pbou-stat">-->
+<!--                <i class="nc-icon nc-box"></i>-->
+<!--                <div>-->
+<!--                  <span class="pbou-stat-value">{{ profile.boutique.produitsCount || 0 }}</span>-->
+<!--                  <span class="pbou-stat-label">Produits</span>-->
+<!--                </div>-->
+<!--              </div>-->
+              <div class="pbou-stat">
+                <i class="nc-icon nc-favourite-28"></i>
+                <div>
+                  <span class="pbou-stat-value">{{ profile.boutique.note || 0 }}/5</span>
+                  <span class="pbou-stat-label">Note moyenne</span>
+                </div>
+              </div>
+            </div>
           </div>
+
         </div>
       </div>
+
+      <!-- COLONNE DROITE - INFORMATIONS -->
+      <div class="col-lg-8">
+
+        <!-- INFORMATIONS PROPRIÉTAIRE -->
+        <div class="card pbou-info-card">
+          <div class="pbou-info-header">
+            <i class="nc-icon nc-single-02"></i>
+            <span>Informations du propriétaire</span>
+          </div>
+          <div class="pbou-info-body">
+            <div class="pbou-info-grid">
+              <div class="pbou-info-item">
+                <span class="pbou-info-label">Prénom</span>
+                <span class="pbou-info-value">{{ profile?.prenom }}</span>
+              </div>
+              <div class="pbou-info-item">
+                <span class="pbou-info-label">Nom</span>
+                <span class="pbou-info-value">{{ profile?.nom }}</span>
+              </div>
+              <div class="pbou-info-item">
+                <span class="pbou-info-label">Email</span>
+                <span class="pbou-info-value">{{ profile?.email }}</span>
+              </div>
+              <div class="pbou-info-item">
+                <span class="pbou-info-label">Téléphone</span>
+                <span class="pbou-info-value">{{ profile?.telephone || 'Non renseigné' }}</span>
+              </div>
+              <div class="pbou-info-item">
+                <span class="pbou-info-label">Rôle</span>
+                <span class="pbou-role-badge" [ngClass]="getRoleBadgeClass()">
+                  <i class="nc-icon nc-badge"></i>
+                  {{ profile?.role }}
+                </span>
+              </div>
+              <div class="pbou-info-item">
+                <span class="pbou-info-label">Membre depuis</span>
+                <span class="pbou-info-value">{{ formatDate(profile?.createdAt) }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- INFORMATIONS BOUTIQUE -->
+        <div class="card pbou-detail-card" *ngIf="profile?.boutique">
+          <div class="pbou-detail-header">
+            <i class="nc-icon nc-shop"></i>
+            <span>Détails de la boutique</span>
+          </div>
+          <div class="pbou-detail-body">
+            <div class="pbou-detail-grid">
+              <div class="pbou-detail-item">
+                <span class="pbou-detail-label">Nom de la boutique</span>
+                <span class="pbou-detail-value">{{ profile.boutique.nomBoutique }}</span>
+              </div>
+              <div class="pbou-detail-item">
+                <span class="pbou-detail-label">Catégorie</span>
+                <span class="pbou-detail-value">{{ profile.boutique.categorie || 'Non spécifiée' }}</span>
+              </div>
+              <div class="pbou-detail-item" *ngIf="profile.boutique.description">
+                <span class="pbou-detail-label">Description</span>
+                <span class="pbou-detail-value pbou-detail-desc">{{ profile.boutique.description }}</span>
+              </div>
+              <div class="pbou-detail-item">
+                <span class="pbou-detail-label">Produits actifs</span>
+                <span class="pbou-detail-value">{{ profile.boutique.produitsActifs || 0 }}</span>
+              </div>
+              <div class="pbou-detail-item">
+                <span class="pbou-detail-label">Produits en promotion</span>
+                <span class="pbou-detail-value">{{ profile.boutique.produitsEnPromo || 0 }}</span>
+              </div>
+              <div class="pbou-detail-item">
+                <span class="pbou-detail-label">Nombre d'avis</span>
+                <span class="pbou-detail-value">{{ profile.boutique.nombreAvis || 0 }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
     </div>
+
   </div>
 </div>
-
-<!-- Modal - Modifier le profil -->
-<div class="modal fade" id="editProfileModal" tabindex="-1" role="dialog" aria-labelledby="editProfileModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="editProfileModalLabel">
-          <i class="nc-icon nc-settings-gear-65"></i>
-          Modifier le profil
-        </h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <form>
-          <div class="form-group">
-            <label>Prénom <span class="text-danger">*</span></label>
-            <input type="text" class="form-control" placeholder="Votre prénom" >
-          </div>
-          <div class="form-group">
-            <label>Nom <span class="text-danger">*</span></label>
-            <input type="text" class="form-control" placeholder="Votre nom" >
-          </div>
-          <div class="form-group">
-            <label>Numéro de téléphone</label>
-            <input type="tel" class="form-control" placeholder="06 12 34 56 78" >
-          </div>
-        </form>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">
-          <i class="nc-icon nc-simple-remove"></i>
-          Annuler
-        </button>
-        <button type="button" class="btn btn-success"  >
-          <i class="nc-icon nc-check-2"></i>
-          Enregistrer
-        </button>
-      </div>
-    </div>
-  </div>
-</div>
-

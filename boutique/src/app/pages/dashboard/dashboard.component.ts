@@ -1,47 +1,56 @@
 import { Component, OnInit } from '@angular/core';
-import {DashboardService} from "../../services/dashboard/dashboard.service";
-import {response} from "express";
-
+import { DashboardService } from '../../services/dashboard/dashboard.service';
 
 @Component({
-    selector: 'dashboard-cmp',
-    moduleId: module.id,
-    templateUrl: 'dashboard.component.html'
+  selector: 'dashboard-cmp',
+  moduleId: module.id,
+  templateUrl: 'dashboard.component.html',
+  styleUrls: ['dashboard.component.css']
 })
+export class DashboardComponent implements OnInit {
 
-export class DashboardComponent implements OnInit{
+  stats = {
+    produits: 0,
+    stock: 0,
+    commandes: 0,
+    valeurTotale: 0
+  };
 
-  produit: number = 0;
-  stock: number = 0;
-  commande: number = 0;
-  valeurTotal: number = 0;
-
-  loading: boolean = true;
+  loading: boolean = false;
   error: string = '';
 
-  constructor(private dashboardService: DashboardService) { }
+  constructor(private dashboardService: DashboardService) {}
 
-    ngOnInit(){
-      this.loadStats();
-    }
+  ngOnInit() {
+    this.loadStats();
+  }
 
-    loadStats(){
-      this.dashboardService.getStats().subscribe({
-        next: (response: any) => {
-          if(response.success){
-            const stat = response.data.stats;
-            this.produit = stat.produits.total;
-            this.stock = stat.stock.quantiteTotale;
-            this.commande = stat.commandes.enCours;
-            this.valeurTotal = stat.stock.valeurTotale;
-          }
-          this.loading = false;
-        },
-        error: (err) => {
-          console.error(err);
-          this.error = "Erreur lors de la récupération des statistiques";
-          this.loading = false;
+  loadStats() {
+    this.loading = true;
+    this.error = '';
+
+    this.dashboardService.getStats().subscribe({
+      next: (response: any) => {
+        this.loading = false;
+        if (response.success && response.data?.stats) {
+          const s = response.data.stats;
+          this.stats = {
+            produits: s.produits?.total || 0,
+            stock: s.stock?.quantiteTotale || 0,
+            commandes: s.commandes?.enCours || 0,
+            valeurTotale: s.stock?.valeurTotale || 0
+          };
         }
-      });
-    }
+      },
+      error: (err) => {
+        this.loading = false;
+        console.error(err);
+        this.error = 'Erreur lors du chargement des statistiques.';
+      }
+    });
+  }
+
+  formatNumber(num: number): string {
+    return new Intl.NumberFormat('fr-FR').format(num);
+  }
 }

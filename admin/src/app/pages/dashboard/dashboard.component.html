@@ -1,186 +1,189 @@
 <div class="row">
-  <div class="col-lg-3 col-md-6 col-sm-6">
-    <div class="card card-stats">
-      <div class="card-body">
-        <div class="row">
-          <div class="col-5 col-md-4">
-            <div class="icon-big text-center icon-warning">
-              <i class="nc-icon nc-shop text-warning"></i>
-            </div>
-          </div>
-          <div class="col-7 col-md-8">
-            <div class="numbers">
-              <p class="card-category">Magasin</p>
-              <p class="card-title">
-                {{ magasin }}
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="card-footer">
-        <hr>
-        <div class="stats">
-          Nombre total de magasin
-        </div>
-      </div>
-    </div>
-  </div>
+  <div class="col-md-12">
 
-  <div class="col-lg-3 col-md-6 col-sm-6">
-    <div class="card card-stats">
-      <div class="card-body">
-        <div class="row">
-          <div class="col-5 col-md-4">
-            <div class="icon-big text-center icon-warning">
-              <i class="nc-icon nc-circle-10 text-primary"></i>
-            </div>
-          </div>
-          <div class="col-7 col-md-8">
-            <div class="numbers">
-              <p class="card-category">Utilisateur</p>
-              <p class="card-title">
-                {{ user }}
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="card-footer">
-        <hr>
-        <div class="stats">
-          Nombre total d'utilisateur
-        </div>
-      </div>
+    <!-- ERROR -->
+    <div *ngIf="error" class="dashsa-alert">
+      <i class="nc-icon nc-alert-circle-i"></i>
+      {{ error }}
+      <button (click)="error = ''">×</button>
     </div>
-  </div>
 
-  <div class="col-lg-3 col-md-6 col-sm-6">
-    <div class="card card-stats">
-      <div class="card-body">
-        <div class="row">
-          <div class="col-5 col-md-4">
-            <div class="icon-big text-center icon-warning">
-              <i class="nc-icon nc-button-pause text-danger"></i>
-            </div>
-          </div>
-          <div class="col-7 col-md-8">
-            <div class="numbers">
-              <p class="card-category">Attente</p>
-              <p class="card-title">
-                {{ attente }}
-              </p>
-            </div>
-          </div>
-        </div>
+    <!-- HEADER -->
+    <div class="dashsa-header">
+      <div class="dashsa-header-icon">
+        <i class="nc-icon nc-chart-bar-32"></i>
       </div>
-      <div class="card-footer">
-        <hr>
-        <div class="stats">
-          Nombre total de boutique en attente
-        </div>
+      <div>
+        <h4 class="dashsa-title">Super Administration</h4>
+        <p class="dashsa-subtitle">Supervision complète de la plateforme</p>
       </div>
     </div>
-  </div>
 
-  <div class="col-lg-3 col-md-6 col-sm-6">
-    <div class="card card-stats">
-      <div class="card-body">
-        <div class="row">
-          <div class="col-5 col-md-4">
-            <div class="icon-big text-center icon-primary">
-              <i class="nc-icon nc-check-2 text-success"></i>
-            </div>
-          </div>
-          <div class="col-7 col-md-8">
-            <div class="numbers">
-              <p class="card-category">Validées</p>
-              <p class="card-title">
-                {{ valide }}
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="card-footer">
-        <hr>
-        <div class="stats">
-          Nombre total de Boutique validée
-        </div>
-      </div>
+    <!-- LOADING -->
+    <div *ngIf="loading" class="dashsa-loading">
+      <div class="dashsa-spinner"></div>
+      <p>Chargement des statistiques...</p>
     </div>
-  </div>
-  <div class="col-lg-3 col-md-6 col-sm-6">
-    <div class="card card-stats">
-      <div class="card-body">
-        <div class="row">
-          <div class="col-5 col-md-4">
-            <div class="icon-big text-center icon-primary">
-              <i class="nc-icon nc-money-coins text-success"></i>
-            </div>
-          </div>
-          <div class="col-7 col-md-8">
-            <div class="numbers">
-              <p class="card-category">chiffre d'affaires</p>
-              <p class="card-title">
-                {{ chiffreAffaire }}
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="card-footer">
-        <hr>
-        <div class="stats">
-          chiffre d'affaire total
-        </div>
-      </div>
-    </div>
-  </div>
 
-  <div class="col-lg-3 col-md-6 col-sm-6">
-    <div class="card card-stats">
-      <div class="card-body">
-        <div class="row">
-          <div class="col-5 col-md-4">
-            <div class="icon-big text-center icon-primary">
-              <i class="nc-icon nc-money-coins text-success"></i>
-            </div>
-          </div>
-          <div class="col-7 col-md-8">
-            <div class="numbers">
-              <p class="card-category">chiffre d'affaires par mois</p>
-              <p class="card-title">
-                {{ chiffreAffaireMoi }}
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="card-footer">
-        <hr>
-        <div class="stats">
-          chiffre d'affaire par mois
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
+    <!-- STATS KPI -->
+    <div class="row dashsa-stats-row" *ngIf="!loading">
 
-<div class="row">
-  <div class="col-xxl-8 px-4 py-5">
-    <div class="row flex-lg-row-reverse align-items-center g-5 py-5">
-      <div class="col-10 col-sm-8 col-lg-6">
-        <img src="assets/img/aff.jpg" class="d-block mx-lg-auto img-fluid" alt="Dashboard Image" width="700" height="500" loading="lazy">
+      <!-- Total Boutiques -->
+      <div class="col-lg-4 col-md-6">
+        <div class="card dashsa-kpi-card dashsa-kpi-orange">
+          <div class="dashsa-kpi-icon">
+            <i class="nc-icon nc-shop"></i>
+          </div>
+          <div class="dashsa-kpi-content">
+            <span class="dashsa-kpi-label">Total Boutiques</span>
+            <h2 class="dashsa-kpi-value">{{ formatNumber(stats.boutiques) }}</h2>
+          </div>
+          <div class="dashsa-kpi-footer">
+            <i class="nc-icon nc-bag-16"></i>
+            <span>Boutiques enregistrées</span>
+          </div>
+        </div>
       </div>
-      <div class="col-lg-6">
-        <h1 class="display-5 fw-bold lh-1 mb-3">Page Administrateur</h1>
-        <p class="lead">
-          Cet espace a été conçu pour vous offrir une gestion simple, efficace et sécurisée de l’ensemble des activités du centre : boutiques, utilisateur et services.
-          En tant qu’administrateur, vous disposez de tous les outils nécessaires pour piloter, superviser et optimiser le fonctionnement du centre commercial au quotidien.
-          Nous vous souhaitons une excellente expérience de gestion.
-        </p>
+
+      <!-- Utilisateurs -->
+      <div class="col-lg-4 col-md-6">
+        <div class="card dashsa-kpi-card dashsa-kpi-blue">
+          <div class="dashsa-kpi-icon">
+            <i class="nc-icon nc-single-02"></i>
+          </div>
+          <div class="dashsa-kpi-content">
+            <span class="dashsa-kpi-label">Utilisateurs</span>
+            <h2 class="dashsa-kpi-value">{{ formatNumber(stats.utilisateurs) }}</h2>
+          </div>
+          <div class="dashsa-kpi-footer">
+            <i class="nc-icon nc-circle-10"></i>
+            <span>Comptes actifs</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- En attente -->
+      <div class="col-lg-4 col-md-6">
+        <div class="card dashsa-kpi-card dashsa-kpi-red">
+          <div class="dashsa-kpi-icon">
+            <i class="nc-icon nc-watch-time"></i>
+          </div>
+          <div class="dashsa-kpi-content">
+            <span class="dashsa-kpi-label">En attente</span>
+            <h2 class="dashsa-kpi-value">{{ formatNumber(stats.boutiquesPendantes) }}</h2>
+          </div>
+          <div class="dashsa-kpi-footer">
+            <i class="nc-icon nc-button-pause"></i>
+            <span>Boutiques à valider</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Validées -->
+      <div class="col-lg-4 col-md-6">
+        <div class="card dashsa-kpi-card dashsa-kpi-green">
+          <div class="dashsa-kpi-icon">
+            <i class="nc-icon nc-check-2"></i>
+          </div>
+          <div class="dashsa-kpi-content">
+            <span class="dashsa-kpi-label">Validées</span>
+            <h2 class="dashsa-kpi-value">{{ formatNumber(stats.boutiquesValidees) }}</h2>
+          </div>
+          <div class="dashsa-kpi-footer">
+            <i class="nc-icon nc-badge"></i>
+            <span>Boutiques actives</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- CA Total -->
+      <div class="col-lg-4 col-md-6">
+        <div class="card dashsa-kpi-card dashsa-kpi-purple">
+          <div class="dashsa-kpi-icon">
+            <i class="nc-icon nc-money-coins"></i>
+          </div>
+          <div class="dashsa-kpi-content">
+            <span class="dashsa-kpi-label">CA Total</span>
+            <h2 class="dashsa-kpi-value">{{ formatNumber(stats.chiffreTotal) }}</h2>
+            <span class="dashsa-kpi-currency">Ar</span>
+          </div>
+          <div class="dashsa-kpi-footer">
+            <i class="nc-icon nc-chart-pie-36"></i>
+            <span>Chiffre d'affaires</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- CA Mois -->
+      <div class="col-lg-4 col-md-6">
+        <div class="card dashsa-kpi-card dashsa-kpi-teal">
+          <div class="dashsa-kpi-icon">
+            <i class="nc-icon nc-calendar-60"></i>
+          </div>
+          <div class="dashsa-kpi-content">
+            <span class="dashsa-kpi-label">CA ce mois</span>
+            <h2 class="dashsa-kpi-value">{{ formatNumber(stats.chiffreMois) }}</h2>
+            <span class="dashsa-kpi-currency">Ar</span>
+          </div>
+          <div class="dashsa-kpi-footer">
+            <i class="nc-icon nc-chart-bar-32"></i>
+            <span>Mois en cours</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- SECTION BIENVENUE -->
+    <div class="row dashsa-welcome-row" *ngIf="!loading">
+      <div class="col-md-12">
+        <div class="card dashsa-welcome-card">
+          <div class="row g-0 align-items-center">
+
+            <!-- Image -->
+            <div class="col-md-5 dashsa-welcome-img-col">
+              <img src="assets/img/aff.jpg"
+                   class="dashsa-welcome-img"
+                   alt="Administration" />
+            </div>
+
+            <!-- Contenu -->
+            <div class="col-md-7 dashsa-welcome-content">
+              <div class="dashsa-welcome-badge">
+                <i class="nc-icon nc-settings-gear-65"></i>
+                <span>Super Administration</span>
+              </div>
+              <h2 class="dashsa-welcome-title">Bienvenue dans l'espace super admin</h2>
+              <p class="dashsa-welcome-text">
+                Cet espace a été conçu pour vous offrir une gestion simple, efficace et sécurisée
+                de l'ensemble des activités du centre commercial. Vous disposez de tous les outils
+                nécessaires pour piloter, superviser et optimiser le fonctionnement de la plateforme
+                au quotidien.
+              </p>
+              <div class="dashsa-welcome-features">
+                <div class="dashsa-feature">
+                  <i class="nc-icon nc-check-2"></i>
+                  <span>Gestion des boutiques</span>
+                </div>
+                <div class="dashsa-feature">
+                  <i class="nc-icon nc-check-2"></i>
+                  <span>Supervision des utilisateurs</span>
+                </div>
+                <div class="dashsa-feature">
+                  <i class="nc-icon nc-check-2"></i>
+                  <span>Validation des demandes</span>
+                </div>
+                <div class="dashsa-feature">
+                  <i class="nc-icon nc-check-2"></i>
+                  <span>Statistiques avancées</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
       </div>
     </div>
+
   </div>
 </div>
