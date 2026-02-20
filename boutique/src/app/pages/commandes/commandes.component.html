@@ -121,7 +121,27 @@
                     <i class="nc-icon nc-check-2"></i>
                     Valider
                   </button>
-                  <a *ngIf="c?.statut !== 'en_attente'"
+                  <button *ngIf="c?.statut === 'confirmee'"
+                          class="cmnd-btn-preparer"
+                          (click)="clickPreparerCommande(c?._id)">
+                    <i class="nc-icon nc-box-2"></i>
+                    Preparer
+                  </button>
+
+                  <button *ngIf="c?.statut === 'expediee'"
+                          class="cmnd-btn-livrer"
+                          (click)="clickLivrerCommande(c?._id)">
+                    <i class="nc-icon nc-delivery-fast"></i>
+                    Livrer
+                  </button>
+                  <button *ngIf="c?.statut === 'en_preparation'"
+                          class="cmnd-btn-livrer"
+                          (click)="clickExpedierCommande(c?._id)">
+                    <i class="nc-icon nc-spaceship"></i>
+                    Expedier
+                  </button>
+
+                  <a *ngIf="c?.statut === 'livree' || c?.statut === 'annulee' || c?.statut === 'en_livraison' "
                      class="cmnd-btn-voir"
                      [routerLink]="['/detail-commande']"
                      [queryParams]="{id: c?._id}">

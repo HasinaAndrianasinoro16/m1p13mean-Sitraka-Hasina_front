@@ -48,6 +48,48 @@ export class CommandeService {
     }
 
     return this.http.put(`${this.baseUrl}/commandes/${id}/statut`, Data, {headers});
+  }
+
+  preparerCommande(id: string): Observable<any>{
+    const token = localStorage.getItem("token");
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
+
+    const data ={
+      statut: 'en_preparation',
+    }
+
+    return this.http.put(`${this.baseUrl}/commandes/${id}/statut`, data, {headers});
 
   }
+
+  expedierCommande(id: string): Observable<any>{
+    const token = localStorage.getItem("token");
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
+
+    const data ={
+      statut: 'expediee',
+    }
+
+    return this.http.put(`${this.baseUrl}/commandes/${id}/statut`, data, {headers});
+
+  }
+
+  livrerCommande(id: string): Observable<any>{
+    const token = localStorage.getItem("token");
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
+
+    const data ={
+      statut: 'en_livraison',
+    }
+
+    return this.http.put(`${this.baseUrl}/commandes/${id}/statut`, data, {headers});
+
+  }
+
 }

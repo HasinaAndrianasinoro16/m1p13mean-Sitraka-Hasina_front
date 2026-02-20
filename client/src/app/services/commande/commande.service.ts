@@ -54,6 +54,26 @@ export class CommandeService {
 
   }
 
+  confirmerReceptionCommande(id: string): Observable<any>{
+    const token = localStorage.getItem("token");
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`
+    });
+
+    return this.http.put(`${this.baseUrl}/${id}/confirmer-reception`,null,{headers});
+  }
+
+  payerCommande(id: String): Observable<any>{
+    const token = localStorage.getItem("token");
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`
+    });
+
+    return this.http.put(`${this.baseUrl}/${id}/payer`,null,{headers});
+
+  }
+
+
   annulerCommande (id: string): Observable<any>{
     const token = localStorage.getItem("token");
     const headers = new HttpHeaders({

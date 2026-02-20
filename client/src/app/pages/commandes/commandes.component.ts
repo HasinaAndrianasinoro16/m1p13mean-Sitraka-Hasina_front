@@ -8,21 +8,22 @@ import { CommandeService } from '../../services/commande/commande.service';
 })
 export class CommandesComponent implements OnInit {
 
-  // ✅ Initialisé à [] — jamais null
   commandes: any[] = [];
 
   loading: boolean = false;
-  error:   string  = '';
+  error: string = '';
   successMessage: string = '';
 
-  // Confirmation annulation
+  // Confirmation inline
   confirmAnnulId: string | null = null;
+  confirmReceptionId: string | null = null;
+  confirmPaiementId: string | null = null;
 
   // Pagination
-  currentPage: number   = 1;
-  limit:       number   = 5;
-  totalPages:  number   = 0;
-  pages:       number[] = [];
+  currentPage: number = 1;
+  limit: number = 10;
+  totalPages: number = 0;
+  pages: number[] = [];
 
   constructor(private commandeService: CommandeService) {}
 
@@ -32,21 +33,20 @@ export class CommandesComponent implements OnInit {
 
   loadCommande(page: number): void {
     this.loading = true;
-    this.error   = '';
+    this.error = '';
 
     this.commandeService.getListeCommandes(page, this.limit).subscribe({
       next: (res: any) => {
         this.loading = false;
         if (res.success && res.data) {
-          // ✅ Filtre les nulls
           this.commandes = (Array.isArray(res.data.commandes)
             ? res.data.commandes : [])
             .filter((c: any) => c != null);
 
-          const p        = res.data.pagination;
+          const p = res.data.pagination;
           this.currentPage = p.page;
-          this.totalPages  = p.totalPages;
-          this.pages       = Array.from({ length: this.totalPages }, (_, i) => i + 1);
+          this.totalPages = p.totalPages;
+          this.pages = Array.from({ length: this.totalPages }, (_, i) => i + 1);
         }
       },
       error: (err) => {
@@ -63,12 +63,12 @@ export class CommandesComponent implements OnInit {
     }
   }
 
-  // ── Annulation avec confirmation inline ──
+  // ── Annulation ──
   demanderAnnulation(id: string): void {
     this.confirmAnnulId = id;
   }
 
-  annulerDemande(): void {
+  annulerDemandeAnnulation(): void {
     this.confirmAnnulId = null;
   }
 
@@ -78,7 +78,6 @@ export class CommandesComponent implements OnInit {
     this.commandeService.annulerCommande(id).subscribe({
       next: (res: any) => {
         if (res.success) {
-          // ✅ Mise à jour locale — pas de rechargement
           const idx = this.commandes.findIndex((c: any) => c._id === id);
           if (idx !== -1) {
             this.commandes[idx] = { ...this.commandes[idx], statut: 'annulee' };
@@ -93,41 +92,115 @@ export class CommandesComponent implements OnInit {
     });
   }
 
+  // ── Réception ──
+  demanderReception(id: string): void {
+    this.confirmReceptionId = id;
+  }
+
+  annulerDemandeReception(): void {
+    this.confirmReceptionId = null;
+  }
+
+  confirmerReception(id: string): void {
+    this.confirmReceptionId = null;
+
+    this.commandeService.confirmerReceptionCommande(id).subscribe({
+      next: (res: any) => {
+        if (res.success) {
+          const idx = this.commandes.findIndex((c: any) => c._id === id);
+          if (idx !== -1) {
+            this.commandes[idx] = { ...this.commandes[idx], statut: 'livree' };
+          }
+          this.showSuccess('Commande réceptionnée avec succès.');
+        }
+      },
+      error: (err) => {
+        console.error(err);
+        this.error = err?.error?.message || 'Erreur lors de la réception.';
+      }
+    });
+  }
+
+  // ── Paiement ──
+  demanderPaiement(id: string): void {
+    this.confirmPaiementId = id;
+  }
+
+  annulerDemandePaiement(): void {
+    this.confirmPaiementId = null;
+  }
+
+  confirmerPaiement(id: string): void {
+    this.confirmPaiementId = null;
+
+    this.commandeService.payerCommande(id).subscribe({
+      next: (res: any) => {
+        if (res.success) {
+          const idx = this.commandes.findIndex((c: any) => c._id === id);
+          if (idx !== -1) {
+            this.commandes[idx] = { ...this.commandes[idx], paiementStatut: 'paye' };
+          }
+          this.showSuccess('Paiement effectué avec succès.');
+        }
+      },
+      error: (err) => {
+        console.error(err);
+        this.error = err?.error?.message || 'Erreur lors du paiement.';
+      }
+    });
+  }
+
   // ── Helpers statut ──
   getStatutBadgeClass(statut: string): string {
     const m: { [k: string]: string } = {
-      'en_attente':    'badge-attente',
-      'confirmee':     'badge-confirmee',
-      'en_preparation':'badge-en-cours',
-      'en_livraison':  'badge-en-cours',
-      'livree':        'badge-livree',
-      'annulee':       'badge-annulee'
+      'en_attente': 'badge-attente',
+      'confirmee': 'badge-confirmee',
+      'en_preparation': 'badge-en-cours',
+      'en_livraison': 'badge-en-cours',
+      'livree': 'badge-livree',
+      'annulee': 'badge-annulee'
     };
     return m[statut] || 'badge-attente';
   }
 
   getStatutTexte(statut: string): string {
     const m: { [k: string]: string } = {
-      'en_attente':    'En attente',
-      'confirmee':     'Confirmée',
-      'en_preparation':'En préparation',
-      'en_livraison':  'En livraison',
-      'livree':        'Livrée',
-      'annulee':       'Annulée'
+      'en_attente': 'En attente',
+      'confirmee': 'Confirmée',
+      'en_preparation': 'En préparation',
+      'en_livraison': 'En livraison',
+      'livree': 'Livrée',
+      'annulee': 'Annulée'
     };
     return m[statut] || statut;
   }
 
   getStatutIcon(statut: string): string {
     const m: { [k: string]: string } = {
-      'en_attente':    'nc-watch-time',
-      'confirmee':     'nc-check-2',
-      'en_preparation':'nc-box',
-      'en_livraison':  'nc-delivery-fast',
-      'livree':        'nc-check-2',
-      'annulee':       'nc-simple-remove'
+      'en_attente': 'nc-watch-time',
+      'confirmee': 'nc-check-2',
+      'en_preparation': 'nc-box',
+      'en_livraison': 'nc-delivery-fast',
+      'livree': 'nc-check-2',
+      'annulee': 'nc-simple-remove'
     };
     return m[statut] || 'nc-bullet-list-67';
+  }
+
+  canAnnuler(statut: string): boolean {
+    return statut === 'en_attente';
+  }
+
+  canReceptionner(statut: string): boolean {
+    return statut === 'en_livraison';
+  }
+
+  canPayer(statut: string, paiementStatut: string): boolean {
+    return statut === 'livree' && paiementStatut === 'en_attente';
+  }
+
+  showVoirDetails(statut: string, paiementStatut: string): boolean {
+    return !(this.canAnnuler(statut) || this.canReceptionner(statut) || this.canPayer(statut, paiementStatut));
   }
 
   showSuccess(msg: string): void {

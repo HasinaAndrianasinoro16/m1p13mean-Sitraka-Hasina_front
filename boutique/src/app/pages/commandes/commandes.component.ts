@@ -67,6 +67,7 @@ export class CommandesComponent implements OnInit {
       'confirmee':     'badge-confirmee',
       'en_preparation':'badge-en-cours',
       'en_livraison':  'badge-en-cours',
+      'expediee':     'badge-en-cours',
       'livree':        'badge-livree',
       'annulee':       'badge-annulee'
     };
@@ -78,6 +79,7 @@ export class CommandesComponent implements OnInit {
       'en_attente':    'En attente',
       'confirmee':     'Confirmée',
       'en_preparation':'En préparation',
+      'expediee':      'Expediée',
       'en_livraison':  'En livraison',
       'livree':        'Livrée',
       'annulee':       'Annulée'
@@ -90,6 +92,7 @@ export class CommandesComponent implements OnInit {
       'en_attente':    'nc-watch-time',
       'confirmee':     'nc-check-2',
       'en_preparation':'nc-box',
+      'expediee':     'nc-delivery-fast',
       'en_livraison':  'nc-delivery-fast',
       'livree':        'nc-check-2',
       'annulee':       'nc-simple-remove'
@@ -135,4 +138,65 @@ export class CommandesComponent implements OnInit {
       }
     });
   }
+
+  clickPreparerCommande(id: string): void {
+    if (!id) {
+      this.error = 'Commande introuvable';
+      return;
+    }
+
+    this.commandeService.preparerCommande(id).subscribe({
+      next: (response: any) => {
+        if (response.success) {
+         alert('la commande est en cours de preparation');
+         this.loadCommandes(this.currentPage);
+        }
+      },
+      error: (err) => {
+        console.error('Erreur preparation:', err);
+        this.error = err?.error?.message || 'Erreur lors de la preparation';
+      }
+    });
+  }
+
+  clickExpedierCommande(id: string): void {
+    if (!id) {
+      this.error = 'Commande introuvable';
+      return;
+    }
+
+    this.commandeService.expedierCommande(id).subscribe({
+      next: (response: any) => {
+        if (response.success) {
+          alert('votre commande a été expédier');
+          this.loadCommandes(this.currentPage);
+        }
+      },
+      error: (err) => {
+        console.error('Erreur expédition:', err);
+        this.error = err?.error?.message || 'Erreur lors de la expédition';
+      }
+    })
+  }
+
+  clickLivrerCommande(id: string): void {
+    if (!id) {
+      this.error = 'Commande introuvable';
+      return;
+    }
+
+    this.commandeService.livrerCommande(id).subscribe({
+      next: (response: any) => {
+        if (response.success) {
+          alert('la commande a été livrer');
+          this.loadCommandes(this.currentPage);
+        }
+      },
+      error: (err) => {
+        console.error('Erreur livraison:', err);
+        this.error = err?.error?.message || 'Erreur lors de la livraison';
+      }
+    });
+  }
+
 }

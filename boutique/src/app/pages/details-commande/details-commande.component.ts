@@ -25,6 +25,7 @@ export class DetailsCommandeComponent implements OnInit {
       'confirmee':     'badge-confirmee',
       'en_preparation':'badge-en-cours',
       'en_livraison':  'badge-en-cours',
+      'expediee':  'badge-en-cours',
       'livree':        'badge-livree',
       'annulee':       'badge-annulee'
     };
@@ -37,6 +38,7 @@ export class DetailsCommandeComponent implements OnInit {
       'confirmee':     'Confirmée',
       'en_preparation':'En préparation',
       'en_livraison':  'En livraison',
+      'expediee':     'Expediée',
       'livree':        'Livrée',
       'annulee':       'Annulée'
     };
@@ -49,6 +51,7 @@ export class DetailsCommandeComponent implements OnInit {
       'confirmee':     'nc-check-2',
       'en_preparation':'nc-box',
       'en_livraison':  'nc-delivery-fast',
+      'expediee':     'nc-spaceship',
       'livree':        'nc-check-2',
       'annulee':       'nc-simple-remove'
     };

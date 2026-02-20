@@ -158,6 +158,36 @@
 }
 .cmnd-btn-valider i { font-size: 12px; }
 
+.cmnd-btn-preparer {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 7px 14px; border-radius: 8px;
+  font-size: .8rem; font-weight: 600; cursor: pointer;
+  border: 1.5px solid #6c757d; background: transparent; color: #6c757d;
+  transition: all .2s; font-family: inherit;
+}
+.cmnd-btn-preparer:hover {
+  background: #6c757d; color: white;
+  box-shadow: 0 4px 12px rgba(189, 189, 189, 0.62);
+  transform: translateY(-1px);
+}
+.cmnd-btn-preparer i { font-size: 12px; }
+
+
+.cmnd-btn-livrer {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 7px 14px; border-radius: 8px;
+  font-size: .8rem; font-weight: 600; cursor: pointer;
+  border: 1.5px solid #f0a030; background: transparent; color: #f0a030;
+  transition: all .2s; font-family: inherit;
+}
+.cmnd-btn-livrer:hover {
+  background: #f0a030; color: white;
+  box-shadow: 0 4px 12px rgb(220, 125, 43);
+  transform: translateY(-1px);
+}
+.cmnd-btn-livrer i { font-size: 12px; }
+
+
 /* Lien voir */
 .cmnd-btn-voir {
   font-size: .82rem; font-weight: 600; color: #9e9a92;
