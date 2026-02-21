@@ -2,19 +2,65 @@
   <div class="col-md-12">
 
     <!-- SUCCESS -->
-<!--    <div *ngIf="successMessage" class="msg-alert msg-alert-success">-->
-<!--      <i class="nc-icon nc-check-2"></i>-->
-<!--      {{ successMessage }}-->
-<!--    </div>-->
+    <div *ngIf="successMessage" class="msg-alert msg-alert-success">
+      <i class="nc-icon nc-check-2"></i>
+      {{ successMessage }}
+    </div>
 
-<!--    &lt;!&ndash; ERROR &ndash;&gt;-->
-<!--    <div *ngIf="error" class="msg-alert msg-alert-error">-->
-<!--      <i class="nc-icon nc-alert-circle-i"></i>-->
-<!--      {{ error }}-->
-<!--      <button (click)="error = ''">×</button>-->
-<!--    </div>-->
+    <!-- ERROR -->
+    <div *ngIf="error" class="msg-alert msg-alert-error">
+      <i class="nc-icon nc-alert-circle-i"></i>
+      {{ error }}
+      <button (click)="error = ''">×</button>
+    </div>
 
     <div class="card msg-card">
+
+      <!-- MODAL NOUVELLE CONVERSATION -->
+      <div class="modal" [class.show]="showNewConversationModal" style="display: block;" *ngIf="showNewConversationModal">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Nouvelle conversation</h5>
+              <button type="button" class="close" (click)="showNewConversationModal = false">
+                <span>&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <div class="form-group">
+                <label>Sélectionner une boutique</label>
+                <select class="form-control" [(ngModel)]="selectedBoutiqueId">
+                  <option value="">Choisir une boutique...</option>
+                  <option *ngFor="let boutique of boutiques" [value]="boutique._id">
+                    {{ boutique.nomBoutique }}
+                  </option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Sujet</label>
+                <input type="text" class="form-control" [(ngModel)]="nouveauSujet"
+                       placeholder="Ex: Renseignement produit">
+              </div>
+              <div class="form-group">
+                <label>Message</label>
+                <textarea class="form-control" rows="3" [(ngModel)]="nouveauMessageInitial"
+                          placeholder="Votre message..."></textarea>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" (click)="showNewConversationModal = false">
+                Annuler
+              </button>
+              <button type="button" class="btn btn-primary" (click)="demarrerConversation()"
+                      [disabled]="loading || !selectedBoutiqueId">
+                <span *ngIf="loading" class="spinner-border spinner-border-sm mr-2"></span>
+                Démarrer la conversation
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-backdrop fade show" *ngIf="showNewConversationModal"></div>
 
       <!-- HEADER -->
       <div class="card-header msg-header">
@@ -24,19 +70,41 @@
           </div>
           <div>
             <h5 class="card-title">Messagerie</h5>
-            <p class="card-category">Conversations avec les boutiques et clients</p>
+            <p class="card-category">Conversations avec les boutiques</p>
           </div>
         </div>
-        <button class="msg-btn-compose">
-          <i class="nc-icon nc-simple-add"></i>
-          Nouveau message
+
+        <!-- Nouveau bouton pour démarrer une conversation -->
+        <button class="btn btn-primary btn-sm" (click)="showNewConversationModal = true"
+                *ngIf="boutiques && boutiques.length > 0">
+          <i class="nc-icon nc-simple-add"></i> Nouvelle conversation
         </button>
       </div>
 
       <!-- BODY -->
       <div class="card-body p-0">
 
-        <div class="msg-layout">
+        <!-- LOADING GLOBAL -->
+        <div *ngIf="loading && conversations.length === 0" class="msg-loading">
+          <div class="msg-spinner"></div>
+          <p>Chargement des conversations...</p>
+        </div>
+
+        <!-- ÉTAT VIDE -->
+        <div *ngIf="!loading && conversations.length === 0" class="msg-empty">
+          <div class="msg-empty-icon">
+            <i class="nc-icon nc-chat-33"></i>
+          </div>
+          <p class="msg-empty-title">Aucune conversation</p>
+          <p class="msg-empty-sub">Commencez une conversation avec une boutique</p>
+          <button class="btn btn-primary btn-sm mt-3" (click)="showNewConversationModal = true"
+                  *ngIf="boutiques && boutiques.length > 0">
+            <i class="nc-icon nc-simple-add"></i> Démarrer une conversation
+          </button>
+        </div>
+
+        <!-- LAYOUT MESSAGERIE -->
+        <div class="msg-layout" *ngIf="!loading || conversations.length > 0">
 
           <!-- ══════════════════════════════════════════════
                SIDEBAR CONVERSATIONS
@@ -46,89 +114,49 @@
             <!-- Recherche -->
             <div class="msg-search">
               <i class="nc-icon nc-zoom-split msg-search-icon"></i>
-              <input type="text" class="msg-search-input" placeholder="Rechercher..." />
+              <input type="text"
+                     class="msg-search-input"
+                     placeholder="Rechercher..."
+                     [(ngModel)]="searchQuery"
+                     (input)="onSearchChange()" />
             </div>
 
             <!-- Filtres -->
             <div class="msg-filters">
-              <button class="msg-filter msg-filter-active">Tous</button>
-              <button class="msg-filter">Non lus</button>
-              <button class="msg-filter">Archivés</button>
+              <button class="msg-filter"
+                      [class.msg-filter-active]="filtreActif === 'tous'"
+                      (click)="appliquerFiltre('tous')">
+                Tous
+              </button>
+              <button class="msg-filter"
+                      [class.msg-filter-active]="filtreActif === 'non_lus'"
+                      (click)="appliquerFiltre('non_lus')">
+                Non lus
+              </button>
             </div>
 
             <!-- Liste conversations -->
             <div class="msg-conversations">
 
-              <!-- Conversation active -->
-              <div class="msg-conv msg-conv-active">
-                <div class="msg-conv-avatar" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
-                  <span>SL</span>
-                  <span class="msg-status-dot"></span>
-                </div>
-                <div class="msg-conv-content">
-                  <div class="msg-conv-top">
-                    <h3 class="msg-conv-name">Sophie Lemaire</h3>
-                    <span class="msg-conv-time">14:32</span>
-                  </div>
-                  <p class="msg-conv-preview">Parfait ! Je te confirme la livraison...</p>
-                  <span class="msg-unread-badge">3</span>
-                </div>
-              </div>
+              <div class="msg-conv"
+                   *ngFor="let conv of conversations"
+                   [class.msg-conv-active]="conversationActive?._id === conv._id"
+                   (click)="selectionnerConversation(conv)">
 
-              <!-- Conversation -->
-              <div class="msg-conv">
-                <div class="msg-conv-avatar" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
-                  <span>MD</span>
+                <div class="msg-conv-avatar" [style.background]="getAvatarColor(conv)">
+                  <span>{{ getInitiales(conv) }}</span>
+                  <span class="msg-status-dot" *ngIf="conv.isActive"></span>
                 </div>
-                <div class="msg-conv-content">
-                  <div class="msg-conv-top">
-                    <h3 class="msg-conv-name">Marc Dubois</h3>
-                    <span class="msg-conv-time">Hier</span>
-                  </div>
-                  <p class="msg-conv-preview">D'accord, merci pour l'info !</p>
-                </div>
-              </div>
 
-              <!-- Conversation -->
-              <div class="msg-conv">
-                <div class="msg-conv-avatar" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
-                  <span>AB</span>
-                </div>
                 <div class="msg-conv-content">
                   <div class="msg-conv-top">
-                    <h3 class="msg-conv-name">Boutique Analakely</h3>
-                    <span class="msg-conv-time">2j</span>
+                    <h3 class="msg-conv-name">{{ getNomAutreParticipant(conv) }}</h3>
+                    <span class="msg-conv-time">{{ formatTime(conv.lastMessageAt || conv.updatedAt) }}</span>
                   </div>
-                  <p class="msg-conv-preview">Bonjour, votre commande est prête...</p>
-                  <span class="msg-unread-badge">1</span>
-                </div>
-              </div>
-
-              <!-- Conversation -->
-              <div class="msg-conv">
-                <div class="msg-conv-avatar" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">
-                  <span>LM</span>
-                </div>
-                <div class="msg-conv-content">
-                  <div class="msg-conv-top">
-                    <h3 class="msg-conv-name">Laura Martin</h3>
-                    <span class="msg-conv-time">3j</span>
-                  </div>
-                  <p class="msg-conv-preview">Vous : Merci beaucoup...</p>
-                </div>
-              </div>
-
-              <!-- Conversation -->
-              <div class="msg-conv">
-                <div class="msg-conv-avatar" style="background: linear-gradient(135deg, #30cfd0 0%, #330867 100%);">
-                  <span>TM</span>
-                </div>
-                <div class="msg-conv-content">
-                  <div class="msg-conv-top">
-                    <h3 class="msg-conv-name">Tana Market</h3>
-                    <span class="msg-conv-time">1sem</span>
-                  </div>
-                  <p class="msg-conv-preview">Bonjour, nous avons bien reçu...</p>
+                  <p class="msg-conv-preview">{{ conv.lastMessage?.content || conv.sujet || 'Nouvelle conversation' }}</p>
+                  <span class="msg-unread-badge" *ngIf="getUnreadCount(conv) > 0">
+                    {{ getUnreadCount(conv) }}
+                  </span>
                 </div>
               </div>
 
@@ -141,143 +169,92 @@
           ══════════════════════════════════════════════ -->
           <main class="msg-chat">
 
-            <!-- Header chat -->
-            <header class="msg-chat-header">
-              <div class="msg-chat-avatar" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
-                <span>SL</span>
-                <span class="msg-status-dot-large"></span>
+            <!-- État vide -->
+            <div *ngIf="!conversationActive" class="msg-chat-empty">
+              <div class="msg-chat-empty-icon">
+                <i class="nc-icon nc-chat-33"></i>
               </div>
-              <div class="msg-chat-info">
-                <h2 class="msg-chat-name">Sophie Lemaire</h2>
-                <p class="msg-chat-status">
-                  <span class="msg-status-online"></span>
-                  En ligne
-                </p>
-              </div>
-              <div class="msg-chat-actions">
-                <button class="msg-action-btn" title="Rechercher">
-                  <i class="nc-icon nc-zoom-split"></i>
-                </button>
-                <button class="msg-action-btn" title="Plus">
-                  <i class="nc-icon nc-settings-gear-65"></i>
-                </button>
-              </div>
-            </header>
-
-            <!-- Messages -->
-            <div class="msg-messages">
-
-              <!-- Message reçu -->
-              <div class="msg-message msg-received">
-                <div class="msg-message-avatar" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
-                  SL
-                </div>
-                <div class="msg-message-content">
-                  <div class="msg-bubble msg-bubble-received">
-                    <p>Bonjour ! J'ai une question concernant ma commande #CMD-2024-0312</p>
-                  </div>
-                  <span class="msg-message-time">14:28</span>
-                </div>
-              </div>
-
-              <!-- Message reçu -->
-              <div class="msg-message msg-received">
-                <div class="msg-message-avatar"></div>
-                <div class="msg-message-content">
-                  <div class="msg-bubble msg-bubble-received">
-                    <p>Est-ce qu'il est possible de modifier l'adresse de livraison ?</p>
-                  </div>
-                  <span class="msg-message-time">14:28</span>
-                </div>
-              </div>
-
-              <!-- Message envoyé -->
-              <div class="msg-message msg-sent">
-                <div class="msg-message-content">
-                  <div class="msg-bubble msg-bubble-sent">
-                    <p>Bonjour Sophie ! Bien sûr, je peux vous aider avec ça 😊</p>
-                  </div>
-                  <span class="msg-message-time">14:29 • Lu</span>
-                </div>
-              </div>
-
-              <!-- Message envoyé -->
-              <div class="msg-message msg-sent">
-                <div class="msg-message-content">
-                  <div class="msg-bubble msg-bubble-sent">
-                    <p>Quelle est la nouvelle adresse de livraison ?</p>
-                  </div>
-                  <span class="msg-message-time">14:29 • Lu</span>
-                </div>
-              </div>
-
-              <!-- Message reçu -->
-              <div class="msg-message msg-received">
-                <div class="msg-message-avatar" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
-                  SL
-                </div>
-                <div class="msg-message-content">
-                  <div class="msg-bubble msg-bubble-received">
-                    <p>123 Avenue de la Liberté, Antananarivo</p>
-                  </div>
-                  <span class="msg-message-time">14:30</span>
-                </div>
-              </div>
-
-              <!-- Message envoyé -->
-              <div class="msg-message msg-sent">
-                <div class="msg-message-content">
-                  <div class="msg-bubble msg-bubble-sent">
-                    <p>Parfait, c'est noté ! L'adresse a été mise à jour ✅</p>
-                  </div>
-                  <span class="msg-message-time">14:31 • Lu</span>
-                </div>
-              </div>
-
-              <!-- Message reçu -->
-              <div class="msg-message msg-received">
-                <div class="msg-message-avatar" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
-                  SL
-                </div>
-                <div class="msg-message-content">
-                  <div class="msg-bubble msg-bubble-received">
-                    <p>Parfait ! Je te confirme la livraison pour demain matin 🚚</p>
-                  </div>
-                  <span class="msg-message-time">14:32</span>
-                </div>
-              </div>
-
-              <!-- Typing indicator -->
-              <div class="msg-typing">
-                <div class="msg-typing-avatar" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
-                  SL
-                </div>
-                <div class="msg-typing-bubble">
-                  <div class="msg-typing-dot"></div>
-                  <div class="msg-typing-dot"></div>
-                  <div class="msg-typing-dot"></div>
-                </div>
-              </div>
-
+              <p class="msg-chat-empty-title">Sélectionnez une conversation</p>
+              <p class="msg-chat-empty-sub">Choisissez une conversation pour commencer à discuter</p>
             </div>
 
-            <!-- Input zone -->
-            <footer class="msg-input-zone">
-              <button class="msg-attach-btn">
-                <i class="nc-icon nc-pin-3"></i>
-              </button>
+            <!-- Chat actif -->
+            <div *ngIf="conversationActive" class="msg-chat-active">
 
-              <div class="msg-input-wrapper">
-                <input type="text" class="msg-input" placeholder="Écrivez votre message..." />
-                <button class="msg-emoji-btn">
-                  😊
-                </button>
+              <!-- Header chat -->
+              <header class="msg-chat-header">
+                <div class="msg-chat-avatar" [style.background]="getAvatarColor(conversationActive)">
+                  <span>{{ getInitiales(conversationActive) }}</span>
+                  <span class="msg-status-dot-large" *ngIf="conversationActive.isActive"></span>
+                </div>
+                <div class="msg-chat-info">
+                  <h2 class="msg-chat-name">{{ getNomAutreParticipant(conversationActive) }}</h2>
+                  <p class="msg-chat-status">
+                    <span class="msg-status-online" *ngIf="conversationActive.isActive"></span>
+                    {{ conversationActive.sujet || 'Conversation' }}
+                  </p>
+                </div>
+              </header>
+
+              <!-- Loading messages -->
+              <div *ngIf="loadingMessages" class="msg-messages-loading">
+                <div class="msg-spinner-small"></div>
               </div>
 
-              <button class="msg-send-btn">
-                <i class="nc-icon nc-send"></i>
-              </button>
-            </footer>
+              <!-- Messages -->
+              <div class="msg-messages" #messagesContainer *ngIf="!loadingMessages">
+
+                <div *ngFor="let msg of messages"
+                     class="msg-message"
+                     [class.msg-sent]="isMessageFromMe(msg)"
+                     [class.msg-received]="!isMessageFromMe(msg)">
+
+                  <!-- Avatar pour messages reçus -->
+                  <div class="msg-message-avatar"
+                       *ngIf="!isMessageFromMe(msg)"
+                       [style.background]="getAvatarColor(conversationActive)">
+                    {{ getInitiales(conversationActive) }}
+                  </div>
+
+                  <div class="msg-message-content">
+                    <div class="msg-bubble"
+                         [class.msg-bubble-sent]="isMessageFromMe(msg)"
+                         [class.msg-bubble-received]="!isMessageFromMe(msg)">
+                      <p>{{ msg.content }}</p>
+                    </div>
+                    <span class="msg-message-time">
+                      {{ formatMessageTime(msg.createdAt) }}
+                      <span *ngIf="isMessageFromMe(msg) && msg.isRead"> • Lu</span>
+                    </span>
+                  </div>
+                </div>
+
+                <!-- Message si pas de messages -->
+                <div *ngIf="messages.length === 0" class="text-center p-4 text-muted">
+                  <i class="nc-icon nc-chat-33 d-block mb-2" style="font-size: 2rem; opacity: 0.3;"></i>
+                  <p>Aucun message pour le moment.<br>Soyez le premier à écrire !</p>
+                </div>
+
+              </div>
+
+              <!-- Input zone -->
+              <footer class="msg-input-zone">
+                <div class="msg-input-wrapper">
+                  <input type="text"
+                         class="msg-input"
+                         placeholder="Écrivez votre message..."
+                         [(ngModel)]="nouveauMessage"
+                         (keydown.enter)="envoyerMessage()" />
+                </div>
+
+                <button class="msg-send-btn"
+                        (click)="envoyerMessage()"
+                        [disabled]="!nouveauMessage.trim()">
+                  <i class="nc-icon nc-send"></i>
+                </button>
+              </footer>
+
+            </div>
 
           </main>
 

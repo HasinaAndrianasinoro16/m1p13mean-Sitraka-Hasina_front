@@ -17,6 +17,7 @@ export const AppRoutes: Routes = [
   }]},
   {
     path: '**',
-    redirectTo: 'dashboard'
+    // redirectTo: 'dasboard'
+    redirectTo: 'achats'
   }
 ]
