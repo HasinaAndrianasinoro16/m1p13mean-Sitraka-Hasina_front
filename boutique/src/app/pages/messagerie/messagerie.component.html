@@ -1,1 +1,210 @@
-<p>messagerie works!</p>
+<div class="row">
+  <div class="col-md-12">
+
+    <!-- SUCCESS -->
+    <div *ngIf="successMessage" class="msg-alert msg-alert-success">
+      <i class="nc-icon nc-check-2"></i>
+      {{ successMessage }}
+    </div>
+
+    <!-- ERROR -->
+    <div *ngIf="error" class="msg-alert msg-alert-error">
+      <i class="nc-icon nc-alert-circle-i"></i>
+      {{ error }}
+      <button (click)="error = ''">×</button>
+    </div>
+
+    <div class="card msg-card">
+
+      <!-- HEADER -->
+      <div class="card-header msg-header">
+        <div class="msg-header-left">
+          <div class="msg-header-icon">
+            <i class="nc-icon nc-chat-33"></i>
+          </div>
+          <div>
+            <h5 class="card-title">Messagerie</h5>
+            <p class="card-category">Conversations avec les Client</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- BODY -->
+      <div class="card-body p-0">
+
+        <!-- LOADING GLOBAL -->
+        <div *ngIf="loading && conversations.length === 0" class="msg-loading">
+          <div class="msg-spinner"></div>
+          <p>Chargement des conversations...</p>
+        </div>
+
+        <!-- ÉTAT VIDE -->
+        <div *ngIf="!loading && conversations.length === 0" class="msg-empty">
+          <div class="msg-empty-icon">
+            <i class="nc-icon nc-chat-33"></i>
+          </div>
+          <p class="msg-empty-title">Aucune conversation</p>
+          <p class="msg-empty-sub">Attender que un client vous contact</p>
+        </div>
+
+        <!-- LAYOUT MESSAGERIE -->
+        <div class="msg-layout" *ngIf="!loading || conversations.length > 0">
+
+          <!-- ══════════════════════════════════════════════
+               SIDEBAR CONVERSATIONS
+          ══════════════════════════════════════════════ -->
+          <aside class="msg-sidebar">
+
+            <!-- Recherche -->
+            <div class="msg-search">
+              <i class="nc-icon nc-zoom-split msg-search-icon"></i>
+              <input type="text"
+                     class="msg-search-input"
+                     placeholder="Rechercher..."
+                     [(ngModel)]="searchQuery"
+                     (input)="onSearchChange()" />
+            </div>
+
+            <!-- Filtres -->
+            <div class="msg-filters">
+              <button class="msg-filter"
+                      [class.msg-filter-active]="filtreActif === 'tous'"
+                      (click)="appliquerFiltre('tous')">
+                Tous
+              </button>
+              <button class="msg-filter"
+                      [class.msg-filter-active]="filtreActif === 'non_lus'"
+                      (click)="appliquerFiltre('non_lus')">
+                Non lus
+              </button>
+            </div>
+
+            <!-- Liste conversations -->
+            <div class="msg-conversations">
+
+              <div class="msg-conv"
+                   *ngFor="let conv of conversations"
+                   [class.msg-conv-active]="conversationActive?._id === conv._id"
+                   (click)="selectionnerConversation(conv)">
+
+                <div class="msg-conv-avatar" [style.background]="getAvatarColor(conv)">
+                  <span>{{ getInitiales(conv) }}</span>
+                  <span class="msg-status-dot" *ngIf="conv.isActive"></span>
+                </div>
+
+                <div class="msg-conv-content">
+                  <div class="msg-conv-top">
+                    <h3 class="msg-conv-name">{{ getNomAutreParticipant(conv) }}</h3>
+                    <span class="msg-conv-time">{{ formatTime(conv.lastMessageAt || conv.updatedAt) }}</span>
+                  </div>
+                  <p class="msg-conv-preview">{{ conv.lastMessage?.content || conv.sujet || 'Nouvelle conversation' }}</p>
+                  <span class="msg-unread-badge" *ngIf="getUnreadCount(conv) > 0">
+                    {{ getUnreadCount(conv) }}
+                  </span>
+                </div>
+              </div>
+
+            </div>
+
+          </aside>
+
+          <!-- ══════════════════════════════════════════════
+               ZONE DE CHAT
+          ══════════════════════════════════════════════ -->
+          <main class="msg-chat">
+
+            <!-- État vide -->
+            <div *ngIf="!conversationActive" class="msg-chat-empty">
+              <div class="msg-chat-empty-icon">
+                <i class="nc-icon nc-chat-33"></i>
+              </div>
+              <p class="msg-chat-empty-title">Sélectionnez une conversation</p>
+              <p class="msg-chat-empty-sub">Choisissez une conversation pour commencer à discuter</p>
+            </div>
+
+            <!-- Chat actif -->
+            <div *ngIf="conversationActive" class="msg-chat-active">
+
+              <!-- Header chat -->
+              <header class="msg-chat-header">
+                <div class="msg-chat-avatar" [style.background]="getAvatarColor(conversationActive)">
+                  <span>{{ getInitiales(conversationActive) }}</span>
+                  <span class="msg-status-dot-large" *ngIf="conversationActive.isActive"></span>
+                </div>
+                <div class="msg-chat-info">
+                  <h2 class="msg-chat-name">{{ getNomAutreParticipant(conversationActive) }}</h2>
+                  <p class="msg-chat-status">
+                    <span class="msg-status-online" *ngIf="conversationActive.isActive"></span>
+                    {{ conversationActive.sujet || 'Conversation' }}
+                  </p>
+                </div>
+              </header>
+
+              <!-- Loading messages -->
+              <div *ngIf="loadingMessages" class="msg-messages-loading">
+                <div class="msg-spinner-small"></div>
+              </div>
+
+              <!-- Messages -->
+              <div class="msg-messages" #messagesContainer *ngIf="!loadingMessages">
+
+                <div *ngFor="let msg of messages"
+                     class="msg-message"
+                     [class.msg-sent]="isMessageFromMe(msg)"
+                     [class.msg-received]="!isMessageFromMe(msg)">
+
+                  <!-- Avatar pour messages reçus -->
+                  <div class="msg-message-avatar"
+                       *ngIf="!isMessageFromMe(msg)"
+                       [style.background]="getAvatarColor(conversationActive)">
+                    {{ getInitiales(conversationActive) }}
+                  </div>
+
+                  <div class="msg-message-content">
+                    <div class="msg-bubble"
+                         [class.msg-bubble-sent]="isMessageFromMe(msg)"
+                         [class.msg-bubble-received]="!isMessageFromMe(msg)">
+                      <p>{{ msg.content }}</p>
+                    </div>
+                    <span class="msg-message-time">
+                      {{ formatMessageTime(msg.createdAt) }}
+                      <span *ngIf="isMessageFromMe(msg) && msg.isRead"> • Lu</span>
+                    </span>
+                  </div>
+                </div>
+
+                <!-- Message si pas de messages -->
+                <div *ngIf="messages.length === 0" class="text-center p-4 text-muted">
+                  <i class="nc-icon nc-chat-33 d-block mb-2" style="font-size: 2rem; opacity: 0.3;"></i>
+                  <p>Aucun message pour le moment.<br>Soyez le premier à écrire !</p>
+                </div>
+
+              </div>
+
+              <!-- Input zone -->
+              <footer class="msg-input-zone">
+                <div class="msg-input-wrapper">
+                  <input type="text"
+                         class="msg-input"
+                         placeholder="Écrivez votre message..."
+                         [(ngModel)]="nouveauMessage"
+                         (keydown.enter)="envoyerMessage()" />
+                </div>
+
+                <button class="msg-send-btn"
+                        (click)="envoyerMessage()"
+                        [disabled]="!nouveauMessage.trim()">
+                  <i class="nc-icon nc-send"></i>
+                </button>
+              </footer>
+
+            </div>
+
+          </main>
+
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>

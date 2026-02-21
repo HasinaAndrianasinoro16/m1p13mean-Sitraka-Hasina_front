@@ -18,6 +18,7 @@ import {DetailProduitsComponent} from "../../pages/detail-produits/detail-produi
 import {ProfileComponent} from "../../pages/profile/profile.component";
 import {DetailsCommandeComponent} from "../../pages/details-commande/details-commande.component";
 import {NotificationsComponent} from "../../pages/notifications/notifications.component";
+import {MessagerieComponent} from "../../pages/messagerie/messagerie.component";
 
 @NgModule({
   imports: [
@@ -32,6 +33,7 @@ import {NotificationsComponent} from "../../pages/notifications/notifications.co
     NotificationsComponent,
     ProduitsComponent,
     CommandesComponent,
+    MessagerieComponent,
     StatComponent,
     ProfileComponent,
     ApreciationsComponent,

@@ -12,6 +12,7 @@ import {DetailProduitsComponent} from "../../pages/detail-produits/detail-produi
 import {ProfileComponent} from "../../pages/profile/profile.component";
 import {DetailsCommandeComponent} from "../../pages/details-commande/details-commande.component";
 import {NotificationsComponent} from "../../pages/notifications/notifications.component";
+import {MessagerieComponent} from "../../pages/messagerie/messagerie.component";
 
 export const AdminLayoutRoutes: Routes = [
     { path: 'dashboard',      component: DashboardComponent, canActivate: [AuthGuard] },
@@ -25,4 +26,5 @@ export const AdminLayoutRoutes: Routes = [
     {path: 'profile', component: ProfileComponent, canActivate: [AuthGuard] },
     {path: 'detail-commande', component: DetailsCommandeComponent, canActivate: [AuthGuard] },
     {path: 'notifications', component: NotificationsComponent, canActivate: [AuthGuard] },
+    {path: 'messagerie', component: MessagerieComponent, canActivate: [AuthGuard] },
 ];
