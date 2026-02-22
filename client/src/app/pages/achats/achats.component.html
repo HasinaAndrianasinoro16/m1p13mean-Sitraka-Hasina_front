@@ -42,25 +42,30 @@
         <!-- Ligne 1 -->
         <div class="ach-filters-row">
           <div class="ach-filter-group ach-filter-large">
-            <label class="ach-filter-label">Nom du produit</label>
+            <label class="ach-filter-label">Rechercher</label>
             <input type="text" class="ach-filter-input"
-                   placeholder="Rechercher..."
-                   [(ngModel)]="filters.nom" />
+                   placeholder="Nom du produit..."
+                   [(ngModel)]="filters.search"
+                   (ngModelChange)="onSearchChange($event)" />
           </div>
 
           <div class="ach-filter-group">
             <label class="ach-filter-label">Boutique</label>
-            <select class="ach-filter-input" [(ngModel)]="filters.boutique">
+            <select class="ach-filter-input" 
+                    [(ngModel)]="filters.boutique"
+                    (ngModelChange)="onFilterChange()">
               <option value="">Toutes les boutiques</option>
-              <option *ngFor="let b of boutiques" [value]="b">{{ b }}</option>
+              <option *ngFor="let b of boutiques" [value]="b._id">{{ b.nomBoutique }}</option>
             </select>
           </div>
 
           <div class="ach-filter-group">
             <label class="ach-filter-label">Catégorie</label>
-            <select class="ach-filter-input" [(ngModel)]="filters.categorie">
+            <select class="ach-filter-input" 
+                    [(ngModel)]="filters.categorie"
+                    (ngModelChange)="onFilterChange()">
               <option value="">Toutes les catégories</option>
-              <option *ngFor="let c of categories" [value]="c">{{ c }}</option>
+              <option *ngFor="let c of categories" [value]="c._id">{{ c.nom }}</option>
             </select>
           </div>
         </div>
@@ -70,21 +75,40 @@
           <div class="ach-filter-group ach-filter-small">
             <label class="ach-filter-label">Prix min</label>
             <input type="number" class="ach-filter-input"
-                   placeholder="0" [(ngModel)]="filters.prixMin" />
+                   placeholder="0" 
+                   [(ngModel)]="filters.prixMin"
+                   (change)="onFilterChange()" />
           </div>
 
           <div class="ach-filter-group ach-filter-small">
             <label class="ach-filter-label">Prix max</label>
             <input type="number" class="ach-filter-input"
-                   placeholder="∞" [(ngModel)]="filters.prixMax" />
+                   placeholder="∞" 
+                   [(ngModel)]="filters.prixMax"
+                   (change)="onFilterChange()" />
           </div>
 
           <div class="ach-filter-group ach-filter-checkbox">
             <label class="ach-checkbox-label">
               <input type="checkbox" class="ach-checkbox"
-                     [(ngModel)]="filters.stockOnly" />
-              <span>En stock seulement</span>
+                     [(ngModel)]="filters.enPromo"
+                     (ngModelChange)="onFilterChange()" />
+              <span>En promotion</span>
             </label>
+          </div>
+
+          <div class="ach-filter-group">
+            <label class="ach-filter-label">Trier par</label>
+            <select class="ach-filter-input" 
+                    [(ngModel)]="filters.sort"
+                    (ngModelChange)="onSortChange()">
+              <option value="recent">Plus récents</option>
+              <option value="prix_asc">Prix croissant</option>
+              <option value="prix_desc">Prix décroissant</option>
+              <option value="nom_asc">Nom A-Z</option>
+              <option value="nom_desc">Nom Z-A</option>
+              <option value="populaire">Popularité</option>
+            </select>
           </div>
         </div>
 
@@ -101,8 +125,24 @@
     <div *ngIf="!loading" class="ach-results">
       <div class="ach-results-header">
         <span class="ach-results-count">
-          {{ produitsFiltres.length }} produit(s)
+          {{ pagination.total }} produit(s)
+          <span *ngIf="pagination.totalPages > 1" class="ach-page-info">
+            — Page {{ pagination.page }} sur {{ pagination.totalPages }}
+          </span>
         </span>
+
+        <!-- Sélecteur nombre par page -->
+        <div class="ach-per-page">
+          <label class="ach-per-page-label">Afficher</label>
+          <select class="ach-per-page-select" 
+                  [value]="pagination.limit"
+                  (change)="onLimitChange($any($event.target).value)">
+            <option value="8">8</option>
+            <option value="12">12</option>
+            <option value="24">24</option>
+            <option value="48">48</option>
+          </select>
+        </div>
       </div>
 
       <!-- VIDE -->
@@ -126,6 +166,13 @@
           <!-- Image -->
           <div class="ach-product-img-wrap">
             <img [src]="p.image" alt="{{ p.nom }}" class="ach-product-img" />
+            
+            <!-- Badge promo -->
+            <span class="ach-promo-badge" *ngIf="p.enPromo && p.pourcentageReduction > 0">
+              -{{ p.pourcentageReduction }}%
+            </span>
+            
+            <!-- Badge stock -->
             <span class="ach-stock-badge" [ngClass]="getStockClass(p.stock)">
               <i class="nc-icon nc-box"></i>
               {{ p.stock }}
@@ -152,8 +199,14 @@
               </span>
             </div>
 
-            <div class="ach-product-prix">
-              {{ p.prix | number }} <span class="ach-devise">Ar</span>
+            <!-- Prix -->
+            <div class="ach-product-prix-wrap">
+              <div class="ach-product-prix" [class.has-promo]="p.enPromo">
+                {{ p.prixActuel | number }} <span class="ach-devise">Ar</span>
+              </div>
+              <div class="ach-product-prix-old" *ngIf="p.enPromo && p.prixPromo">
+                {{ p.prix | number }} Ar
+              </div>
             </div>
 
             <!-- Quantité -->
@@ -178,6 +231,61 @@
         </div>
 
       </div>
+
+      <!-- PAGINATION -->
+      <div class="ach-pagination" *ngIf="pagination.totalPages > 1">
+        
+        <!-- Bouton Précédent -->
+        <button class="ach-page-btn ach-page-prev"
+                [disabled]="pagination.page === 1"
+                (click)="previousPage()">
+          <i class="nc-icon nc-minimal-left"></i>
+          <span class="ach-page-btn-text">Précédent</span>
+        </button>
+
+        <!-- Numéros de pages -->
+        <div class="ach-page-numbers">
+          
+          <!-- Première page -->
+          <button class="ach-page-num"
+                  *ngIf="showStartEllipsis()"
+                  (click)="goToPage(1)">
+            1
+          </button>
+          
+          <!-- Ellipsis début -->
+          <span class="ach-page-ellipsis" *ngIf="showStartEllipsis()">...</span>
+
+          <!-- Pages visibles -->
+          <button class="ach-page-num"
+                  *ngFor="let page of getPageNumbers()"
+                  [class.active]="page === pagination.page"
+                  (click)="goToPage(page)">
+            {{ page }}
+          </button>
+
+          <!-- Ellipsis fin -->
+          <span class="ach-page-ellipsis" *ngIf="showEndEllipsis()">...</span>
+
+          <!-- Dernière page -->
+          <button class="ach-page-num"
+                  *ngIf="showEndEllipsis()"
+                  (click)="goToPage(pagination.totalPages)">
+            {{ pagination.totalPages }}
+          </button>
+
+        </div>
+
+        <!-- Bouton Suivant -->
+        <button class="ach-page-btn ach-page-next"
+                [disabled]="pagination.page === pagination.totalPages"
+                (click)="nextPage()">
+          <span class="ach-page-btn-text">Suivant</span>
+          <i class="nc-icon nc-minimal-right"></i>
+        </button>
+
+      </div>
+
     </div>
 
   </div>

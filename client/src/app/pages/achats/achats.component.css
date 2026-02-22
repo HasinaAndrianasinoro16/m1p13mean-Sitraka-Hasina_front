@@ -246,12 +246,49 @@
   justify-content: space-between;
   padding: 10px 4px;
   margin-bottom: 16px;
+  flex-wrap: wrap;
+  gap: 12px;
 }
 
 .ach-results-count {
   font-size: .86rem;
   font-weight: 600;
   color: #6c6c6c;
+}
+
+.ach-page-info {
+  color: #9e9a92;
+  font-weight: 500;
+}
+
+/* ── SÉLECTEUR PAR PAGE ── */
+.ach-per-page {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ach-per-page-label {
+  font-size: .8rem;
+  font-weight: 600;
+  color: #6c6c6c;
+}
+
+.ach-per-page-select {
+  padding: 6px 10px;
+  border: 1.5px solid #e8e4de;
+  border-radius: 7px;
+  font-size: .82rem;
+  font-weight: 600;
+  color: #1a1a1a;
+  background: white;
+  cursor: pointer;
+  transition: all .2s;
+  font-family: inherit;
+}
+.ach-per-page-select:focus {
+  outline: none;
+  border-color: #b84a14;
 }
 
 /* ── ÉTAT VIDE ── */
@@ -360,6 +397,23 @@
   color: #c02020;
 }
 
+/* ── BADGE PROMO ── */
+.ach-promo-badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px 10px;
+  border-radius: 6px;
+  font-size: .76rem;
+  font-weight: 800;
+  background: #b84a14;
+  color: white;
+  box-shadow: 0 2px 8px rgba(184,74,20,.35);
+}
+
 .ach-product-content {
   padding: 16px;
   display: flex;
@@ -408,16 +462,32 @@
   color: #9e9a92;
 }
 
+.ach-product-prix-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-top: auto;
+}
+
 .ach-product-prix {
   font-size: 1.2rem;
   font-weight: 800;
+  color: #1a1a1a;
+}
+.ach-product-prix.has-promo {
   color: #b84a14;
-  margin-top: auto;
 }
 .ach-devise {
   font-size: .8rem;
   font-weight: 600;
   color: #9e9a92;
+}
+
+.ach-product-prix-old {
+  font-size: .82rem;
+  font-weight: 500;
+  color: #9e9a92;
+  text-decoration: line-through;
 }
 
 .ach-quantite-wrap {
@@ -487,6 +557,86 @@
   font-size: 14px;
 }
 
+/* ── PAGINATION ── */
+.ach-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 32px;
+  padding: 20px 0;
+  flex-wrap: wrap;
+}
+
+.ach-page-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 16px;
+  border: 1.5px solid #e8e4de;
+  border-radius: 9px;
+  font-size: .84rem;
+  font-weight: 600;
+  color: #3d3a35;
+  background: white;
+  cursor: pointer;
+  transition: all .2s;
+  font-family: inherit;
+}
+.ach-page-btn:hover:not(:disabled) {
+  border-color: #b84a14;
+  color: #b84a14;
+  background: #fdf8f5;
+}
+.ach-page-btn:disabled {
+  opacity: .4;
+  cursor: not-allowed;
+}
+.ach-page-btn i {
+  font-size: 14px;
+}
+
+.ach-page-numbers {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.ach-page-num {
+  min-width: 40px;
+  height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1.5px solid #e8e4de;
+  border-radius: 9px;
+  font-size: .88rem;
+  font-weight: 600;
+  color: #3d3a35;
+  background: white;
+  cursor: pointer;
+  transition: all .2s;
+  font-family: inherit;
+}
+.ach-page-num:hover:not(.active) {
+  border-color: #b84a14;
+  color: #b84a14;
+  background: #fdf8f5;
+}
+.ach-page-num.active {
+  background: #b84a14;
+  border-color: #b84a14;
+  color: white;
+  box-shadow: 0 4px 12px rgba(184,74,20,.3);
+}
+
+.ach-page-ellipsis {
+  padding: 0 8px;
+  font-size: .9rem;
+  color: #9e9a92;
+  font-weight: 600;
+}
+
 /* ── ANIMATIONS ── */
 @keyframes fadeUp {
   from {
@@ -527,5 +677,44 @@
 
   .ach-product-content {
     padding: 12px;
+  }
+
+  .ach-results-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .ach-pagination {
+    gap: 6px;
+  }
+
+  .ach-page-btn-text {
+    display: none;
+  }
+
+  .ach-page-btn {
+    padding: 10px 12px;
+  }
+
+  .ach-page-num {
+    min-width: 36px;
+    height: 36px;
+    font-size: .82rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .ach-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .ach-page-numbers {
+    gap: 2px;
+  }
+
+  .ach-page-num {
+    min-width: 32px;
+    height: 32px;
+    font-size: .78rem;
   }
 }
