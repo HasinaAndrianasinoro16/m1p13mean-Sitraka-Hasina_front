@@ -27,7 +27,7 @@ export class MessagerieComponent implements OnInit, OnDestroy, AfterViewChecked 
 
   currentUserId: string = '';
   currentUserRole: string = 'BOUTIQUE';
-  currentBoutiqueId: string = ''; 
+  currentBoutiqueId: string = '';
 
   private pollingSubscription?: Subscription;
   private shouldScrollToBottom = false;
