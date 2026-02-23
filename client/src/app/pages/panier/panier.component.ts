@@ -51,7 +51,7 @@ export class PanierComponent implements OnInit {
           .map((item: any) => ({
             id:       item.produit._id,
             nom:      item.produit.nom,
-            prix:     item.prixUnitaire,
+            prix:     item.enPromo === true? item.prixPromo : item.prixUnitaire,
             quantite: item.quantite,
             stocks:   item.produit.stock,
             image:    item.produit.imagePrincipaleUrl || 'assets/img/default-product.jpg'
