@@ -22,7 +22,7 @@ export class CommandesComponent implements OnInit {
 
   // Pagination
   currentPage: number = 1;
-  limit: number = 10;
+  limit: number = 5;
   totalPages: number = 0;
   pages: number[] = [];
 
@@ -158,7 +158,6 @@ export class CommandesComponent implements OnInit {
   genererFacture(commandeId: string): void {
     this.generatingInvoice = true;
 
-    // Récupérer les détails de la commande
     this.commandeService.getDetailsCommandes(commandeId).subscribe({
       next: (res: any) => {
         this.generatingInvoice = false;
