@@ -1,95 +1,69 @@
-<div class="row d-flex justify-content-center">
-  <div class="col-md-7">
-    <div class="login-container">
-      <div class="login-card">
+<div class="auth-wrapper">
 
-        <!-- HEADER -->
-        <div class="login-header text-center">
-          <h3 class="login-title">COMMERCIAL SHOP</h3>
-          <p class="login-subtitle">Connexion à votre compte</p>
-        </div>
+  <div class="auth-card">
 
-        <!-- BODY -->
-        <div class="login-body">
-          <form (ngSubmit)="login()" #loginForm="ngForm">
-
-            <!-- EMAIL -->
-            <div class="form-group mb-4">
-              <label class="form-label" for="email">Email</label>
-              <div class="input-group">
-                <span class="input-group-text">
-                  <i class="nc-icon nc-email-85"></i>
-                </span>
-                <input
-                  id="email"
-                  type="email"
-                  class="form-control input-field"
-                  placeholder="Entrez votre email"
-                  [(ngModel)]="email"
-                  name="email"
-                  required
-                  email
-                  [disabled]="isLoading"
-                  autocomplete="email"
-                  value="admin@centrecommercial.com"
-                />
-              </div>
-            </div>
-
-            <!-- PASSWORD -->
-            <div class="form-group mb-4">
-              <label class="form-label" for="password">Mot de passe</label>
-              <div class="input-group">
-                <span class="input-group-text">
-                  <i class="nc-icon nc-lock-circle-open"></i>
-                </span>
-                <input
-                  id="password"
-                  [type]="showPassword ? 'text' : 'password'"
-                  class="form-control input-field"
-                  placeholder="Entrez votre mot de passe"
-                  [(ngModel)]="password"
-                  name="password"
-                  required
-                  [disabled]="isLoading"
-                  autocomplete="current-password"
-                  (keyup.enter)="login()"
-                  value="Admin123!"
-                />
-                <button
-                  class="btn btn-outline-secondary"
-                  type="button"
-                  (click)="togglePasswordVisibility()"
-                  [disabled]="isLoading"
-                  [attr.aria-label]="showPassword ? 'Masquer le mot de passe' : 'Afficher le mot de passe'"
-                >
-                  <i [class]="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
-                </button>
-              </div>
-            </div>
-
-            <!-- BUTTON -->
-            <div class="text-center">
-              <button
-                type="submit"
-                class="btn btn-success w-50 mb-3"
-                [disabled]="isLoading || !email || !password"
-              >
-                <span *ngIf="!isLoading">
-                  <i class="fas fa-sign-in-alt me-2"></i>
-                  Se connecter
-                </span>
-                <span *ngIf="isLoading">
-                  <i class="fas fa-spinner fa-spin me-2"></i>
-                  Connexion...
-                </span>
-              </button>
-            </div>
-
-          </form>
-        </div>
-
-      </div>
+    <!-- HEADER -->
+    <div class="auth-header text-center">
+      <h2 class="brand-title">COMMERCIAL SHOP</h2>
+      <p class="brand-subtitle">Connexion Administrateur</p>
     </div>
+
+    <form (ngSubmit)="login()" #loginForm="ngForm">
+
+      <!-- EMAIL -->
+      <div class="mb-3">
+        <label>Email</label>
+        <input
+          type="email"
+          class="form-control modern-input"
+          placeholder="admin@centrecommercial.com"
+          [(ngModel)]="email"
+          name="email"
+          required
+          autocomplete="email"
+          [disabled]="isLoading"
+        />
+      </div>
+
+      <!-- PASSWORD -->
+      <div class="mb-4 position-relative">
+        <label>Mot de passe</label>
+        <input
+          [type]="showPassword ? 'text' : 'password'"
+          class="form-control modern-input"
+          placeholder="Entrez votre mot de passe"
+          [(ngModel)]="password"
+          name="password"
+          required
+          autocomplete="current-password"
+          [disabled]="isLoading"
+        />
+
+        <span
+          class="password-toggle"
+          (click)="togglePasswordVisibility()"
+        >
+          <i [class]="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
+        </span>
+      </div>
+
+      <!-- BUTTON -->
+      <button
+        type="submit"
+        class="btn admin-btn w-100"
+        [disabled]="isLoading || !loginForm.valid"
+      >
+        <span *ngIf="!isLoading">
+          <i class="fas fa-sign-in-alt me-2"></i>
+          Se connecter
+        </span>
+        <span *ngIf="isLoading">
+          <i class="fas fa-spinner fa-spin me-2"></i>
+          Connexion...
+        </span>
+      </button>
+
+    </form>
+
   </div>
 </div>
