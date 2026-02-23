@@ -303,7 +303,7 @@ export class CommandesComponent implements OnInit {
           ${(cmd.items || []).map((item: any) => `
             <tr>
               <td class="produit-nom">${item.nom || 'Produit'}</td>
-              <td class="text-right">${this.formatNumber(item.prix)} Ar</td>
+              <td class="text-right">${this.formatNumber(item.prixPromo || item.prix)} Ar</td>
               <td class="text-right">x${item.quantite}</td>
               <td class="text-right">${this.formatNumber(item.sousTotal)} Ar</td>
             </tr>

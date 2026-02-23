@@ -11,7 +11,7 @@ export class CommandesComponent implements OnInit {
   commandes: any[] = [];
 
   currentPage: number = 1;
-  limit: number       = 10;
+  limit: number       = 5;
   totalPages: number  = 0;
   pages: number[]     = [];
 
