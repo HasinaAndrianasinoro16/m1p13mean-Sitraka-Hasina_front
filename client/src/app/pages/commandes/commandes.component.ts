@@ -122,7 +122,6 @@ export class CommandesComponent implements OnInit {
     });
   }
 
-  // ── Paiement avec génération de facture ──
   demanderPaiement(id: string): void {
     this.confirmPaiementId = id;
   }
@@ -143,7 +142,7 @@ export class CommandesComponent implements OnInit {
           }
           this.showSuccess('Paiement effectué avec succès.');
 
-          // Générer la facture automatiquement
+          //ito commentena rah ohatra ka ts ilaina le generer facture
           setTimeout(() => this.genererFacture(id), 500);
         }
       },
