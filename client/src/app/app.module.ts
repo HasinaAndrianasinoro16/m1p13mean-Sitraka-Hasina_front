@@ -15,6 +15,7 @@ import { AppRoutes } from './app.routing';
 import { AdminLayoutComponent } from './layouts/admin-layout/admin-layout.component';
 import {HttpClientModule} from "@angular/common/http";
 import { NotificationsComponent } from './pages/notifications/notifications.component';
+import { AuthLayoutComponent } from './layouts/auth-layout/auth-layout.component';
 
 
 @NgModule({
@@ -22,6 +23,7 @@ import { NotificationsComponent } from './pages/notifications/notifications.comp
     AppComponent,
     AdminLayoutComponent,
     NotificationsComponent,
+    AuthLayoutComponent,
   ],
   imports: [
     BrowserAnimationsModule,

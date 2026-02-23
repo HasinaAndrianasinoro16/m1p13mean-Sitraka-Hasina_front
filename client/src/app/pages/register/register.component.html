@@ -1,133 +1,109 @@
-<div class="row d-flex justify-content-center">
-  <div class="col-md-11">
-    <div class="login-container">
-      <div class="login-card">
+<div class="auth-wrapper">
+  <div class="auth-card">
 
-        <!-- HEADER -->
-        <div class="login-header">
-          <h3 class="login-title">COMMERCIAL SHOP</h3>
-          <p class="login-subtitle">Créer un nouveau compte</p>
-        </div>
-
-        <!-- BODY -->
-        <div class="login-body">
-
-          <!-- NOM -->
-          <div class="form-group mb-4">
-            <label class="form-label">Nom</label>
-            <div class="input-group">
-          <span class="input-group-text">
-            <i class="nc-icon nc-single-02"></i>
-          </span>
-              <input
-                type="text"
-                class="form-control input-field"
-                placeholder="Votre nom"
-                [(ngModel)]="nom"
-              />
-            </div>
-          </div>
-          <div class="form-group mb-4">
-            <label class="form-label">Prenom</label>
-            <div class="input-group">
-          <span class="input-group-text">
-            <i class="nc-icon nc-single-02"></i>
-          </span>
-              <input
-                type="text"
-                class="form-control input-field"
-                placeholder="Votre nom"
-                [(ngModel)]="prenom"
-              />
-            </div>
-          </div>
-
-          <!-- EMAIL -->
-          <div class="form-group mb-4">
-            <label class="form-label">Email</label>
-            <div class="input-group">
-          <span class="input-group-text">
-            <i class="nc-icon nc-email-85"></i>
-          </span>
-              <input
-                type="email"
-                class="form-control input-field"
-                placeholder="Votre email"
-                [(ngModel)]="email"
-              />
-            </div>
-          </div>
-
-          <!-- MOT DE PASSE -->
-          <div class="form-group mb-4">
-            <label class="form-label">Mot de passe</label>
-            <div class="input-group">
-          <span class="input-group-text">
-            <i class="nc-icon nc-lock-circle-open"></i>
-          </span>
-              <input
-                [type]="showPassword ? 'text' : 'password'"
-                class="form-control input-field"
-                placeholder="Mot de passe"
-                [(ngModel)]="password"
-              />
-              <button
-                class="btn btn-outline-secondary"
-                type="button"
-                (click)="togglePasswordVisibility()"
-              >
-                <i [class]="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
-              </button>
-            </div>
-          </div>
-
-          <!-- CONFIRMATION -->
-          <div class="form-group mb-4">
-            <label class="form-label">Numero de telephone</label>
-            <div class="input-group">
-          <span class="input-group-text">
-            <i class="nc-icon nc-alert-circle-i"></i>
-          </span>
-              <input
-                type="text"
-                class="form-control input-field"
-                placeholder="034 12 345 67"
-                [(ngModel)]="telephone"
-              />
-            </div>
-          </div>
-
-          <!-- BOUTON REGISTER -->
-          <div class="text-center">
-            <button
-              class="btn btn-success w-75 mb-3"
-              (click)="register()"
-              [disabled]="isLoading"
-            >
-        <span *ngIf="!isLoading">
-          Créer un compte
-        </span>
-              <span *ngIf="isLoading">
-          <i class="fas fa-spinner fa-spin mr-2"></i>
-          Création...
-        </span>
-            </button>
-
-          </div>
-          <!-- LIEN LOGIN -->
-          <div class="text-center">
-            <small class="text-muted">
-              Déjà un compte ?
-              <a routerLink="/login" class="text-primary font-weight-bold">
-                Se connecter
-              </a>
-            </small>
-          </div>
-
-        </div>
-
-      </div>
+    <!-- HEADER -->
+    <div class="auth-header text-center">
+      <h2 class="brand-title">COMMERCIAL SHOP</h2>
+      <p class="brand-subtitle">Créer un nouveau compte</p>
     </div>
 
+    <!-- FORM -->
+    <form (ngSubmit)="register()" #registerForm="ngForm" class="auth-form">
+
+      <!-- NOM & PRENOM -->
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <label>Nom</label>
+          <input
+            type="text"
+            class="form-control modern-input"
+            placeholder="Votre nom"
+            [(ngModel)]="nom"
+            name="nom"
+            required
+          />
+        </div>
+
+        <div class="col-md-6 mb-3">
+          <label>Prénom</label>
+          <input
+            type="text"
+            class="form-control modern-input"
+            placeholder="Votre prénom"
+            [(ngModel)]="prenom"
+            name="prenom"
+            required
+          />
+        </div>
+      </div>
+
+      <!-- EMAIL -->
+      <div class="mb-3">
+        <label>Email</label>
+        <input
+          type="email"
+          class="form-control modern-input"
+          placeholder="exemple@email.com"
+          [(ngModel)]="email"
+          name="email"
+          required
+        />
+      </div>
+
+      <!-- PASSWORD -->
+      <div class="mb-3 position-relative">
+        <label>Mot de passe</label>
+        <input
+          [type]="showPassword ? 'text' : 'password'"
+          class="form-control modern-input"
+          placeholder="Mot de passe"
+          [(ngModel)]="password"
+          name="password"
+          required
+        />
+        <span
+          class="password-toggle"
+          (click)="togglePasswordVisibility()"
+        >
+          <i [class]="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
+        </span>
+      </div>
+
+      <!-- TELEPHONE -->
+      <div class="mb-4">
+        <label>Numéro de téléphone</label>
+        <input
+          type="text"
+          class="form-control modern-input"
+          placeholder="034 12 345 67"
+          [(ngModel)]="telephone"
+          name="telephone"
+        />
+      </div>
+
+      <!-- BUTTON -->
+      <button
+        type="submit"
+        class="btn register-btn w-100"
+        [disabled]="isLoading || !registerForm.valid"
+      >
+        <span *ngIf="!isLoading">Créer un compte</span>
+        <span *ngIf="isLoading">
+          <i class="fas fa-spinner fa-spin me-2"></i>
+          Création...
+        </span>
+      </button>
+
+      <!-- LOGIN LINK -->
+      <div class="text-center mt-3">
+        <small>
+          Déjà un compte ?
+          <a routerLink="/login" class="login-link">
+            Se connecter
+          </a>
+        </small>
+      </div>
+
+    </form>
   </div>
 </div>

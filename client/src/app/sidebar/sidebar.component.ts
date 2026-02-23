@@ -38,7 +38,7 @@ export class SidebarComponent implements OnInit {
       // localStorage.removeItem('role');
       // localStorage.removeItem('user');
 
-      this.router.navigate(['/login']).then(() => {
+      this.router.navigate(['/achats']).then(() => {
         alert('Déconnexion réussie');
       });
     }
