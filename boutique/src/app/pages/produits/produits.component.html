@@ -1,6 +1,5 @@
 <div class="row">
   <div class="col-md-12">
-
     <!-- SUCCESS -->
     <div *ngIf="successMessage" class="prod-alert prod-alert-success">
       <i class="nc-icon nc-check-2"></i>
@@ -15,7 +14,6 @@
     </div>
 
     <div class="card prod-card">
-
       <!-- HEADER -->
       <div class="card-header prod-header">
         <div class="prod-header-left">
@@ -24,12 +22,14 @@
           </div>
           <div>
             <h5 class="card-title">Gestion des produits</h5>
-            <p class="card-category">Gérez vos produits et leur stock</p>
+            <p class="card-category">Gérez vos produits, stock et promotions</p>
           </div>
         </div>
-        <button class="prod-btn-add"
-                data-bs-toggle="modal"
-                data-bs-target="#addProductModal">
+        <button
+          class="prod-btn-add"
+          data-bs-toggle="modal"
+          data-bs-target="#addProductModal"
+        >
           <i class="nc-icon nc-simple-add"></i>
           Nouveau produit
         </button>
@@ -37,7 +37,6 @@
 
       <!-- BODY -->
       <div class="card-body p-0">
-
         <!-- LOADING -->
         <div *ngIf="loading" class="prod-loading">
           <div class="prod-spinner"></div>
@@ -50,86 +49,152 @@
             <i class="nc-icon nc-bag-16"></i>
           </div>
           <p class="prod-empty-title">Aucun produit</p>
-          <p class="prod-empty-sub">Commencez par ajouter votre premier produit</p>
-          <button class="prod-btn-add mt-3"
-                  data-bs-toggle="modal"
-                  data-bs-target="#addProductModal">
+          <p class="prod-empty-sub">
+            Commencez par ajouter votre premier produit
+          </p>
+          <button
+            class="prod-btn-add mt-3"
+            data-bs-toggle="modal"
+            data-bs-target="#addProductModal"
+          >
             <i class="nc-icon nc-simple-add"></i>
             Ajouter un produit
           </button>
         </div>
 
         <!-- TABLE -->
-        <div class="table-responsive" *ngIf="!loading && produitData.length > 0">
+        <div
+          class="table-responsive"
+          *ngIf="!loading && produitData.length > 0"
+        >
           <table class="table table-hover align-middle prod-table">
             <thead>
-            <tr>
-              <th style="width:72px">Image</th>
-              <th>Produit</th>
-              <th>Prix unitaire</th>
-              <th>Stock</th>
-              <th class="text-end">Action</th>
-            </tr>
+              <tr>
+                <th style="width: 72px">Image</th>
+                <th>Produit</th>
+                <th>Prix</th>
+                <th>Stock</th>
+                <th class="text-end">Actions</th>
+              </tr>
             </thead>
             <tbody>
-            <ng-container *ngFor="let p of produitData">
-              <tr class="prod-row" *ngIf="p">
+              <ng-container *ngFor="let p of produitData">
+                <tr class="prod-row" *ngIf="p">
+                  <!-- Image -->
+                  <td>
+                    <div class="prod-img-wrap">
+                      <img
+                        [src]="
+                          p.imagePrincipaleUrl ||
+                          'assets/img/default-product.jpg'
+                        "
+                        alt="{{ p.nom }}"
+                        class="prod-img"
+                      />
+                      <!-- Badge promo sur image -->
+                      <span class="prod-promo-badge-img" *ngIf="isEnPromo(p)">
+                        -{{ getReductionPercent(p) }}%
+                      </span>
+                    </div>
+                  </td>
 
-                <!-- Image -->
-                <td>
-                  <div class="prod-img-wrap">
-                    <img [src]="p.imagePrincipaleUrl || 'assets/img/default-product.jpg'"
-                         alt="{{ p.nom }}"
-                         class="prod-img" />
-                  </div>
-                </td>
-
-                <!-- Nom -->
-                <td>
-                  <a class="prod-nom"
-                     [routerLink]="['/detail-produit']"
-                     [queryParams]="{id: p.id}">
-                    {{ p.nom }}
-                  </a>
-                  <span class="prod-categorie" *ngIf="p.categorie?.nom">
+                  <!-- Nom + Catégorie -->
+                  <td>
+                    <a
+                      class="prod-nom"
+                      [routerLink]="['/detail-produit']"
+                      [queryParams]="{ id: p.id || p._id }"
+                    >
+                      {{ p.nom }}
+                    </a>
+                    <span class="prod-categorie" *ngIf="p.categorie?.nom">
                       {{ p.categorie.nom }}
                     </span>
-                </td>
+                    <!-- Badge promo texte -->
+                    <span class="prod-promo-tag" *ngIf="isEnPromo(p)">
+                      <i class="nc-icon nc-tag-content"></i> En promo
+                    </span>
+                  </td>
 
-                <!-- Prix -->
-                <td>
-                  <span class="prod-prix">{{ p.prix | number }}</span>
-                  <span class="prod-devise">Ar</span>
-                </td>
+                  <!-- Prix -->
+                  <td>
+                    <div class="prod-prix-wrap">
+                      <!-- Si en promo -->
+                      <ng-container *ngIf="isEnPromo(p); else prixNormal">
+                        <span class="prod-prix-promo">{{
+                          p.prixPromo | number
+                        }}</span>
+                        <span class="prod-devise">Ar</span>
+                        <span class="prod-prix-barre"
+                          >{{ p.prix | number }} Ar</span
+                        >
+                      </ng-container>
+                      <!-- Prix normal -->
+                      <ng-template #prixNormal>
+                        <span class="prod-prix">{{ p.prix | number }}</span>
+                        <span class="prod-devise">Ar</span>
+                      </ng-template>
+                    </div>
+                  </td>
 
-                <!-- Stock -->
-                <td>
-                    <span class="prod-stock-badge"
-                          [ngClass]="p.stock > 10 ? 'stock-ok' : p.stock > 0 ? 'stock-low' : 'stock-empty'">
+                  <!-- Stock -->
+                  <td>
+                    <span
+                      class="prod-stock-badge"
+                      [ngClass]="
+                        p.stock > 10
+                          ? 'stock-ok'
+                          : p.stock > 0
+                            ? 'stock-low'
+                            : 'stock-empty'
+                      "
+                    >
                       <i class="nc-icon nc-box"></i>
                       {{ p.stock }}
                     </span>
-                </td>
+                  </td>
 
-                <!-- Action -->
-                <td class="text-end">
-                  <button class="prod-btn-stock"
-                          (click)="clickInfo(p.id || p._id, p.stock)"
-                          data-bs-toggle="modal"
-                          data-bs-target="#addStockModal">
-                    <i class="nc-icon nc-simple-add"></i>
-                    Stock
-                  </button>
-                  <button class="prod-btn-sup"
-                          (click)="clickSupprimerProduits(p.id || p._id)"
-                          >
-                    <i class="nc-icon nc-simple-remove"></i>
-                    Supprimer
-                  </button>
-                </td>
+                  <!-- Actions -->
+                  <td class="text-end">
+                    <div class="prod-actions">
+                      <!-- Bouton Promo -->
+                      <button
+                        class="prod-btn-promo"
+                        [ngClass]="{ active: isEnPromo(p) }"
+                        (click)="openPromoModal(p)"
+                        data-bs-toggle="modal"
+                        data-bs-target="#promoModal"
+                        title="Gérer la promotion"
+                      >
+                        <i class="nc-icon nc-tag-content"></i>
+                        <span *ngIf="!isEnPromo(p)">Promo</span>
+                        <span *ngIf="isEnPromo(p)"
+                          >-{{ getReductionPercent(p) }}%</span
+                        >
+                      </button>
 
-              </tr>
-            </ng-container>
+                      <!-- Bouton Stock -->
+                      <button
+                        class="prod-btn-stock"
+                        (click)="clickInfo(p.id || p._id, p.stock)"
+                        data-bs-toggle="modal"
+                        data-bs-target="#addStockModal"
+                      >
+                        <i class="nc-icon nc-simple-add"></i>
+                        Stock
+                      </button>
+
+                      <!-- Bouton Supprimer -->
+                      <button
+                        class="prod-btn-sup"
+                        (click)="clickSupprimerProduits(p.id || p._id)"
+                      >
+                        <i class="nc-icon nc-simple-remove"></i>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              </ng-container>
             </tbody>
           </table>
         </div>
@@ -139,23 +204,32 @@
           <nav>
             <ul class="pagination justify-content-end mb-0">
               <li class="page-item" [class.disabled]="currentPage === 1">
-                <a class="page-link" (click)="goToPage(currentPage - 1)">‹ Précédent</a>
+                <a class="page-link" (click)="goToPage(currentPage - 1)"
+                  >‹ Précédent</a
+                >
               </li>
-              <li class="page-item" *ngFor="let p of pages" [class.active]="currentPage === p">
+              <li
+                class="page-item"
+                *ngFor="let p of pages"
+                [class.active]="currentPage === p"
+              >
                 <a class="page-link" (click)="goToPage(p)">{{ p }}</a>
               </li>
-              <li class="page-item" [class.disabled]="currentPage === totalPages">
-                <a class="page-link" (click)="goToPage(currentPage + 1)">Suivant ›</a>
+              <li
+                class="page-item"
+                [class.disabled]="currentPage === totalPages"
+              >
+                <a class="page-link" (click)="goToPage(currentPage + 1)"
+                  >Suivant ›</a
+                >
               </li>
             </ul>
           </nav>
         </div>
-
       </div>
     </div>
   </div>
 </div>
-
 
 <!-- ═══════════════════════════════════
      MODAL : NOUVEAU PRODUIT
@@ -163,7 +237,6 @@
 <div class="modal fade" id="addProductModal" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content prod-modal-content">
-
       <div class="modal-header prod-modal-header">
         <div class="prod-modal-icon">
           <i class="nc-icon nc-bag-16"></i>
@@ -178,63 +251,87 @@
       </div>
 
       <div class="modal-body prod-modal-body">
-
         <div class="prod-form-group">
-          <label class="prod-form-label">Nom du produit <span class="required">*</span></label>
-          <input type="text" class="prod-form-input"
-                 placeholder="Ex: T-shirt coton bio"
-                 [(ngModel)]="nomProduit" />
+          <label class="prod-form-label"
+            >Nom du produit <span class="required">*</span></label
+          >
+          <input
+            type="text"
+            class="prod-form-input"
+            placeholder="Ex: T-shirt coton bio"
+            [(ngModel)]="nomProduit"
+          />
         </div>
 
         <div class="prod-form-group">
           <label class="prod-form-label">Catégorie</label>
           <select class="prod-form-input" [(ngModel)]="categorie">
-            <option value="" disabled selected>— Sélectionner une catégorie —</option>
-            <option *ngFor="let c of categories" [value]="c._id">{{ c.nom }}</option>
+            <option value="" disabled selected>
+              — Sélectionner une catégorie —
+            </option>
+            <option *ngFor="let c of categories" [value]="c._id">
+              {{ c.nom }}
+            </option>
           </select>
         </div>
 
         <div class="prod-form-row2">
           <div class="prod-form-group">
-            <label class="prod-form-label">Prix (Ar) <span class="required">*</span></label>
-            <input type="number" class="prod-form-input"
-                   placeholder="0" [(ngModel)]="prix" min="0" />
+            <label class="prod-form-label"
+              >Prix (Ar) <span class="required">*</span></label
+            >
+            <input
+              type="number"
+              class="prod-form-input"
+              placeholder="0"
+              [(ngModel)]="prix"
+              min="0"
+            />
           </div>
           <div class="prod-form-group">
             <label class="prod-form-label">Stock initial</label>
-            <input type="number" class="prod-form-input"
-                   placeholder="0" [(ngModel)]="stock" min="0" />
+            <input
+              type="number"
+              class="prod-form-input"
+              placeholder="0"
+              [(ngModel)]="stock"
+              min="0"
+            />
           </div>
         </div>
 
         <div class="prod-form-group">
           <label class="prod-form-label">Description</label>
-          <textarea class="prod-form-input prod-form-textarea"
-                    placeholder="Décrivez votre produit..."
-                    [(ngModel)]="description"
-                    rows="4"></textarea>
+          <textarea
+            class="prod-form-input prod-form-textarea"
+            placeholder="Décrivez votre produit..."
+            [(ngModel)]="description"
+            rows="4"
+          ></textarea>
         </div>
-
       </div>
 
       <div class="modal-footer prod-modal-footer">
-        <button class="prod-btn-cancel" data-bs-dismiss="modal"
-                (click)="resetFormulaire()">
+        <button
+          class="prod-btn-cancel"
+          data-bs-dismiss="modal"
+          (click)="resetFormulaire()"
+        >
           Annuler
         </button>
-        <button class="prod-btn-confirm"
-                (click)="clickAddProduit()"
-                data-bs-dismiss="modal"
-                [disabled]="!formulaireValide || loadingAction">
+        <button
+          class="prod-btn-confirm"
+          (click)="clickAddProduit()"
+          data-bs-dismiss="modal"
+          [disabled]="!formulaireValide || loadingAction"
+        >
           <i class="nc-icon nc-check-2"></i>
           Enregistrer le produit
         </button>
       </div>
-
     </div>
   </div>
 </div>
-
 
 <!-- ═══════════════════════════════════
      MODAL : AJOUT STOCK
@@ -242,7 +339,6 @@
 <div class="modal fade" id="addStockModal" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-stock">
     <div class="modal-content prod-modal-content">
-
       <div class="modal-header prod-modal-header">
         <div class="prod-modal-icon prod-modal-icon-green">
           <i class="nc-icon nc-box"></i>
@@ -259,13 +355,15 @@
       </div>
 
       <div class="modal-body prod-modal-body">
-
         <div class="prod-form-group">
           <label class="prod-form-label">Quantité à ajouter</label>
-          <input type="number" class="prod-form-input"
-                 [(ngModel)]="addStock"
-                 placeholder="Ex: 50"
-                 min="1" />
+          <input
+            type="number"
+            class="prod-form-input"
+            [(ngModel)]="addStock"
+            placeholder="Ex: 50"
+            min="1"
+          />
         </div>
 
         <!-- Aperçu nouveau stock -->
@@ -284,22 +382,161 @@
             <strong>{{ currentStock + addStock }}</strong>
           </div>
         </div>
-
       </div>
 
       <div class="modal-footer prod-modal-footer">
-        <button class="prod-btn-cancel" data-bs-dismiss="modal">
-          Annuler
-        </button>
-        <button class="prod-btn-confirm prod-btn-green"
-                data-bs-dismiss="modal"
-                (click)="clickAddStock(selectedId, currentStock)"
-                [disabled]="addStock <= 0 || loadingAction">
+        <button class="prod-btn-cancel" data-bs-dismiss="modal">Annuler</button>
+        <button
+          class="prod-btn-confirm prod-btn-green"
+          data-bs-dismiss="modal"
+          (click)="clickAddStock(selectedId, currentStock)"
+          [disabled]="addStock <= 0 || loadingAction"
+        >
           <i class="nc-icon nc-check-2"></i>
           Confirmer l'ajout
         </button>
       </div>
+    </div>
+  </div>
+</div>
 
+<!-- ═══════════════════════════════════
+     MODAL : GESTION PROMO
+═══════════════════════════════════ -->
+<div class="modal fade" id="promoModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content prod-modal-content">
+      <div class="modal-header prod-modal-header">
+        <div class="prod-modal-icon prod-modal-icon-promo">
+          <i class="nc-icon nc-tag-content"></i>
+        </div>
+        <div>
+          <h5 class="modal-title">
+            {{
+              isEnPromo(selectedProduit)
+                ? "Modifier la promotion"
+                : "Mettre en promotion"
+            }}
+          </h5>
+          <p class="prod-modal-sub" *ngIf="selectedProduit">
+            {{ selectedProduit.nom }}
+          </p>
+        </div>
+        <button
+          type="button"
+          class="prod-modal-close"
+          data-bs-dismiss="modal"
+          (click)="resetPromoForm()"
+        >
+          <i class="nc-icon nc-simple-remove"></i>
+        </button>
+      </div>
+
+      <div class="modal-body prod-modal-body" *ngIf="selectedProduit">
+        <!-- Erreur dans le modal -->
+        <div *ngIf="error" class="prod-alert prod-alert-error mb-3">
+          <i class="nc-icon nc-alert-circle-i"></i>
+          {{ error }}
+          <button (click)="error = ''">×</button>
+        </div>
+
+        <!-- Info prix actuel -->
+        <div class="promo-info-card">
+          <div class="promo-info-row">
+            <span class="promo-info-label">Prix normal</span>
+            <span class="promo-info-value"
+              >{{ selectedProduit.prix | number }} Ar</span
+            >
+          </div>
+          <div class="promo-info-row" *ngIf="isEnPromo(selectedProduit)">
+            <span class="promo-info-label">Prix promo actuel</span>
+            <span class="promo-info-value promo-active"
+              >{{ selectedProduit.prixPromo | number }} Ar</span
+            >
+          </div>
+        </div>
+
+        <!-- Formulaire promo simplifié -->
+        <div class="prod-form-group">
+          <label class="prod-form-label"
+            >Prix promotionnel (Ar) <span class="required">*</span></label
+          >
+          <input
+            type="number"
+            class="prod-form-input"
+            [(ngModel)]="prixPromo"
+            placeholder="Ex: 45000"
+            min="1"
+          />
+          <small
+            class="prod-form-hint"
+            *ngIf="prixPromo > 0 && prixPromo < selectedProduit.prix"
+          >
+            Réduction de {{ getPreviewReductionPercent() }}%
+          </small>
+          <small
+            class="prod-form-error"
+            *ngIf="prixPromo >= selectedProduit.prix && prixPromo > 0"
+          >
+            Le prix promo doit être inférieur au prix normal
+          </small>
+        </div>
+
+        <!-- Aperçu -->
+        <div
+          class="promo-preview"
+          *ngIf="prixPromo > 0 && prixPromo < selectedProduit.prix"
+        >
+          <div class="promo-preview-header">
+            <i class="nc-icon nc-bulb-63"></i>
+            Aperçu de la promotion
+          </div>
+          <div class="promo-preview-content">
+            <div class="promo-preview-prices">
+              <span class="promo-old-price"
+                >{{ selectedProduit.prix | number }} Ar</span
+              >
+              <span class="promo-arrow">→</span>
+              <span class="promo-new-price">{{ prixPromo | number }} Ar</span>
+            </div>
+            <span class="promo-badge-preview">
+              -{{ getPreviewReductionPercent() }}%
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer prod-modal-footer">
+        <!-- Bouton retirer promo si actif -->
+        <button
+          class="prod-btn-danger"
+          *ngIf="isEnPromo(selectedProduit)"
+          (click)="retirerPromo()"
+          data-bs-dismiss="modal"
+          [disabled]="loadingAction"
+        >
+          <i class="nc-icon nc-simple-remove"></i>
+          Retirer la promo
+        </button>
+
+        <button
+          class="prod-btn-cancel"
+          data-bs-dismiss="modal"
+          (click)="resetPromoForm()"
+        >
+          Annuler
+        </button>
+
+        <button
+          class="prod-btn-confirm prod-btn-promo-confirm"
+          (click)="appliquerPromo()"
+          data-bs-dismiss="modal"
+          [disabled]="!promoFormValide || loadingAction"
+        >
+          <i class="nc-icon nc-check-2"></i>
+          {{ isEnPromo(selectedProduit) ? "Modifier" : "Appliquer" }} la promo
+        </button>
+      </div>
     </div>
   </div>
 </div>

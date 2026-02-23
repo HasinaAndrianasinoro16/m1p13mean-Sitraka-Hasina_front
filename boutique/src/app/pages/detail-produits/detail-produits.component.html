@@ -1,18 +1,34 @@
 <div class="admin-product-detail">
   <div class="container-fluid mt-4 mb-5">
+    <!-- Messages -->
+    <div *ngIf="successMessage" class="alert-success-custom">
+      <i class="nc-icon nc-check-2"></i>
+      {{ successMessage }}
+    </div>
 
-    <!-- Header avec actions -->
+    <div *ngIf="error" class="alert-error-custom">
+      <i class="nc-icon nc-alert-circle-i"></i>
+      {{ error }}
+      <button (click)="error = ''">×</button>
+    </div>
+
+    <!-- Header -->
     <div class="row mb-4">
       <div class="col-12">
-        <h2 class="page-title">
-          <i class="nc-icon nc-box-2"></i>
-          Détail du produit
-        </h2>
+        <div class="page-header-detail">
+          <a routerLink="/produits" class="back-link">
+            <i class="nc-icon nc-minimal-left"></i>
+            Retour aux produits
+          </a>
+          <h2 class="page-title">
+            <i class="nc-icon nc-box-2"></i>
+            Détail du produit
+          </h2>
+        </div>
       </div>
     </div>
 
-    <div class="row">
-
+    <div class="row" *ngIf="produit">
       <!-- SECTION GALERIE -->
       <div class="col-lg-6 mb-4">
         <div class="card product-gallery-card">
@@ -23,12 +39,14 @@
             </h5>
           </div>
           <div class="card-body">
-
             <!-- IMAGE PRINCIPALE -->
             <div class="main-image-wrapper">
               <div class="image-container">
                 <img
-                  [src]="produit.imagePrincipaleUrl || 'assets/img/default-product.jpg'"
+                  [src]="
+                    produit.imagePrincipaleUrl ||
+                    'assets/img/default-product.jpg'
+                  "
                   class="main-image"
                   [alt]="produit.nom"
                 />
@@ -45,27 +63,26 @@
                 </div>
 
                 <!-- Badge stock -->
-                <div class="stock-indicator" [ngClass]="produit.stock > 0 ? 'in-stock' : 'out-stock'">
-                  <i class="nc-icon" [ngClass]="produit.stock > 0 ? 'nc-check-2' : 'nc-simple-remove'"></i>
-                  {{ produit.stock > 0 ? 'En stock' : 'Rupture' }}
+                <div
+                  class="stock-indicator"
+                  [ngClass]="produit.stock > 0 ? 'in-stock' : 'out-stock'"
+                >
+                  <i
+                    class="nc-icon"
+                    [ngClass]="
+                      produit.stock > 0 ? 'nc-check-2' : 'nc-simple-remove'
+                    "
+                  ></i>
+                  {{ produit.stock > 0 ? "En stock" : "Rupture" }}
+                </div>
+
+                <!-- Badge promo -->
+                <div class="promo-indicator" *ngIf="isEnPromo()">
+                  <i class="nc-icon nc-tag-content"></i>
+                  -{{ getReductionPercent() }}%
                 </div>
               </div>
             </div>
-
-            <!-- MINIATURES (Si plusieurs images) -->
-            <!-- <div class="thumbnails-grid">
-              <div class="thumbnail-item active">
-                <img src="assets/img/product1.jpg" alt="Photo 1">
-                <button class="btn-delete"><i class="nc-icon nc-simple-remove"></i></button>
-              </div>
-              <div class="thumbnail-item">
-                <img src="assets/img/product2.jpg" alt="Photo 2">
-                <button class="btn-delete"><i class="nc-icon nc-simple-remove"></i></button>
-              </div>
-              <div class="thumbnail-item add-more">
-                <i class="nc-icon nc-simple-add"></i>
-              </div>
-            </div> -->
 
             <!-- Bouton d'ajout -->
             <div class="add-image-section">
@@ -75,14 +92,13 @@
                 data-bs-target="#addImageModal"
               >
                 <i class="nc-icon nc-image"></i>
-                Ajouter une photo
+                Modifier la photo
               </button>
               <p class="upload-hint">
                 <i class="nc-icon nc-bulb-63"></i>
                 Formats acceptés : JPG, PNG (max 5MB)
               </p>
             </div>
-
           </div>
         </div>
       </div>
@@ -90,83 +106,309 @@
       <!-- SECTION INFORMATIONS -->
       <div class="col-lg-6">
         <div class="card product-info-card">
-          <div class="card-header">
+          <div
+            class="card-header d-flex justify-content-between align-items-center"
+          >
             <h5 class="card-title mb-0">
               <i class="nc-icon nc-notes"></i>
               Informations du produit
             </h5>
+            <button
+              class="btn-edit-toggle"
+              (click)="toggleEditMode()"
+              *ngIf="!editMode"
+            >
+              <i class="nc-icon nc-settings-gear-65"></i>
+              Modifier
+            </button>
           </div>
           <div class="card-body">
-
-            <!-- Nom du produit -->
-            <div class="info-section">
-              <label class="info-label">Nom du produit</label>
-              <h3 class="product-name">{{ produit.nom }}</h3>
-            </div>
-
-            <!-- Description -->
-            <div class="info-section">
-              <label class="info-label">Description</label>
-              <p class="product-description">
-                {{ produit.description || 'Aucune description disponible' }}
-              </p>
-            </div>
-
-            <!-- Prix -->
-            <div class="info-section">
-              <label class="info-label">Prix unitaire</label>
-              <div class="price-display">
-                <span class="price-amount">{{ produit.prix | number }}</span>
-                <span class="price-currency">Ar</span>
+            <!-- MODE AFFICHAGE -->
+            <ng-container *ngIf="!editMode">
+              <!-- Nom du produit -->
+              <div class="info-section">
+                <label class="info-label">Nom du produit</label>
+                <h3 class="product-name">{{ produit.nom }}</h3>
               </div>
-            </div>
 
-            <!-- Stock -->
-            <div class="info-section">
-              <label class="info-label">Stock disponible</label>
-              <div class="stock-display">
-                <div class="stock-badge" >
-                  <i class="nc-icon nc-box"></i>
-                  <span class="stock-number">{{ produit.stock }}</span>
-                  <span class="stock-unit">unités</span>
+              <!-- Description -->
+              <div class="info-section">
+                <label class="info-label">Description</label>
+                <p class="product-description">
+                  {{ produit.description || "Aucune description disponible" }}
+                </p>
+              </div>
+
+              <!-- Prix avec promo -->
+              <div class="info-section">
+                <label class="info-label">Prix</label>
+
+                <!-- Si en promo -->
+                <div
+                  class="price-display-wrapper"
+                  *ngIf="isEnPromo(); else prixNormalDisplay"
+                >
+                  <div class="price-promo-display">
+                    <span class="price-promo-amount">{{
+                      produit.prixPromo | number
+                    }}</span>
+                    <span class="price-currency">Ar</span>
+                    <span class="price-promo-badge"
+                      >-{{ getReductionPercent() }}%</span
+                    >
+                  </div>
+                  <div class="price-original">
+                    <span class="price-original-label">Prix normal :</span>
+                    <span class="price-original-amount"
+                      >{{ produit.prix | number }} Ar</span
+                    >
+                  </div>
                 </div>
-                <div class="stock-status">
-                  <span class="status-dot" [ngClass]="produit.stock > 10 ? 'dot-success' : produit.stock > 0 ? 'dot-warning' : 'dot-danger'"></span>
+
+                <!-- Prix normal -->
+                <ng-template #prixNormalDisplay>
+                  <div class="price-display">
+                    <span class="price-amount">{{
+                      produit.prix | number
+                    }}</span>
+                    <span class="price-currency">Ar</span>
+                  </div>
+                </ng-template>
+              </div>
+
+              <!-- Stock -->
+              <div class="info-section">
+                <label class="info-label">Stock disponible</label>
+                <div class="stock-display">
+                  <div class="stock-badge">
+                    <i class="nc-icon nc-box"></i>
+                    <span class="stock-number">{{ produit.stock }}</span>
+                    <span class="stock-unit">unités</span>
+                  </div>
+                  <div class="stock-status">
+                    <span
+                      class="status-dot"
+                      [ngClass]="
+                        produit.stock > 10
+                          ? 'dot-success'
+                          : produit.stock > 0
+                            ? 'dot-warning'
+                            : 'dot-danger'
+                      "
+                    ></span>
+                  </div>
                 </div>
               </div>
-            </div>
 
-            <!-- Informations supplémentaires -->
-            <div class="additional-info">
-              <div class="info-row">
-                <span class="info-key">
+              <!-- Informations supplémentaires -->
+              <div class="additional-info">
+                <div class="info-row">
+                  <span class="info-key">
+                    <i class="nc-icon nc-tag-content"></i>
+                    Catégorie
+                  </span>
+                  <span class="info-value">{{
+                    produit.categorie?.nom || "Non catégorisé"
+                  }}</span>
+                </div>
+                <div class="info-row">
+                  <span class="info-key">
+                    <i class="nc-icon nc-shop"></i>
+                    Boutique
+                  </span>
+                  <span class="info-value">{{
+                    produit.boutique?.nomBoutique || "N/A"
+                  }}</span>
+                </div>
+                <div class="info-row">
+                  <span class="info-key">
+                    <i class="nc-icon nc-calendar-60"></i>
+                    Ajouté le
+                  </span>
+                  <span class="info-value">{{
+                    produit.createdAt | date: "dd/MM/yyyy"
+                  }}</span>
+                </div>
+              </div>
+
+              <!-- Bouton gérer promo -->
+              <div class="promo-action-section">
+                <button
+                  class="btn-promo-toggle"
+                  [ngClass]="{ active: isEnPromo() }"
+                  (click)="togglePromoForm()"
+                >
                   <i class="nc-icon nc-tag-content"></i>
-                  Catégorie
-                </span>
-                <span class="info-value">{{ produit.categorie?.nom || 'Non catégorisé' }}</span>
+                  {{
+                    isEnPromo()
+                      ? "Gérer la promotion (-" + getReductionPercent() + "%)"
+                      : "Mettre en promotion"
+                  }}
+                </button>
               </div>
-              <div class="info-row">
-                <span class="info-key">
-                  <i class="nc-icon nc-shop"></i>
-                  Boutique
-                </span>
-                <span class="info-value">{{ produit.boutique?.nomBoutique || 'N/A' }}</span>
+            </ng-container>
+
+            <!-- MODE ÉDITION -->
+            <ng-container *ngIf="editMode">
+              <div class="edit-form">
+                <div class="form-group">
+                  <label class="form-label"
+                    >Nom du produit <span class="required">*</span></label
+                  >
+                  <input
+                    type="text"
+                    class="form-input"
+                    [(ngModel)]="editForm.nom"
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">Description</label>
+                  <textarea
+                    class="form-input form-textarea"
+                    [(ngModel)]="editForm.description"
+                    rows="4"
+                  ></textarea>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label"
+                    >Prix (Ar) <span class="required">*</span></label
+                  >
+                  <input
+                    type="number"
+                    class="form-input"
+                    [(ngModel)]="editForm.prix"
+                    min="1"
+                  />
+                </div>
+
+                <div class="edit-actions">
+                  <button class="btn-cancel" (click)="toggleEditMode()">
+                    Annuler
+                  </button>
+                  <button
+                    class="btn-save"
+                    (click)="saveEdit()"
+                    [disabled]="loadingEdit"
+                  >
+                    <span *ngIf="!loadingEdit">
+                      <i class="nc-icon nc-check-2"></i> Enregistrer
+                    </span>
+                    <span *ngIf="loadingEdit">Enregistrement...</span>
+                  </button>
+                </div>
               </div>
-              <div class="info-row">
-                <span class="info-key">
-                  <i class="nc-icon nc-calendar-60"></i>
-                  Ajouté le
-                </span>
-                <span class="info-value">{{ produit.createdAt | date:'dd/MM/yyyy' }}</span>
+            </ng-container>
+          </div>
+        </div>
+
+        <!-- SECTION PROMO (conditionnelle) -->
+        <div class="card promo-card mt-4" *ngIf="showPromoForm">
+          <div class="card-header promo-card-header">
+            <h5 class="card-title mb-0">
+              <i class="nc-icon nc-tag-content"></i>
+              {{ isEnPromo() ? "Modifier la promotion" : "Nouvelle promotion" }}
+            </h5>
+            <button class="btn-close-promo" (click)="togglePromoForm()">
+              <i class="nc-icon nc-simple-remove"></i>
+            </button>
+          </div>
+          <div class="card-body">
+            <!-- Info prix actuel -->
+            <div class="promo-info-card">
+              <div class="promo-info-row">
+                <span class="promo-info-label">Prix normal</span>
+                <span class="promo-info-value"
+                  >{{ produit.prix | number }} Ar</span
+                >
+              </div>
+              <div class="promo-info-row" *ngIf="isEnPromo()">
+                <span class="promo-info-label">Prix promo actuel</span>
+                <span class="promo-info-value promo-active"
+                  >{{ produit.prixPromo | number }} Ar</span
+                >
               </div>
             </div>
 
+            <!-- Formulaire simplifié (sans dates) -->
+            <div class="form-group">
+              <label class="form-label"
+                >Prix promotionnel (Ar) <span class="required">*</span></label
+              >
+              <input
+                type="number"
+                class="form-input"
+                [(ngModel)]="prixPromo"
+                placeholder="Ex: 45000"
+                min="1"
+              />
+              <small
+                class="form-hint"
+                *ngIf="prixPromo > 0 && prixPromo < produit.prix"
+              >
+                Réduction de {{ getPreviewReductionPercent() }}%
+              </small>
+              <small
+                class="form-error"
+                *ngIf="prixPromo >= produit.prix && prixPromo > 0"
+              >
+                Le prix promo doit être inférieur au prix normal
+              </small>
+            </div>
+
+            <!-- Aperçu -->
+            <div
+              class="promo-preview"
+              *ngIf="prixPromo > 0 && prixPromo < produit.prix"
+            >
+              <div class="promo-preview-header">
+                <i class="nc-icon nc-bulb-63"></i>
+                Aperçu
+              </div>
+              <div class="promo-preview-content">
+                <div class="promo-preview-prices">
+                  <span class="promo-old-price"
+                    >{{ produit.prix | number }} Ar</span
+                  >
+                  <span class="promo-arrow">→</span>
+                  <span class="promo-new-price"
+                    >{{ prixPromo | number }} Ar</span
+                  >
+                </div>
+                <span class="promo-badge-preview"
+                  >-{{ getPreviewReductionPercent() }}%</span
+                >
+              </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="promo-actions">
+              <button
+                class="btn-danger-outline"
+                *ngIf="isEnPromo()"
+                (click)="retirerPromo()"
+                [disabled]="loadingPromo"
+              >
+                <i class="nc-icon nc-simple-remove"></i>
+                Retirer la promo
+              </button>
+              <button
+                class="btn-promo-apply"
+                (click)="appliquerPromo()"
+                [disabled]="!promoFormValide || loadingPromo"
+              >
+                <span *ngIf="!loadingPromo">
+                  <i class="nc-icon nc-check-2"></i>
+                  {{ isEnPromo() ? "Modifier" : "Appliquer" }}
+                </span>
+                <span *ngIf="loadingPromo">Traitement...</span>
+              </button>
+            </div>
           </div>
         </div>
       </div>
-
     </div>
-
   </div>
 </div>
 
@@ -174,19 +416,21 @@
 <div class="modal fade" id="addImageModal" tabindex="-1">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content custom-upload-modal">
-
       <div class="modal-header">
         <h5 class="modal-title">
           <i class="nc-icon nc-cloud-upload-94"></i>
-          Ajouter une photo
+          Modifier la photo
         </h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+        ></button>
       </div>
 
       <div class="modal-body">
-
         <!-- Zone de drop -->
-        <div class="upload-zone" >
+        <div class="upload-zone">
           <div class="upload-content">
             <i class="nc-icon nc-image upload-icon"></i>
             <h6>Glissez votre image ici</h6>
@@ -205,17 +449,11 @@
           </div>
         </div>
 
-        <!-- Aperçu image sélectionnée -->
-<!--        <div *ngIf="selectedImage" class="image-preview">-->
-<!--          <img [src]="imagePreview" alt="Aperçu">-->
-<!--          <div class="preview-info">-->
-<!--            <p class="file-name">{{ selectedImage.name }}</p>-->
-<!--            <p class="file-size">{{ getFileSize(selectedImage.size) }}</p>-->
-<!--          </div>-->
-<!--          <button class="btn-remove-preview" (click)="removeSelectedImage()">-->
-<!--            <i class="nc-icon nc-simple-remove"></i>-->
-<!--          </button>-->
-<!--        </div>-->
+        <!-- Aperçu fichier sélectionné -->
+        <div class="selected-file-info" *ngIf="selectedImage">
+          <i class="nc-icon nc-check-2"></i>
+          <span>{{ selectedImage.name }}</span>
+        </div>
 
         <!-- Aide -->
         <div class="upload-help">
@@ -228,7 +466,6 @@
             <strong>Taille max :</strong> 5 MB
           </small>
         </div>
-
       </div>
 
       <div class="modal-footer">
@@ -239,19 +476,16 @@
         <button
           class="btn btn-success"
           (click)="clickModifImage()"
+          data-bs-dismiss="modal"
           [disabled]="loadingImage || !selectedImage"
         >
           <span *ngIf="!loadingImage">
             <i class="nc-icon nc-check-2"></i>
-            Ajouter à la galerie
+            Enregistrer
           </span>
-          <span *ngIf="loadingImage">
-            <i class="fas fa-spinner fa-spin"></i>
-            Upload en cours...
-          </span>
+          <span *ngIf="loadingImage"> Upload en cours... </span>
         </button>
       </div>
-
     </div>
   </div>
 </div>
