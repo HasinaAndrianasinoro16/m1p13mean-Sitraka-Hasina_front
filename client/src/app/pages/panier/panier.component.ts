@@ -48,14 +48,38 @@ export class PanierComponent implements OnInit {
 
         this.panier = items
           .filter((item: any) => item?.produit != null)
-          .map((item: any) => ({
-            id:       item.produit._id,
-            nom:      item.produit.nom,
-            prix:     item.enPromo === true? item.prixPromo : item.prixUnitaire,
-            quantite: item.quantite,
-            stocks:   item.produit.stock,
-            image:    item.produit.imagePrincipaleUrl || 'assets/img/default-product.jpg'
-          }));
+          .map((item: any) => {
+            const produit = item.produit;
+
+            const prixUnitaire = produit.enPromo && produit.prixPromo
+              ? produit.prixPromo
+              : produit.prix;
+
+            const prixOriginal = produit.prix;
+
+            return {
+              id:       item.produit._id,
+              nom:      item.produit.nom,
+              prix:     prixUnitaire,
+              quantite: item.quantite,
+              stocks:   item.produit.stock,
+              image:    item.produit.imagePrincipaleUrl || 'assets/img/default-product.jpg'
+            };
+          });
+
+
+        // this.panier = items
+        //   .filter((item: any) => item?.produit != null)
+        //   .map((item: any) => ({
+        //     id:       item.produit._id,
+        //     nom:      item.produit.nom,
+        //     prix:     item.enPromo && item.prixPromo
+        //       ? item.prixPromo
+        //       : item.prix,
+        //     quantite: item.quantite,
+        //     stocks:   item.produit.stock,
+        //     image:    item.produit.imagePrincipaleUrl || 'assets/img/default-product.jpg'
+        //   }));
 
         this.total = res.data?.panier?.total || this.getTotal();
       },
