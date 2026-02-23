@@ -130,6 +130,7 @@ export class CommandesComponent implements OnInit {
     this.confirmPaiementId = null;
   }
 
+  // ── Paiement avec génération de facture ──
   confirmerPaiement(id: string): void {
     this.confirmPaiementId = null;
 
