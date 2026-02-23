@@ -41,8 +41,8 @@
 }
 
 .modern-input:focus {
-  border-color: #28a745;
-  box-shadow: 0 0 0 0.15rem rgba(40, 167, 69, 0.25);
+  border-color: #ff7300;
+  box-shadow: 0 0 0 0.15rem rgb(220, 125, 43);
 }
 
 /* PASSWORD TOGGLE */
@@ -56,7 +56,7 @@
 
 /* BUTTON */
 .login-btn {
-  background: linear-gradient(135deg, #28a745, #218838);
+  background: linear-gradient(135deg, #ff7300, #dc7d2b);
   border: none;
   padding: 12px;
   border-radius: 8px;
@@ -67,7 +67,7 @@
 
 .login-btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(40, 167, 69, 0.3);
+  box-shadow: 0 8px 20px rgb(220, 125, 43);
 }
 
 /* FLÈCHE RETOUR */
@@ -90,7 +90,7 @@
 }
 
 .back-floating:hover {
-  color: #28a745;
+  color: #ff7300;
   transform: translateX(-4px);
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
 }
@@ -103,7 +103,7 @@
 .register-link {
   font-weight: 600;
   text-decoration: none;
-  color: #28a745;
+  color: #ff7300;
   transition: 0.3s;
 }
 
