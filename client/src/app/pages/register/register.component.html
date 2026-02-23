@@ -27,6 +27,20 @@
               />
             </div>
           </div>
+          <div class="form-group mb-4">
+            <label class="form-label">Prenom</label>
+            <div class="input-group">
+          <span class="input-group-text">
+            <i class="nc-icon nc-single-02"></i>
+          </span>
+              <input
+                type="text"
+                class="form-control input-field"
+                placeholder="Votre nom"
+                [(ngModel)]="prenom"
+              />
+            </div>
+          </div>
 
           <!-- EMAIL -->
           <div class="form-group mb-4">
@@ -69,32 +83,19 @@
 
           <!-- CONFIRMATION -->
           <div class="form-group mb-4">
-            <label class="form-label">Confirmer le mot de passe</label>
+            <label class="form-label">Numero de telephone</label>
             <div class="input-group">
           <span class="input-group-text">
-            <i class="nc-icon nc-check-2"></i>
+            <i class="nc-icon nc-alert-circle-i"></i>
           </span>
               <input
-                type="password"
+                type="text"
                 class="form-control input-field"
-                placeholder="Confirmer le mot de passe"
-                [(ngModel)]="confirmPassword"
+                placeholder="034 12 345 67"
+                [(ngModel)]="telephone"
               />
             </div>
           </div>
-
-          <!-- Choix du type de compte -->
-          <div class="form-group mb-4">
-            <label class="checkbox-label d-flex align-items-center gap-2">
-              <input
-                type="checkbox"
-                [(ngModel)]="isBoutique"
-                class="form-check-input"
-              />
-              <span>Enregistrer en tant que boutique</span>
-            </label>
-          </div>
-
 
           <!-- BOUTON REGISTER -->
           <div class="text-center">

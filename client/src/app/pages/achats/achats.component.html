@@ -51,7 +51,7 @@
 
           <div class="ach-filter-group">
             <label class="ach-filter-label">Boutique</label>
-            <select class="ach-filter-input" 
+            <select class="ach-filter-input"
                     [(ngModel)]="filters.boutique"
                     (ngModelChange)="onFilterChange()">
               <option value="">Toutes les boutiques</option>
@@ -61,7 +61,7 @@
 
           <div class="ach-filter-group">
             <label class="ach-filter-label">Catégorie</label>
-            <select class="ach-filter-input" 
+            <select class="ach-filter-input"
                     [(ngModel)]="filters.categorie"
                     (ngModelChange)="onFilterChange()">
               <option value="">Toutes les catégories</option>
@@ -75,7 +75,7 @@
           <div class="ach-filter-group ach-filter-small">
             <label class="ach-filter-label">Prix min</label>
             <input type="number" class="ach-filter-input"
-                   placeholder="0" 
+                   placeholder="0"
                    [(ngModel)]="filters.prixMin"
                    (change)="onFilterChange()" />
           </div>
@@ -83,7 +83,7 @@
           <div class="ach-filter-group ach-filter-small">
             <label class="ach-filter-label">Prix max</label>
             <input type="number" class="ach-filter-input"
-                   placeholder="∞" 
+                   placeholder="∞"
                    [(ngModel)]="filters.prixMax"
                    (change)="onFilterChange()" />
           </div>
@@ -99,7 +99,7 @@
 
           <div class="ach-filter-group">
             <label class="ach-filter-label">Trier par</label>
-            <select class="ach-filter-input" 
+            <select class="ach-filter-input"
                     [(ngModel)]="filters.sort"
                     (ngModelChange)="onSortChange()">
               <option value="recent">Plus récents</option>
@@ -132,17 +132,17 @@
         </span>
 
         <!-- Sélecteur nombre par page -->
-        <div class="ach-per-page">
-          <label class="ach-per-page-label">Afficher</label>
-          <select class="ach-per-page-select" 
-                  [value]="pagination.limit"
-                  (change)="onLimitChange($any($event.target).value)">
-            <option value="8">8</option>
-            <option value="12">12</option>
-            <option value="24">24</option>
-            <option value="48">48</option>
-          </select>
-        </div>
+<!--        <div class="ach-per-page">-->
+<!--          <label class="ach-per-page-label">Afficher</label>-->
+<!--          <select class="ach-per-page-select" -->
+<!--                  [value]="pagination.limit"-->
+<!--                  (change)="onLimitChange($any($event.target).value)">-->
+<!--            <option value="8">8</option>-->
+<!--            <option value="12">12</option>-->
+<!--            <option value="24">24</option>-->
+<!--            <option value="48">48</option>-->
+<!--          </select>-->
+<!--        </div>-->
       </div>
 
       <!-- VIDE -->
@@ -166,12 +166,12 @@
           <!-- Image -->
           <div class="ach-product-img-wrap">
             <img [src]="p.image" alt="{{ p.nom }}" class="ach-product-img" />
-            
+
             <!-- Badge promo -->
             <span class="ach-promo-badge" *ngIf="p.enPromo && p.pourcentageReduction > 0">
               -{{ p.pourcentageReduction }}%
             </span>
-            
+
             <!-- Badge stock -->
             <span class="ach-stock-badge" [ngClass]="getStockClass(p.stock)">
               <i class="nc-icon nc-box"></i>
@@ -234,7 +234,7 @@
 
       <!-- PAGINATION -->
       <div class="ach-pagination" *ngIf="pagination.totalPages > 1">
-        
+
         <!-- Bouton Précédent -->
         <button class="ach-page-btn ach-page-prev"
                 [disabled]="pagination.page === 1"
@@ -245,14 +245,14 @@
 
         <!-- Numéros de pages -->
         <div class="ach-page-numbers">
-          
+
           <!-- Première page -->
           <button class="ach-page-num"
                   *ngIf="showStartEllipsis()"
                   (click)="goToPage(1)">
             1
           </button>
-          
+
           <!-- Ellipsis début -->
           <span class="ach-page-ellipsis" *ngIf="showStartEllipsis()">...</span>
 

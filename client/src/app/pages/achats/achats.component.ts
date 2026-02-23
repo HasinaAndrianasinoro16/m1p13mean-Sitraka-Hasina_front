@@ -344,10 +344,12 @@ export class AchatsComponent implements OnInit {
     this.panierService.ajoutPanier(produit.id, produit.quantite).subscribe({
       next: (res: any) => {
         if (res.success) {
-          this.showSuccess(
-            `${produit.quantite} × ${produit.nom} ajouté(s) au panier !`,
-          );
+          alert(`${produit.quantite} × ${produit.nom} ajouté(s) au panier !`);
+          // this.showSuccess(
+          //   `${produit.quantite} × ${produit.nom} ajouté(s) au panier !`,
+          // );
           produit.quantite = 1;
+
         }
       },
       error: (err) => {

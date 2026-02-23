@@ -1,5 +1,8 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import {getAPIUrl} from "../../link/url";
+import {HttpClient} from "@angular/common/http";
+import {finalize} from "rxjs/operators";
 
 @Component({
   selector: 'app-register',
@@ -9,9 +12,13 @@ import { Router } from '@angular/router';
 export class RegisterComponent {
 
   nom: string = '';
+  prenom: string = '';
+  telephone: string = '';
   email: string = '';
   password: string = '';
   confirmPassword: string = '';
+
+  baseUrl = getAPIUrl('auth')
 
   // 🔥 Checkbox
   isBoutique: boolean = false;
@@ -19,42 +26,98 @@ export class RegisterComponent {
   showPassword: boolean = false;
   isLoading: boolean = false;
 
-  constructor(private router: Router) {}
+  constructor(private router: Router, private http: HttpClient) {}
 
   togglePasswordVisibility() {
     this.showPassword = !this.showPassword;
   }
 
   register() {
-
-    if (!this.nom || !this.email || !this.password || !this.confirmPassword) {
-      alert('Veuillez remplir tous les champs');
+    if (!this.email ||
+      !this.password ||
+      !this.nom ||
+      !this.prenom ||
+      !this.telephone){
+      alert('veuiller remplir les champs obligatoires');
       return;
     }
 
-    if (this.password !== this.confirmPassword) {
-      alert('Les mots de passe ne correspondent pas');
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(this.email)) {
+      alert('Email invalide');
       return;
     }
-
-    // 🎯 Rôle selon la checkbox
-    const role = this.isBoutique ? 'BOUTIQUE' : 'UTILISATEUR';
 
     this.isLoading = true;
 
-    setTimeout(() => {
-      this.isLoading = false;
+    const payload = {
+      email: this.email,
+      password: this.password,
+      nom: this.nom,
+      prenom: this.prenom,
+      role: 'CLIENT',
+    };
 
-      console.log('Compte créé :', {
-        nom: this.nom,
-        email: this.email,
-        password: this.password,
-        role: role
+    this.http.post<any>(`${this.baseUrl}/register`, payload)
+      .pipe(
+        finalize(() => this.isLoading = false)
+      )
+      .subscribe({
+        next: (res) => {
+          if (!res.success) {
+            alert(res.message || 'Erreur lors de l\' inscription');
+            return;
+          }
+
+          alert('Compte boutique créé avec succès.\n');
+
+          this.router.navigate(['/profile']);
+        },
+        error: (err) => {
+          console.error(err);
+
+          if (err.status === 400) {
+            alert(err.error?.message || 'Données invalides');
+          } else if (err.status === 0) {
+            alert('Impossible de contacter le serveur');
+          } else {
+            alert('Erreur serveur, veuillez réessayer');
+          }
+        }
       });
 
-      alert(`Compte ${role} créé avec succès 🎉`);
-
-      this.router.navigate(['/achats']);
-    }, 1500);
   }
+
+  // register() {
+  //
+  //   if (!this.nom || !this.email || !this.password || !this.confirmPassword) {
+  //     alert('Veuillez remplir tous les champs');
+  //     return;
+  //   }
+  //
+  //   if (this.password !== this.confirmPassword) {
+  //     alert('Les mots de passe ne correspondent pas');
+  //     return;
+  //   }
+  //
+  //   // 🎯 Rôle selon la checkbox
+  //   const role = this.isBoutique ? 'BOUTIQUE' : 'UTILISATEUR';
+  //
+  //   this.isLoading = true;
+  //
+  //   setTimeout(() => {
+  //     this.isLoading = false;
+  //
+  //     console.log('Compte créé :', {
+  //       nom: this.nom,
+  //       email: this.email,
+  //       password: this.password,
+  //       role: role
+  //     });
+  //
+  //     alert(`Compte ${role} créé avec succès 🎉`);
+  //
+  //     this.router.navigate(['/profile']);
+  //   }, 500);
+  // }
 }

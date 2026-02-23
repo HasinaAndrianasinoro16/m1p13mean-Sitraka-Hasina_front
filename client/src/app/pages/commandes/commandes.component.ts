@@ -244,7 +244,7 @@ export class CommandesComponent implements OnInit {
     <!-- HEADER -->
     <div class="header">
       <div class="header-top">
-        <div class="logo">E-COMMERCE</div>
+        <div class="logo">COMMERCIAL SHOP</div>
         <div class="facture-info">
           <div class="facture-numero">FACTURE</div>
           <div class="facture-date">N° ${numeroFacture}</div>
@@ -268,6 +268,24 @@ export class CommandesComponent implements OnInit {
         <div class="partie-ligne">${cmd.adresseLivraison?.codePostal || ''} ${cmd.adresseLivraison?.ville || ''}</div>
         <div class="partie-ligne">${cmd.adresseLivraison?.telephone || ''}</div>
       </div>
+    </div>
+
+    <!-- BOUTIQUES -->
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>BOUTIQUE</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${(cmd.parBoutique || []).map((item: any) => `
+            <tr>
+              <td class="produit-nom">${item.nomBoutique || 'Boutique'}</td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
     </div>
 
     <!-- PRODUITS -->
