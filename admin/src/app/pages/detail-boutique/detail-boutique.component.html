@@ -1,165 +1,266 @@
-<div class="page">
-  <!-- HEADING -->
-  <div class="page-heading">
-    <h1>Détails de la boutique</h1>
-    <p>Informations complètes sur la boutique et son propriétaire</p>
-  </div>
+<div class="row">
+  <div class="col-md-12">
 
-  <!-- HERO CARD -->
-  <div class="hero-card">
-
-    <div class="hero-body">
-
-      <!-- Logo -->
-      <div class="hero-logo-wrap">
-        <div class="hero-logo-placeholder">
-          <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-            <polyline points="9 22 9 12 15 12 15 22"/>
-          </svg>
-        </div>
-      </div>
-
-
-      <div class="hero-meta">
-        <div class="hero-info">
-          <h2>{{boutiqueData.boutique.nomBoutique}}</h2>
-          <p>Membre depuis {{boutiqueData.boutique.validatedAt | date:'MMMM y'}}</p>
-<!--          <div class="status-badges">-->
-<!--            <span class="badge badge-active">Active</span>-->
-<!--            <span class="badge badge-vendor">Vendeur</span>-->
-<!--          </div>-->
-        </div>
-      </div>
-
-    </div>
-  </div>
-
-  <!-- INFO GRID -->
-  <div class="info-grid">
-
-    <!-- PROPRIÉTAIRE -->
-    <div class="info-card">
-      <div class="card-header">
-        <div class="card-icon">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-            <circle cx="12" cy="7" r="4"/>
-          </svg>
-        </div>
-        <h3>Propriétaire</h3>
-      </div>
-      <div class="card-body">
-
-        <div class="field">
-          <span class="field-label">Nom</span>
-          <span class="field-value">{{boutiqueData.prenom}} {{boutiqueData.nom}}</span>
-        </div>
-
-        <div class="field">
-          <span class="field-label">Email</span>
-          <span class="field-value">
-            <a href="mailto:{{boutiqueData.email}}">{{boutiqueData.email}}</a>
-          </span>
-        </div>
-
-        <div class="field">
-          <span class="field-label">Téléphone</span>
-          <span class="field-value"
-                [class.empty]="!boutiqueData.telephone">
-            {{boutiqueData.telephone || 'Non renseigné'}}
-          </span>
-        </div>
-
-        <div class="field">
-          <span class="field-label">Rôle</span>
-          <span class="field-value">{{boutiqueData.role}}</span>
-        </div>
-
-        <div class="field">
-          <span class="field-label">Inscription</span>
-          <span class="field-value">
-            {{boutiqueData.createdAt | date:'d MMM y':'':'fr'}}
-          </span>
-        </div>
-
-      </div>
+    <!-- BOUTON RETOUR -->
+    <div class="dbt-header-actions">
+      <button class="dbt-btn-back" routerLink="/validation">
+        <i class="nc-icon nc-minimal-left"></i>
+        Retour à la liste
+      </button>
     </div>
 
-    <!-- BOUTIQUE -->
-    <div class="info-card">
-      <div class="card-header">
-        <div class="card-icon">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
-            <line x1="3" y1="6" x2="21" y2="6"/>
-            <path d="M16 10a4 4 0 0 1-8 0"/>
-          </svg>
-        </div>
-        <h3>Boutique</h3>
-      </div>
-      <div class="card-body">
+    <!-- LOADING -->
+    <div *ngIf="loading" class="dbt-loading">
+      <div class="dbt-spinner"></div>
+      <p>Chargement des informations...</p>
+    </div>
 
-        <!-- Description mise en avant -->
-        <div class="description-block"
-             *ngIf="boutiqueData.boutique.description; else noDesc">
-          {{ boutiqueData.boutique.description }}
-        </div>
-        <ng-template #noDesc>
-          <div class="description-block" style="color: var(--ink-3);">
-            Aucune description renseignée.
+    <!-- ERROR -->
+    <div *ngIf="error && !loading" class="dbt-alert">
+      <i class="nc-icon nc-alert-circle-i"></i>
+      {{ error }}
+      <button (click)="retour()">
+        <i class="nc-icon nc-minimal-left"></i>
+        Retour
+      </button>
+    </div>
+
+    <!-- CONTENU -->
+    <div *ngIf="!loading && !error && boutiqueData">
+
+      <!-- HERO CARD - Boutique -->
+      <div class="card dbt-hero-card">
+        <div class="dbt-hero-content">
+
+          <!-- Logo / Avatar -->
+          <div class="dbt-hero-avatar-wrap">
+            <div class="dbt-hero-avatar" *ngIf="!boutiqueData.boutique?.logo && !boutiqueData.boutique?.logoUrl">
+              <span>{{ getInitiales() }}</span>
+            </div>
+            <img *ngIf="boutiqueData.boutique?.logoUrl"
+                 [src]="boutiqueData.boutique.logoUrl"
+                 alt="Logo"
+                 class="dbt-hero-avatar-img" />
           </div>
-        </ng-template>
 
-        <div class="field">
-          <span class="field-label">Email</span>
-          <span class="field-value">
-            <a href="mailto:{{boutiqueData.boutique.email || boutiqueData.email}}">
-              {{boutiqueData.boutique.email || boutiqueData.email}}
-            </a>
-          </span>
+          <!-- Infos principales -->
+          <div class="dbt-hero-info">
+            <h2 class="dbt-hero-title">{{ boutiqueData.boutique?.nomBoutique || 'Boutique' }}</h2>
+
+            <p class="dbt-hero-subtitle" *ngIf="boutiqueData.boutique?.validatedAt">
+              <i class="nc-icon nc-calendar-60"></i>
+              Membre depuis {{ boutiqueData.boutique.validatedAt | date:'MMMM y':'':'fr' }}
+            </p>
+
+            <!-- Badges statut -->
+            <div class="dbt-hero-badges">
+              <span class="dbt-badge dbt-badge-active" *ngIf="boutiqueData.boutique?.isActive !== false">
+                <i class="nc-icon nc-check-2"></i>
+                Active
+              </span>
+              <span class="dbt-badge dbt-badge-pending" *ngIf="boutiqueData.boutique?.isActive === false">
+                <i class="nc-icon nc-watch-time"></i>
+                En attente
+              </span>
+              <span class="dbt-badge dbt-badge-role" *ngIf="boutiqueData.role">
+                <i class="nc-icon nc-badge"></i>
+                {{ boutiqueData.role }}
+              </span>
+              <span class="dbt-badge dbt-badge-category" *ngIf="boutiqueData.boutique?.categorie">
+                <i class="nc-icon nc-tag-content"></i>
+                {{ boutiqueData.boutique.categorie }}
+              </span>
+            </div>
+
+            <!-- Description -->
+            <div class="dbt-hero-description" *ngIf="boutiqueData.boutique?.description">
+              <p>{{ boutiqueData.boutique.description }}</p>
+            </div>
+            <div class="dbt-hero-description dbt-hero-no-desc" *ngIf="!boutiqueData.boutique?.description">
+              <p>Aucune description renseignée</p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- GRID INFOS -->
+      <div class="row dbt-info-row">
+
+        <!-- PROPRIÉTAIRE -->
+        <div class="col-lg-6">
+          <div class="card dbt-info-card">
+            <div class="dbt-info-header">
+              <div class="dbt-info-icon dbt-info-icon-blue">
+                <i class="nc-icon nc-single-02"></i>
+              </div>
+              <h5 class="dbt-info-title">Informations propriétaire</h5>
+            </div>
+            <div class="dbt-info-body">
+
+              <div class="dbt-field">
+                <span class="dbt-field-label">Nom complet</span>
+                <span class="dbt-field-value">
+                  {{ boutiqueData.prenom || '' }} {{ boutiqueData.nom || '' }}
+                </span>
+              </div>
+
+              <div class="dbt-field">
+                <span class="dbt-field-label">Email</span>
+                <span class="dbt-field-value dbt-field-link">
+                  <a [href]="'mailto:' + boutiqueData.email">
+                    <i class="nc-icon nc-email-85"></i>
+                    {{ boutiqueData.email }}
+                  </a>
+                </span>
+              </div>
+
+              <div class="dbt-field">
+                <span class="dbt-field-label">Téléphone</span>
+                <span class="dbt-field-value"
+                      [class.dbt-field-empty]="!boutiqueData.telephone">
+                  <i class="nc-icon nc-mobile"></i>
+                  {{ boutiqueData.telephone || 'Non renseigné' }}
+                </span>
+              </div>
+
+              <div class="dbt-field" *ngIf="boutiqueData.role">
+                <span class="dbt-field-label">Rôle</span>
+                <span class="dbt-field-value">
+                  <span class="dbt-inline-badge dbt-inline-orange">
+                    {{ boutiqueData.role }}
+                  </span>
+                </span>
+              </div>
+
+              <div class="dbt-field" *ngIf="boutiqueData.createdAt">
+                <span class="dbt-field-label">Date d'inscription</span>
+                <span class="dbt-field-value">
+                  <i class="nc-icon nc-calendar-60"></i>
+                  {{ boutiqueData.createdAt | date:'d MMMM y':'':'fr' }}
+                </span>
+              </div>
+
+            </div>
+          </div>
         </div>
 
-        <div class="field">
-          <span class="field-label">Téléphone</span>
-          <span class="field-value"
-                [class.empty]="!boutiqueData.boutique.telephone">
-            {{boutiqueData.boutique.telephone || 'Non renseigné'}}
-          </span>
-        </div>
+        <!-- BOUTIQUE -->
+        <div class="col-lg-6">
+          <div class="card dbt-info-card">
+            <div class="dbt-info-header">
+              <div class="dbt-info-icon dbt-info-icon-orange">
+                <i class="nc-icon nc-shop"></i>
+              </div>
+              <h5 class="dbt-info-title">Informations boutique</h5>
+            </div>
+            <div class="dbt-info-body">
 
-        <div class="field">
-          <span class="field-label">Adresse</span>
-          <span class="field-value"
-                [class.empty]="!boutiqueData.adresse?.ville">
-            {{boutiqueData.adresse?.ville || 'Non renseignée'}}
-            <ng-container *ngIf="boutiqueData.adresse?.pays">
-              , {{boutiqueData.adresse.pays}}
-            </ng-container>
-          </span>
-        </div>
+              <div class="dbt-field">
+                <span class="dbt-field-label">Nom de la boutique</span>
+                <span class="dbt-field-value dbt-field-strong">
+                  {{ boutiqueData.boutique?.nomBoutique }}
+                </span>
+              </div>
 
-        <div class="field">
-          <span class="field-label">Catégorie</span>
-          <span class="field-value"
-                [class.empty]="!boutiqueData.boutique.categorie">
-            {{boutiqueData.boutique.categorie || 'Non renseignée'}}
-          </span>
+              <div class="dbt-field">
+                <span class="dbt-field-label">Email boutique</span>
+                <span class="dbt-field-value dbt-field-link">
+                  <a [href]="'mailto:' + (boutiqueData.boutique?.email || boutiqueData.email)">
+                    <i class="nc-icon nc-email-85"></i>
+                    {{ boutiqueData.boutique?.email || boutiqueData.email }}
+                  </a>
+                </span>
+              </div>
+
+              <div class="dbt-field">
+                <span class="dbt-field-label">Téléphone boutique</span>
+                <span class="dbt-field-value"
+                      [class.dbt-field-empty]="!boutiqueData.boutique?.telephone">
+                  <i class="nc-icon nc-mobile"></i>
+                  {{ boutiqueData.boutique?.telephone || 'Non renseigné' }}
+                </span>
+              </div>
+
+              <div class="dbt-field">
+                <span class="dbt-field-label">Adresse</span>
+                <span class="dbt-field-value"
+                      [class.dbt-field-empty]="!boutiqueData.adresse?.ville">
+                  <i class="nc-icon nc-pin-3"></i>
+                  <ng-container *ngIf="boutiqueData.adresse?.ville; else noAddress">
+                    {{ boutiqueData.adresse.ville }}
+                    <ng-container *ngIf="boutiqueData.adresse?.pays">
+                      , {{ boutiqueData.adresse.pays }}
+                    </ng-container>
+                  </ng-container>
+                  <ng-template #noAddress>Non renseignée</ng-template>
+                </span>
+              </div>
+
+              <div class="dbt-field">
+                <span class="dbt-field-label">Catégorie</span>
+                <span class="dbt-field-value"
+                      [class.dbt-field-empty]="!boutiqueData.boutique?.categorie">
+                  <i class="nc-icon nc-tag-content"></i>
+                  {{ boutiqueData.boutique?.categorie || 'Non renseignée' }}
+                </span>
+              </div>
+
+            </div>
+          </div>
         </div>
 
       </div>
+
+      <!-- STATS (si disponibles) -->
+      <div class="row dbt-stats-row" *ngIf="hasStats()">
+
+        <div class="col-lg-4 col-md-6" *ngIf="boutiqueData.produitsActifs !== undefined">
+          <div class="card dbt-stat-card">
+            <div class="dbt-stat-icon dbt-stat-icon-green">
+              <i class="nc-icon nc-box"></i>
+            </div>
+            <div class="dbt-stat-content">
+              <span class="dbt-stat-label">Produits actifs</span>
+              <h3 class="dbt-stat-value">
+                {{ boutiqueData.produitsActifs || 0 }}
+              </h3>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-4 col-md-6" *ngIf="boutiqueData.noteMoyenne !== undefined">
+          <div class="card dbt-stat-card">
+            <div class="dbt-stat-icon dbt-stat-icon-orange">
+              <i class="nc-icon nc-favourite-28"></i>
+            </div>
+            <div class="dbt-stat-content">
+              <span class="dbt-stat-label">Note moyenne</span>
+              <h3 class="dbt-stat-value">
+                {{ boutiqueData.noteMoyenne | number:'1.1-1' }}
+                <span class="dbt-stat-stars">★</span>
+              </h3>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-4 col-md-6" *ngIf="boutiqueData.nombreAvis !== undefined">
+          <div class="card dbt-stat-card">
+            <div class="dbt-stat-icon dbt-stat-icon-purple">
+              <i class="nc-icon nc-chat-33"></i>
+            </div>
+            <div class="dbt-stat-content">
+              <span class="dbt-stat-label">Avis clients</span>
+              <h3 class="dbt-stat-value">
+                {{ boutiqueData.nombreAvis || 0 }}
+              </h3>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
     </div>
 
   </div>
-
-  <!-- ACTIONS -->
-  <div class="actions-bar">
-    <button class="btn btn-ghost" routerLink="/validation">
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <polyline points="15 18 9 12 15 6"/>
-      </svg>
-      Retour
-    </button>
-  </div>
-
 </div>
