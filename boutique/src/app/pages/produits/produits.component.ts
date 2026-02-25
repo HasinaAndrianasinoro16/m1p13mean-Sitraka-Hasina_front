@@ -1,8 +1,6 @@
 import { Component, OnInit } from "@angular/core";
 import { ProduitService } from "../../services/produit/produit.service";
 import { CategorieService } from "../../services/categorie/categorie.service";
-import { Subject } from "rxjs";
-import { debounceTime, distinctUntilChanged } from "rxjs/operators";
 
 @Component({
   selector: "app-produits",
@@ -20,6 +18,12 @@ export class ProduitsComponent implements OnInit {
   // ── Catégories ──
   categories: any[] = [];
 
+  // ── FILTRES ──
+  searchQuery: string = "";
+  selectedCategorie: string = "";
+  filtreStock: string = "tous"; // tous, en_stock, rupture
+  filtrePromo: string = "tous"; // tous, promo, normal
+
   // ── Ajout de stock ──
   addStock: number = 0;
   selectedId: string = "";
@@ -31,7 +35,7 @@ export class ProduitsComponent implements OnInit {
 
   // ── Liste produits ──
   produitData: any[] = [];
-  filteredProduits: any[] = [];
+  produitsFiltres: any[] = [];
 
   // ── États ──
   loading: boolean = false;
@@ -41,17 +45,9 @@ export class ProduitsComponent implements OnInit {
 
   // ── Pagination ──
   currentPage: number = 1;
-  limit: number = 5;
+  limit: number = 10;
   totalPages: number = 0;
   pages: number[] = [];
-
-  // ── Filtres et recherche ──
-  searchTerm: string = "";
-  selectedCategory: string = "";
-  searchSubject: Subject<string> = new Subject<string>();
-
-  // Catégories disponibles basées sur les produits existants
-  availableCategories: any[] = [];
 
   constructor(
     private produitService: ProduitService,
@@ -61,14 +57,6 @@ export class ProduitsComponent implements OnInit {
   ngOnInit(): void {
     this.loadProduits(this.currentPage);
     this.loadCategorie();
-
-    // Configuration du debounce pour la recherche
-    this.searchSubject.pipe(
-      debounceTime(300),
-      distinctUntilChanged()
-    ).subscribe(() => {
-      this.applyFilters();
-    });
   }
 
   // ══════════════════════════════════════════
@@ -100,11 +88,8 @@ export class ProduitsComponent implements OnInit {
             ? response.data.produits.filter((p: any) => p != null)
             : [];
 
-          // Extraire les catégories uniques des produits
-          this.extractCategoriesFromProducts();
-
           // Appliquer les filtres
-          this.applyFilters();
+          this.appliquerFiltres();
 
           const pagination = response.data.pagination;
           this.currentPage = pagination.page;
@@ -120,84 +105,82 @@ export class ProduitsComponent implements OnInit {
     });
   }
 
-  /**
-   * Extrait les catégories uniques des produits chargés
-   */
-  extractCategoriesFromProducts(): void {
-    const categoryMap = new Map();
-
-    this.produitData.forEach(produit => {
-      if (produit.categorie && produit.categorie._id) {
-        if (!categoryMap.has(produit.categorie._id)) {
-          categoryMap.set(produit.categorie._id, {
-            _id: produit.categorie._id,
-            nom: produit.categorie.nom || 'Sans catégorie'
-          });
-        }
-      } else {
-        // Ajouter une option "Sans catégorie" pour les produits sans catégorie
-        if (!categoryMap.has('sans-categorie')) {
-          categoryMap.set('sans-categorie', {
-            _id: 'sans-categorie',
-            nom: 'Sans catégorie'
-          });
-        }
-      }
-    });
-
-    this.availableCategories = Array.from(categoryMap.values());
-  }
-
-  /**
-   * Applique les filtres de recherche et catégorie
-   */
-  applyFilters(): void {
-    let filtered = [...this.produitData];
-
-    // Filtre par catégorie
-    if (this.selectedCategory) {
-      if (this.selectedCategory === 'sans-categorie') {
-        filtered = filtered.filter(p => !p.categorie || !p.categorie._id);
-      } else {
-        filtered = filtered.filter(p =>
-          p.categorie && p.categorie._id === this.selectedCategory
-        );
-      }
-    }
-
-    // Filtre par recherche (nom, description, catégorie)
-    if (this.searchTerm && this.searchTerm.trim()) {
-      const searchLower = this.searchTerm.toLowerCase().trim();
-      filtered = filtered.filter(p =>
-        (p.nom && p.nom.toLowerCase().includes(searchLower)) ||
-        (p.description && p.description.toLowerCase().includes(searchLower)) ||
-        (p.categorie && p.categorie.nom && p.categorie.nom.toLowerCase().includes(searchLower))
-      );
-    }
-
-    this.filteredProduits = filtered;
-  }
-
-  /**
-   * Déclenche la recherche avec debounce
-   */
-  onSearchChange(): void {
-    this.searchSubject.next(this.searchTerm);
-  }
-
-  /**
-   * Réinitialise tous les filtres
-   */
-  resetFilters(): void {
-    this.searchTerm = "";
-    this.selectedCategory = "";
-    this.applyFilters();
-  }
-
   goToPage(page: number): void {
     if (page >= 1 && page <= this.totalPages && page !== this.currentPage) {
       this.loadProduits(page);
     }
+  }
+
+  // ══════════════════════════════════════════
+  // FILTRES
+  // ══════════════════════════════════════════
+
+  /**
+   * Applique tous les filtres sur les produits
+   */
+  appliquerFiltres(): void {
+    let resultats = [...this.produitData];
+
+    // Filtre par recherche (nom du produit)
+    if (this.searchQuery.trim()) {
+      const query = this.searchQuery.toLowerCase().trim();
+      resultats = resultats.filter((p) =>
+        p.nom?.toLowerCase().includes(query)
+      );
+    }
+
+    // Filtre par catégorie
+    if (this.selectedCategorie && this.selectedCategorie !== "") {
+      resultats = resultats.filter(
+        (p) => p.categorie?._id === this.selectedCategorie
+      );
+    }
+
+    // Filtre par stock
+    if (this.filtreStock === "en_stock") {
+      resultats = resultats.filter((p) => p.stock > 0);
+    } else if (this.filtreStock === "rupture") {
+      resultats = resultats.filter((p) => p.stock === 0);
+    }
+
+    // Filtre par promo
+    if (this.filtrePromo === "promo") {
+      resultats = resultats.filter((p) => this.isEnPromo(p));
+    } else if (this.filtrePromo === "normal") {
+      resultats = resultats.filter((p) => !this.isEnPromo(p));
+    }
+
+    this.produitsFiltres = resultats;
+  }
+
+  /**
+   * Reset tous les filtres
+   */
+  resetFiltres(): void {
+    this.searchQuery = "";
+    this.selectedCategorie = "";
+    this.filtreStock = "tous";
+    this.filtrePromo = "tous";
+    this.appliquerFiltres();
+  }
+
+  /**
+   * Appelé quand un filtre change
+   */
+  onFiltreChange(): void {
+    this.appliquerFiltres();
+  }
+
+  /**
+   * Compte le nombre de filtres actifs
+   */
+  getNombreFiltresActifs(): number {
+    let count = 0;
+    if (this.searchQuery.trim()) count++;
+    if (this.selectedCategorie) count++;
+    if (this.filtreStock !== "tous") count++;
+    if (this.filtrePromo !== "tous") count++;
+    return count;
   }
 
   // ══════════════════════════════════════════
@@ -280,9 +263,9 @@ export class ProduitsComponent implements OnInit {
               ...this.produitData[idx],
               stock: (this.produitData[idx].stock || 0) + this.addStock,
             };
+            this.appliquerFiltres();
           }
           this.addStock = 0;
-          this.applyFilters(); // Re-appliquer les filtres après mise à jour
         }
       },
       error: (err) => {
@@ -297,14 +280,10 @@ export class ProduitsComponent implements OnInit {
   // GESTION DES PROMOTIONS
   // ══════════════════════════════════════════
 
-  /**
-   * Ouvre le modal promo avec les infos du produit
-   */
   openPromoModal(produit: any): void {
     this.selectedProduit = produit;
     this.error = "";
 
-    // Pré-remplir avec le prix promo existant ou suggérer -10%
     if (this.isEnPromo(produit)) {
       this.prixPromo = produit.prixPromo;
     } else {
@@ -312,13 +291,9 @@ export class ProduitsComponent implements OnInit {
     }
   }
 
-  /**
-   * Applique la promotion
-   */
   appliquerPromo(): void {
     if (!this.selectedProduit) return;
 
-    // Validations
     if (!this.prixPromo || this.prixPromo <= 0) {
       this.error = "Le prix promo doit être supérieur à 0.";
       return;
@@ -352,9 +327,6 @@ export class ProduitsComponent implements OnInit {
     });
   }
 
-  /**
-   * Retire la promotion
-   */
   retirerPromo(): void {
     if (!this.selectedProduit) return;
 
@@ -383,9 +355,6 @@ export class ProduitsComponent implements OnInit {
     });
   }
 
-  /**
-   * Vérifie si un produit est actuellement en promo
-   */
   isEnPromo(produit: any): boolean {
     if (!produit) return false;
     return (
@@ -393,17 +362,11 @@ export class ProduitsComponent implements OnInit {
     );
   }
 
-  /**
-   * Calcule le pourcentage de réduction
-   */
   getReductionPercent(produit: any): number {
     if (!produit || !produit.prix || !produit.prixPromo) return 0;
     return Math.round((1 - produit.prixPromo / produit.prix) * 100);
   }
 
-  /**
-   * Calcule le pourcentage de réduction pour l'aperçu
-   */
   getPreviewReductionPercent(): number {
     if (!this.selectedProduit || !this.selectedProduit.prix || !this.prixPromo)
       return 0;
@@ -411,9 +374,6 @@ export class ProduitsComponent implements OnInit {
     return Math.round((1 - this.prixPromo / this.selectedProduit.prix) * 100);
   }
 
-  /**
-   * Reset le formulaire promo
-   */
   resetPromoForm(): void {
     this.selectedProduit = null;
     this.prixPromo = 0;
