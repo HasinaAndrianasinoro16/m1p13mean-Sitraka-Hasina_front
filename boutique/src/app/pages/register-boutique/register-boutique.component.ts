@@ -3,18 +3,21 @@ import {Router} from "@angular/router";
 import {HttpClient, HttpResponse} from "@angular/common/http";
 import {getAPIUrl} from "../link/url";
 import {finalize} from "rxjs/operators";
+import {CategorieService} from "../../services/categorie/categorie.service";
 
 @Component({
   selector: 'app-register-boutique',
   templateUrl: './register-boutique.component.html',
   styleUrls: ['./register-boutique.component.css']
 })
-export class RegisterBoutiqueComponent {
+export class RegisterBoutiqueComponent implements OnInit {
 
   nom: string = '';
   prenom: string = '';
   email: string = '';
   password: string = '';
+  telephone: string = '';
+  categorie: string = '';
 
   nomBoutique: string = '';
   descriptions: string = '';
@@ -22,16 +25,34 @@ export class RegisterBoutiqueComponent {
   showPassword: boolean = false;
   isLoading: boolean = false;
 
+  categories: any[] = null;
+
   baseUrl = getAPIUrl('auth');
 
 
-  constructor(private router: Router, private http: HttpClient) {}
+  constructor(private router: Router, private http: HttpClient, private categorieService: CategorieService) {}
+
+  ngOnInit() {
+    this.loadCategories();
+  }
+
+  loadCategories() {
+    this.categorieService.getCategorieListe().subscribe({
+      next: (res: any) => {
+        if (res.success){
+          this.categories = res.data.categories;
+        }
+      }
+    })
+  }
 
   registerBoutique() {
     if (!this.email ||
       !this.password ||
       !this.nom ||
       !this.prenom ||
+      !this.categorie ||
+      !this.telephone ||
       !this.nomBoutique){
       alert('veuiller remplir les champs obligatoires');
       return;
@@ -50,11 +71,12 @@ export class RegisterBoutiqueComponent {
       password: this.password,
       nom: this.nom,
       prenom: this.prenom,
+      telephone: this.telephone,
       role: 'BOUTIQUE',
       boutique:{
         nomBoutique: this.nomBoutique,
         description: this.descriptions,
-        categorie:'',
+        categorie: this.categorie,
       }
     };
 

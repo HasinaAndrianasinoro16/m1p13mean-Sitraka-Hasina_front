@@ -38,14 +38,14 @@
           <p>Chargement des conversations...</p>
         </div>
 
-        <!-- ÉTAT VIDE -->
-        <div *ngIf="!loading && conversations.length === 0" class="msg-empty">
-          <div class="msg-empty-icon">
-            <i class="nc-icon nc-chat-33"></i>
-          </div>
-          <p class="msg-empty-title">Aucune conversation</p>
-          <p class="msg-empty-sub">Attender que un client vous contact</p>
-        </div>
+<!--        &lt;!&ndash; ÉTAT VIDE &ndash;&gt;-->
+<!--        <div *ngIf="!loading && conversations.length === 0" class="msg-empty">-->
+<!--          <div class="msg-empty-icon">-->
+<!--            <i class="nc-icon nc-chat-33"></i>-->
+<!--          </div>-->
+<!--          <p class="msg-empty-title">Aucune conversation</p>-->
+<!--          <p class="msg-empty-sub">Attender que un client vous contact</p>-->
+<!--        </div>-->
 
         <!-- LAYOUT MESSAGERIE -->
         <div class="msg-layout" *ngIf="!loading || conversations.length > 0">

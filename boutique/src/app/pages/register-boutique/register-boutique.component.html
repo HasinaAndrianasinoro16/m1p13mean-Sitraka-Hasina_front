@@ -26,7 +26,7 @@
       <!-- PROPRIETAIRE -->
       <div class="row">
         <div class="col-md-6 mb-3">
-          <label>Nom *</label>
+          <label>Nom du proprietaire*</label>
           <input
             type="text"
             class="form-control modern-input"
@@ -37,11 +37,38 @@
         </div>
 
         <div class="col-md-6 mb-3">
-          <label>Prénom *</label>
+          <label>Prénom du proprietaire*</label>
           <input
             type="text"
             class="form-control modern-input"
             [(ngModel)]="prenom"
+            name="prenom"
+            required
+          />
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <label>Catégorie*</label>
+          <select class="form-control modern-input"
+                  [(ngModel)]="categorie">
+            <option *ngFor="let c of categories" [value]="c.nom">{{ c.nom }}</option>
+          </select>
+<!--          <input-->
+<!--            type="text"-->
+<!--            class="form-control modern-input"-->
+<!--            [(ngModel)]="telephone"-->
+<!--            name="nom"-->
+<!--            required-->
+<!--          />-->
+        </div>
+
+        <div class="col-md-6 mb-3">
+          <label>Numeros de telephone*</label>
+          <input
+            type="text"
+            class="form-control modern-input"
+            [(ngModel)]="telephone"
             name="prenom"
             required
           />
