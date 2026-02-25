@@ -1,6 +1,8 @@
 import { Component, OnInit } from "@angular/core";
 import { ProduitService } from "../../services/produit/produit.service";
 import { CategorieService } from "../../services/categorie/categorie.service";
+import { Subject } from "rxjs";
+import { debounceTime, distinctUntilChanged } from "rxjs/operators";
 
 @Component({
   selector: "app-produits",
@@ -29,6 +31,7 @@ export class ProduitsComponent implements OnInit {
 
   // ── Liste produits ──
   produitData: any[] = [];
+  filteredProduits: any[] = [];
 
   // ── États ──
   loading: boolean = false;
@@ -42,6 +45,14 @@ export class ProduitsComponent implements OnInit {
   totalPages: number = 0;
   pages: number[] = [];
 
+  // ── Filtres et recherche ──
+  searchTerm: string = "";
+  selectedCategory: string = "";
+  searchSubject: Subject<string> = new Subject<string>();
+
+  // Catégories disponibles basées sur les produits existants
+  availableCategories: any[] = [];
+
   constructor(
     private produitService: ProduitService,
     private categorieService: CategorieService,
@@ -50,6 +61,14 @@ export class ProduitsComponent implements OnInit {
   ngOnInit(): void {
     this.loadProduits(this.currentPage);
     this.loadCategorie();
+
+    // Configuration du debounce pour la recherche
+    this.searchSubject.pipe(
+      debounceTime(300),
+      distinctUntilChanged()
+    ).subscribe(() => {
+      this.applyFilters();
+    });
   }
 
   // ══════════════════════════════════════════
@@ -81,6 +100,12 @@ export class ProduitsComponent implements OnInit {
             ? response.data.produits.filter((p: any) => p != null)
             : [];
 
+          // Extraire les catégories uniques des produits
+          this.extractCategoriesFromProducts();
+
+          // Appliquer les filtres
+          this.applyFilters();
+
           const pagination = response.data.pagination;
           this.currentPage = pagination.page;
           this.totalPages = pagination.totalPages;
@@ -93,6 +118,80 @@ export class ProduitsComponent implements OnInit {
         this.error = "Erreur lors de la récupération des produits.";
       },
     });
+  }
+
+  /**
+   * Extrait les catégories uniques des produits chargés
+   */
+  extractCategoriesFromProducts(): void {
+    const categoryMap = new Map();
+
+    this.produitData.forEach(produit => {
+      if (produit.categorie && produit.categorie._id) {
+        if (!categoryMap.has(produit.categorie._id)) {
+          categoryMap.set(produit.categorie._id, {
+            _id: produit.categorie._id,
+            nom: produit.categorie.nom || 'Sans catégorie'
+          });
+        }
+      } else {
+        // Ajouter une option "Sans catégorie" pour les produits sans catégorie
+        if (!categoryMap.has('sans-categorie')) {
+          categoryMap.set('sans-categorie', {
+            _id: 'sans-categorie',
+            nom: 'Sans catégorie'
+          });
+        }
+      }
+    });
+
+    this.availableCategories = Array.from(categoryMap.values());
+  }
+
+  /**
+   * Applique les filtres de recherche et catégorie
+   */
+  applyFilters(): void {
+    let filtered = [...this.produitData];
+
+    // Filtre par catégorie
+    if (this.selectedCategory) {
+      if (this.selectedCategory === 'sans-categorie') {
+        filtered = filtered.filter(p => !p.categorie || !p.categorie._id);
+      } else {
+        filtered = filtered.filter(p =>
+          p.categorie && p.categorie._id === this.selectedCategory
+        );
+      }
+    }
+
+    // Filtre par recherche (nom, description, catégorie)
+    if (this.searchTerm && this.searchTerm.trim()) {
+      const searchLower = this.searchTerm.toLowerCase().trim();
+      filtered = filtered.filter(p =>
+        (p.nom && p.nom.toLowerCase().includes(searchLower)) ||
+        (p.description && p.description.toLowerCase().includes(searchLower)) ||
+        (p.categorie && p.categorie.nom && p.categorie.nom.toLowerCase().includes(searchLower))
+      );
+    }
+
+    this.filteredProduits = filtered;
+  }
+
+  /**
+   * Déclenche la recherche avec debounce
+   */
+  onSearchChange(): void {
+    this.searchSubject.next(this.searchTerm);
+  }
+
+  /**
+   * Réinitialise tous les filtres
+   */
+  resetFilters(): void {
+    this.searchTerm = "";
+    this.selectedCategory = "";
+    this.applyFilters();
   }
 
   goToPage(page: number): void {
@@ -183,6 +282,7 @@ export class ProduitsComponent implements OnInit {
             };
           }
           this.addStock = 0;
+          this.applyFilters(); // Re-appliquer les filtres après mise à jour
         }
       },
       error: (err) => {
@@ -285,7 +385,6 @@ export class ProduitsComponent implements OnInit {
 
   /**
    * Vérifie si un produit est actuellement en promo
-   * Utilise le champ enPromo du backend
    */
   isEnPromo(produit: any): boolean {
     if (!produit) return false;
