@@ -155,7 +155,7 @@ export class AchatsComponent implements OnInit {
               stock: p.stock || 0,
               categorie: p.categorie?.nom || "Sans catégorie",
               categorieId: p.categorie?._id || "",
-              image: p.imagePrincipaleUrl || "assets/img/default-product.jpg",
+              image: p.imagePrincipale || "assets/img/default-product.jpg",
               quantite: 1,
             }));
 
