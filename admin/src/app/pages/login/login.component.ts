@@ -11,8 +11,8 @@ import { getAPIUrl } from "../../link/url";
 })
 export class LoginComponent implements OnInit {
 
-  email = 'admin@centrecommercial.com';
-  password = 'Admin123!';
+  email: string= 'admin@centrecommercial.com';
+  password: string = 'Admin123!';
   showPassword = false;
   isLoading = false;
 
