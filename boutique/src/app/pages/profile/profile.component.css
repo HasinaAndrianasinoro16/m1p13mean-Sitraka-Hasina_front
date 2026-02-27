@@ -301,6 +301,366 @@
   font-weight: 500;
 }
 
+/* ═══════════════════════════════════════════════════════════
+   AJOUTS AU CSS EXISTANT - profile.component.css
+   Boutons d'édition et modals
+═══════════════════════════════════════════════════════════ */
+
+/* ── BOUTONS ACTIONS RAPIDES ── */
+.pbou-quick-actions {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid #f0ece6;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.pbou-action-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border-radius: 9px;
+  border: none;
+  font-size: .86rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all .2s;
+  font-family: inherit;
+}
+.pbou-action-btn i {
+  font-size: 14px;
+}
+
+.pbou-btn-orange {
+  background: #b84a14;
+  color: white;
+  box-shadow: 0 4px 12px rgba(184,74,20,.25);
+}
+.pbou-btn-orange:hover {
+  background: #9a3b0e;
+  transform: translateY(-1px);
+}
+
+.pbou-btn-blue {
+  background: #1a4b8c;
+  color: white;
+  box-shadow: 0 4px 12px rgba(26,75,140,.25);
+}
+.pbou-btn-blue:hover {
+  background: #153c6f;
+  transform: translateY(-1px);
+}
+
+/* ── HEADERS AVEC BOUTON ÉDITER ── */
+.pbou-info-header,
+.pbou-detail-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 20px;
+  background: #fafaf8;
+  border-bottom: 1px solid #f0ece6;
+}
+
+.pbou-header-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.pbou-header-left i {
+  font-size: 16px;
+  color: #b84a14;
+}
+
+.pbou-header-left span {
+  font-size: .9rem;
+  font-weight: 700;
+  color: #1a1a1a;
+}
+
+.pbou-edit-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 7px;
+  border: 1.5px solid #e8e4de;
+  background: white;
+  color: #6c6c6c;
+  font-size: .78rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all .2s;
+  font-family: inherit;
+}
+.pbou-edit-btn:hover {
+  background: #fafaf8;
+  border-color: #b84a14;
+  color: #b84a14;
+}
+.pbou-edit-btn i {
+  font-size: 12px;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   MODALS
+═══════════════════════════════════════════════════════════ */
+
+.pbou-modal-content {
+  border: none !important;
+  border-radius: 14px !important;
+  box-shadow: 0 12px 40px rgba(15,12,8,.15) !important;
+}
+
+.pbou-modal-header {
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+  padding: 20px 24px !important;
+  border-bottom: 1px solid #f0ece6 !important;
+  background: #fafaf8 !important;
+}
+
+.pbou-modal-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 11px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.pbou-modal-icon i {
+  font-size: 19px;
+}
+
+.pbou-modal-icon-blue {
+  background: #eaf0f9;
+  color: #1a4b8c;
+}
+
+.pbou-modal-icon-orange {
+  background: #fdf0e8;
+  color: #b84a14;
+}
+
+.pbou-modal-icon-purple {
+  background: #f3eef9;
+  color: #6c3b83;
+}
+
+.pbou-modal-icon-green {
+  background: #eaf4ee;
+  color: #2d7a4f;
+}
+
+:host ::ng-deep .pbou-modal-content .modal-title {
+  font-size: .95rem !important;
+  font-weight: 700 !important;
+  color: #1a1a1a !important;
+  margin: 0 !important;
+}
+
+.pbou-modal-sub {
+  font-size: .78rem;
+  color: #9e9a92;
+  margin: 3px 0 0;
+}
+
+.pbou-modal-close {
+  margin-left: auto;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  border: none;
+  background: transparent;
+  color: #6c6c6c;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all .2s;
+  flex-shrink: 0;
+}
+.pbou-modal-close:hover {
+  background: #f0ece6;
+  color: #1a1a1a;
+}
+.pbou-modal-close i {
+  font-size: 16px;
+}
+
+.pbou-modal-body {
+  padding: 24px !important;
+}
+
+/* ── FORMULAIRES ── */
+.pbou-form-group {
+  margin-bottom: 18px;
+}
+
+.pbou-form-label {
+  display: block;
+  font-size: .82rem;
+  font-weight: 600;
+  color: #3d3a35;
+  margin-bottom: 8px;
+}
+
+.required {
+  color: #c02020;
+  margin-left: 2px;
+}
+
+.pbou-form-input {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1.5px solid #e8e4de;
+  border-radius: 9px;
+  font-size: .88rem;
+  color: #1a1a1a;
+  background: white;
+  transition: all .2s;
+  font-family: inherit;
+}
+.pbou-form-input:focus {
+  outline: none;
+  border-color: #b84a14;
+  box-shadow: 0 0 0 3px rgba(184,74,20,.08);
+}
+.pbou-form-input::placeholder {
+  color: #bbb;
+}
+
+.pbou-form-textarea {
+  resize: vertical;
+  min-height: 90px;
+}
+
+.pbou-form-row2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.pbou-form-hint {
+  display: block;
+  font-size: .74rem;
+  color: #9e9a92;
+  margin-top: 6px;
+}
+
+/* ── PASSWORD TOGGLE ── */
+.pbou-password-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.pbou-password-toggle {
+  position: absolute;
+  right: 10px;
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  border: none;
+  background: transparent;
+  color: #9e9a92;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all .2s;
+}
+.pbou-password-toggle:hover {
+  background: #f0ece6;
+  color: #1a1a1a;
+}
+.pbou-password-toggle i {
+  font-size: 14px;
+}
+
+/* ── MODAL FOOTER ── */
+.pbou-modal-footer {
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  padding: 18px 24px !important;
+  border-top: 1px solid #f0ece6 !important;
+  background: #fafaf8 !important;
+}
+
+.pbou-btn-cancel,
+.pbou-btn-confirm {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 18px;
+  border-radius: 9px;
+  font-size: .86rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: all .2s;
+  font-family: inherit;
+}
+.pbou-btn-cancel i,
+.pbou-btn-confirm i {
+  font-size: 14px;
+}
+
+.pbou-btn-cancel {
+  background: #f0ece6;
+  color: #6c6c6c;
+}
+.pbou-btn-cancel:hover {
+  background: #e8e4de;
+  color: #3d3a35;
+}
+
+.pbou-btn-confirm {
+  background: #b84a14;
+  color: white;
+  box-shadow: 0 4px 14px rgba(184,74,20,.28);
+  margin-left: auto;
+}
+.pbou-btn-confirm:hover:not(:disabled) {
+  background: #9a3b0e;
+  transform: translateY(-1px);
+}
+.pbou-btn-confirm:disabled {
+  opacity: .5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.pbou-btn-purple {
+  background: #6c3b83;
+  box-shadow: 0 4px 14px rgba(108,59,131,.28);
+}
+.pbou-btn-purple:hover:not(:disabled) {
+  background: #562e69;
+}
+
+.pbou-btn-green {
+  background: #2d7a4f;
+  box-shadow: 0 4px 14px rgba(45,122,79,.28);
+}
+.pbou-btn-green:hover:not(:disabled) {
+  background: #246339;
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 768px) {
+  .pbou-form-row2 {
+    grid-template-columns: 1fr;
+  }
+}
+
 /* ── ANIMATIONS ── */
 @keyframes fadeUp {
   from {

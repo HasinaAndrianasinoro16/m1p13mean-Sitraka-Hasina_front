@@ -64,13 +64,6 @@
 
             <!-- Stats -->
             <div class="pbou-stats" *ngIf="profile?.boutique">
-<!--              <div class="pbou-stat">-->
-<!--                <i class="nc-icon nc-box"></i>-->
-<!--                <div>-->
-<!--                  <span class="pbou-stat-value">{{ profile.boutique.produitsCount || 0 }}</span>-->
-<!--                  <span class="pbou-stat-label">Produits</span>-->
-<!--                </div>-->
-<!--              </div>-->
               <div class="pbou-stat">
                 <i class="nc-icon nc-favourite-28"></i>
                 <div>
@@ -78,6 +71,24 @@
                   <span class="pbou-stat-label">Note moyenne</span>
                 </div>
               </div>
+            </div>
+
+            <!-- Actions rapides -->
+            <div class="pbou-quick-actions">
+              <button class="pbou-action-btn pbou-btn-orange"
+                      data-bs-toggle="modal"
+                      data-bs-target="#editBoutiqueModal"
+                      (click)="openEditBoutiqueModal()">
+                <i class="nc-icon nc-settings-gear-65"></i>
+                Modifier boutique
+              </button>
+              <button class="pbou-action-btn pbou-btn-blue"
+                      data-bs-toggle="modal"
+                      data-bs-target="#changePasswordModal"
+                      (click)="openChangePasswordModal()">
+                <i class="nc-icon nc-key-25"></i>
+                Changer mot de passe
+              </button>
             </div>
           </div>
 
@@ -90,8 +101,17 @@
         <!-- INFORMATIONS PROPRIÉTAIRE -->
         <div class="card pbou-info-card">
           <div class="pbou-info-header">
-            <i class="nc-icon nc-single-02"></i>
-            <span>Informations du propriétaire</span>
+            <div class="pbou-header-left">
+              <i class="nc-icon nc-single-02"></i>
+              <span>Informations du propriétaire</span>
+            </div>
+            <button class="pbou-edit-btn"
+                    data-bs-toggle="modal"
+                    data-bs-target="#editProprioModal"
+                    (click)="openEditProprioModal()">
+              <i class="nc-icon nc-ruler-pencil"></i>
+              Modifier
+            </button>
           </div>
           <div class="pbou-info-body">
             <div class="pbou-info-grid">
@@ -129,8 +149,17 @@
         <!-- INFORMATIONS BOUTIQUE -->
         <div class="card pbou-detail-card" *ngIf="profile?.boutique">
           <div class="pbou-detail-header">
-            <i class="nc-icon nc-shop"></i>
-            <span>Détails de la boutique</span>
+            <div class="pbou-header-left">
+              <i class="nc-icon nc-shop"></i>
+              <span>Détails de la boutique</span>
+            </div>
+<!--            <button class="pbou-edit-btn"-->
+<!--                    data-bs-toggle="modal"-->
+<!--                    data-bs-target="#editContactModal"-->
+<!--                    (click)="openEditContactModal()">-->
+<!--              <i class="nc-icon nc-ruler-pencil"></i>-->
+<!--              Modifier-->
+<!--            </button>-->
           </div>
           <div class="pbou-detail-body">
             <div class="pbou-detail-grid">
@@ -146,14 +175,6 @@
                 <span class="pbou-detail-label">Description</span>
                 <span class="pbou-detail-value pbou-detail-desc">{{ profile.boutique.description }}</span>
               </div>
-<!--              <div class="pbou-detail-item">-->
-<!--                <span class="pbou-detail-label">Produits actifs</span>-->
-<!--                <span class="pbou-detail-value">{{ profile.boutique.produitsActifs || 0 }}</span>-->
-<!--              </div>-->
-<!--              <div class="pbou-detail-item">-->
-<!--                <span class="pbou-detail-label">Produits en promotion</span>-->
-<!--                <span class="pbou-detail-value">{{ profile.boutique.produitsEnPromo || 0 }}</span>-->
-<!--              </div>-->
               <div class="pbou-detail-item">
                 <span class="pbou-detail-label">Nombre d'avis</span>
                 <span class="pbou-detail-value">{{ profile.boutique.nombreAvis || 0 }}</span>
@@ -166,5 +187,239 @@
 
     </div>
 
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     MODAL : ÉDITER PROPRIÉTAIRE
+═══════════════════════════════════════════════════════════ -->
+<div class="modal fade" id="editProprioModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content pbou-modal-content">
+      <div class="modal-header pbou-modal-header">
+        <div class="pbou-modal-icon pbou-modal-icon-blue">
+          <i class="nc-icon nc-single-02"></i>
+        </div>
+        <div>
+          <h5 class="modal-title">Modifier mes informations</h5>
+          <p class="pbou-modal-sub">Mettez à jour vos informations personnelles</p>
+        </div>
+        <button type="button" class="pbou-modal-close" data-bs-dismiss="modal">
+          <i class="nc-icon nc-simple-remove"></i>
+        </button>
+      </div>
+
+      <div class="modal-body pbou-modal-body">
+        <div class="pbou-form-group">
+          <label class="pbou-form-label">Prénom <span class="required">*</span></label>
+          <input type="text" class="pbou-form-input" [(ngModel)]="editProprioPrenom" />
+        </div>
+
+        <div class="pbou-form-group">
+          <label class="pbou-form-label">Nom <span class="required">*</span></label>
+          <input type="text" class="pbou-form-input" [(ngModel)]="editProprioNom" />
+        </div>
+
+        <div class="pbou-form-group">
+          <label class="pbou-form-label">Téléphone</label>
+          <input type="tel" class="pbou-form-input" [(ngModel)]="editProprioTelephone" />
+        </div>
+      </div>
+
+      <div class="modal-footer pbou-modal-footer">
+        <button class="pbou-btn-cancel" data-bs-dismiss="modal">Annuler</button>
+        <button class="pbou-btn-confirm" (click)="updateProprio()" [disabled]="loadingAction">
+          <i class="nc-icon nc-check-2"></i>
+          {{ loadingAction ? 'Enregistrement...' : 'Enregistrer' }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     MODAL : CHANGER MOT DE PASSE
+═══════════════════════════════════════════════════════════ -->
+<div class="modal fade" id="changePasswordModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content pbou-modal-content">
+      <div class="modal-header pbou-modal-header">
+        <div class="pbou-modal-icon pbou-modal-icon-purple">
+          <i class="nc-icon nc-key-25"></i>
+        </div>
+        <div>
+          <h5 class="modal-title">Changer le mot de passe</h5>
+          <p class="pbou-modal-sub">Sécurisez votre compte</p>
+        </div>
+        <button type="button" class="pbou-modal-close" data-bs-dismiss="modal">
+          <i class="nc-icon nc-simple-remove"></i>
+        </button>
+      </div>
+
+      <div class="modal-body pbou-modal-body">
+        <!-- Mot de passe actuel -->
+        <div class="pbou-form-group">
+          <label class="pbou-form-label">Mot de passe actuel <span class="required">*</span></label>
+          <div class="pbou-password-wrap">
+            <input [type]="showCurrentPassword ? 'text' : 'password'"
+                   class="pbou-form-input"
+                   [(ngModel)]="currentPassword" />
+            <button class="pbou-password-toggle" (click)="showCurrentPassword = !showCurrentPassword">
+              <i class="nc-icon" [ngClass]="showCurrentPassword ? 'nc-simple-remove' : 'nc-bulb-63'"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Nouveau mot de passe -->
+        <div class="pbou-form-group">
+          <label class="pbou-form-label">Nouveau mot de passe <span class="required">*</span></label>
+          <div class="pbou-password-wrap">
+            <input [type]="showNewPassword ? 'text' : 'password'"
+                   class="pbou-form-input"
+                   [(ngModel)]="newPassword" />
+            <button class="pbou-password-toggle" (click)="showNewPassword = !showNewPassword">
+              <i class="nc-icon" [ngClass]="showNewPassword ? 'nc-simple-remove' : 'nc-bulb-63'"></i>
+            </button>
+          </div>
+          <small class="pbou-form-hint">Minimum 6 caractères</small>
+        </div>
+
+        <!-- Confirmer mot de passe -->
+        <div class="pbou-form-group">
+          <label class="pbou-form-label">Confirmer le mot de passe <span class="required">*</span></label>
+          <div class="pbou-password-wrap">
+            <input [type]="showConfirmPassword ? 'text' : 'password'"
+                   class="pbou-form-input"
+                   [(ngModel)]="confirmPassword" />
+            <button class="pbou-password-toggle" (click)="showConfirmPassword = !showConfirmPassword">
+              <i class="nc-icon" [ngClass]="showConfirmPassword ? 'nc-simple-remove' : 'nc-bulb-63'"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer pbou-modal-footer">
+        <button class="pbou-btn-cancel" data-bs-dismiss="modal">Annuler</button>
+        <button class="pbou-btn-confirm pbou-btn-purple" (click)="updatePassword()" [disabled]="loadingAction">
+          <i class="nc-icon nc-check-2"></i>
+          {{ loadingAction ? 'Modification...' : 'Modifier le mot de passe' }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     MODAL : ÉDITER INFO BOUTIQUE
+═══════════════════════════════════════════════════════════ -->
+<div class="modal fade" id="editBoutiqueModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content pbou-modal-content">
+      <div class="modal-header pbou-modal-header">
+        <div class="pbou-modal-icon pbou-modal-icon-orange">
+          <i class="nc-icon nc-shop"></i>
+        </div>
+        <div>
+          <h5 class="modal-title">Modifier la boutique</h5>
+          <p class="pbou-modal-sub">Informations principales</p>
+        </div>
+        <button type="button" class="pbou-modal-close" data-bs-dismiss="modal">
+          <i class="nc-icon nc-simple-remove"></i>
+        </button>
+      </div>
+
+      <div class="modal-body pbou-modal-body">
+        <div class="pbou-form-group">
+          <label class="pbou-form-label">Nom de la boutique <span class="required">*</span></label>
+          <input type="text" class="pbou-form-input" [(ngModel)]="editBoutiqueNom" />
+        </div>
+
+<!--        <div class="pbou-form-group">-->
+<!--          <label class="pbou-form-label">Téléphone boutique</label>-->
+<!--          <input type="tel" class="pbou-form-input" [(ngModel)]="editBoutiqueTelephone" />-->
+<!--        </div>-->
+
+        <div class="pbou-form-group">
+          <label class="pbou-form-label">Description</label>
+          <textarea class="pbou-form-input pbou-form-textarea"
+                    [(ngModel)]="editBoutiqueDescription"
+                    rows="4"></textarea>
+        </div>
+      </div>
+
+      <div class="modal-footer pbou-modal-footer">
+        <button class="pbou-btn-cancel" data-bs-dismiss="modal">Annuler</button>
+        <button class="pbou-btn-confirm" (click)="updateInfoBoutique()" [disabled]="loadingAction">
+          <i class="nc-icon nc-check-2"></i>
+          {{ loadingAction ? 'Enregistrement...' : 'Enregistrer' }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     MODAL : ÉDITER CONTACT BOUTIQUE
+═══════════════════════════════════════════════════════════ -->
+<div class="modal fade" id="editContactModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content pbou-modal-content">
+      <div class="modal-header pbou-modal-header">
+        <div class="pbou-modal-icon pbou-modal-icon-green">
+          <i class="nc-icon nc-pin-3"></i>
+        </div>
+        <div>
+          <h5 class="modal-title">Contact & Adresse</h5>
+          <p class="pbou-modal-sub">Coordonnées de la boutique</p>
+        </div>
+        <button type="button" class="pbou-modal-close" data-bs-dismiss="modal">
+          <i class="nc-icon nc-simple-remove"></i>
+        </button>
+      </div>
+
+      <div class="modal-body pbou-modal-body">
+        <div class="pbou-form-row2">
+          <div class="pbou-form-group">
+            <label class="pbou-form-label">Téléphone</label>
+            <input type="tel" class="pbou-form-input" [(ngModel)]="editContactTelephone" />
+          </div>
+
+          <div class="pbou-form-group">
+            <label class="pbou-form-label">Site web</label>
+            <input type="url" class="pbou-form-input" [(ngModel)]="editContactSiteWeb" placeholder="https://" />
+          </div>
+        </div>
+
+        <div class="pbou-form-group">
+          <label class="pbou-form-label">Rue</label>
+          <input type="text" class="pbou-form-input" [(ngModel)]="editContactRue" />
+        </div>
+
+        <div class="pbou-form-row2">
+          <div class="pbou-form-group">
+            <label class="pbou-form-label">Ville</label>
+            <input type="text" class="pbou-form-input" [(ngModel)]="editContactVille" />
+          </div>
+
+          <div class="pbou-form-group">
+            <label class="pbou-form-label">Code postal</label>
+            <input type="text" class="pbou-form-input" [(ngModel)]="editContactCodePostal" />
+          </div>
+        </div>
+
+        <div class="pbou-form-group">
+          <label class="pbou-form-label">Pays</label>
+          <input type="text" class="pbou-form-input" [(ngModel)]="editContactPays" />
+        </div>
+      </div>
+
+      <div class="modal-footer pbou-modal-footer">
+        <button class="pbou-btn-cancel" data-bs-dismiss="modal">Annuler</button>
+        <button class="pbou-btn-confirm pbou-btn-green" (click)="updateContactBoutique()" [disabled]="loadingAction">
+          <i class="nc-icon nc-check-2"></i>
+          {{ loadingAction ? 'Enregistrement...' : 'Enregistrer' }}
+        </button>
+      </div>
+    </div>
   </div>
 </div>
