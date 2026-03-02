@@ -124,7 +124,7 @@ export class ProduitService {
 
     // Pas de Content-Type pour FormData
     return this.http.put<any>(
-      `${this.baseUrl}/produits/${id}/image`,
+      `${this.baseUrl}/produits/${id}/image/cloud`,
       formData,
       { headers: this.getHeaders() },
     );
